@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Witcorp India Advisor LLP | Compliance Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .nav-btn.active { background-color: #fbbf24; color: #1e3a8a; font-weight: bold; }
+        .section { display: none; }
+        .section.active { display: block; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans flex h-screen overflow-hidden">
+
+    <div class="w-72 bg-[#1e3a8a] text-white flex flex-col shadow-2xl">
+        <div class="p-8 pb-3 border-b border-blue-800 flex flex-col items-center text-center">
+            <div class="w-24 h-24 mb-3 border-2 border-yellow-400 p-1 rounded-2xl shadow-lg bg-white flex items-center justify-center">
+                 <span class="text-blue-900 font-black text-xl">WITCORP</span>
+            </div>
+            <h1 class="text-xl font-bold text-yellow-400 leading-tight uppercase">Witcorp India <br> Advisor LLP</h1>
+        </div>
+        
+        <nav id="sidebarNav" class="flex-1 p-6 space-y-2 mt-4">
+            <button onclick="showSection('dashboard')" class="nav-btn active p-3 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-home w-5"></i> Dashboard</button>
+            <button onclick="showSection('gst')" class="nav-btn p-3 hover:bg-blue-800 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-file-invoice w-5"></i> GST Management</button>
+            <button onclick="showSection('mca')" class="nav-btn p-3 hover:bg-blue-800 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-building w-5"></i> MCA Compliance</button>
+            <button onclick="showSection('it')" class="nav-btn p-3 hover:bg-blue-800 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-percentage w-5"></i> Income Tax</button>
+        </nav>
+        
+        <div class="p-6 border-t border-blue-800 space-y-3 bg-[#1c357e]">
+            <p class="text-xs text-[#a0ffb6] font-semibold italic text-center leading-tight">"Strategic Wisdom. <br> Global Growth."</p>
+            <hr class="border-blue-700">
+            <div class="text-center">
+                <p class="text-[10px] text-yellow-400 font-bold uppercase tracking-wider mb-1">Developed By</p>
+                <p class="text-sm font-bold text-white tracking-wide">Genius Kamlesh Yadav</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-1 p-8 overflow-y-auto">
+        <div id="dashboard" class="section active">
+            <h2 class="text-3xl font-bold mb-8 text-gray-800 uppercase tracking-wide">Compliance Control Center</h2>
+            
+            <div class="grid grid-cols-4 gap-6 mb-8 text-center">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-blue-600">
+                    <p class="text-gray-400 font-bold uppercase text-xs">All Assignments</p>
+                    <p id="totalCount" class="text-4xl font-bold text-blue-900 mt-2">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-green-500">
+                    <p class="text-gray-400 font-bold uppercase text-xs">Completed</p>
+                    <p id="completedCount" class="text-4xl font-bold text-green-600 mt-2">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-red-500">
+                    <p class="text-gray-400 font-bold uppercase text-xs">Pending</p>
+                    <p id="pendingCount" class="text-4xl font-bold text-red-600 mt-2">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-yellow-500">
+                    <p class="text-gray-400 font-bold uppercase text-xs">Firm Status</p>
+                    <p class="text-2xl font-bold text-yellow-500 mt-2">ACTIVE</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-lg mb-8 border border-gray-100">
+                <h3 id="formHeader" class="font-bold mb-6 text-xl text-blue-900 border-l-4 border-blue-900 pl-3 uppercase">Enter Work Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <input id="clientName" type="text" placeholder="Client Name" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="serviceType" type="text" placeholder="Service (GST, MCA, IT)" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="dueDate" type="text" placeholder="Target Date" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <select id="status" class="border-2 border-gray-100 p-3 rounded-xl outline-none bg-white">
+                        <option value="Pending">Pending</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <input id="remarks" type="text" placeholder="Remarks/Notes" class="md:col-span-2 border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                </div>
+                <div class="mt-6">
+                    <button onclick="handleDataSubmit()" id="submitBtn" class="bg-[#1e3a8a] text-white px-8 py-3 rounded-lg font-bold shadow-md hover:bg-blue-700 transition">Update Dashboard</button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b text-gray-600 uppercase text-[10px]">
+                        <tr>
+                            <th class="p-4">Client Name</th>
+                            <th class="p-4">Service</th>
+                            <th class="p-4">Target Date</th>
+                            <th class="p-4">Remarks</th>
+                            <th class="p-4">Updated (IST)</th>
+                            <th class="p-4 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="gst" class="section"></div>
+        <div id="mca" class="section"></div>
+        <div id="it" class="section"></div>
+    </div>
+
+    <script>
+        // PASTE YOUR URL FROM STEP 2 HERE
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzZ6v2jozpzPp4moINOxwvPJ0OCjBP8WhhQK3z1ZaX4pEop_393vKZpun5ZO7A-EKkmsQ/exec'; 
+        let dataList = [];
+
+        window.onload = loadData;
+
+        async function loadData() {
+            const res = await fetch(scriptURL);
+            dataList = await res.json();
+            refreshUI();
+        }
+
+        async function handleDataSubmit() {
+            const btn = document.getElementById('submitBtn');
+            const record = {
+                name: document.getElementById('clientName').value,
+                service: document.getElementById('serviceType').value,
+                date: document.getElementById('dueDate').value,
+                status: document.getElementById('status').value,
+                remark: document.getElementById('remarks').value || "-",
+                timestamp: new Date().toLocaleString('en-IN')
+            };
+
+            if(!record.name || !record.service) return alert("Fill data!");
+
+            btn.disabled = true;
+            btn.innerText = "Syncing...";
+
+            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(record) });
+            alert("Updated!");
+            location.reload();
+        }
+
+        function refreshUI() {
+            const table = document.getElementById('tableBody');
+            table.innerHTML = "";
+            let comp = 0, pend = 0;
+
+            dataList.reverse().forEach(item => {
+                if(item.status === 'Completed') comp++; else pend++;
+                table.innerHTML += `<tr class="border-b hover:bg-blue-50"><td class="p-4 font-semibold">${item.name}</td><td class="p-4">${item.service}</td><td class="p-4">${item.date}</td><td class="p-4 italic text-xs">${item.remark}</td><td class="p-4 text-[10px]">${item.timestamp}</td><td class="p-4 text-center"><span class="px-2 py-1 rounded-full text-[9px] font-bold ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${item.status}</span></td></tr>`;
+            });
+            document.getElementById('totalCount').innerText = dataList.length;
+            document.getElementById('completedCount').innerText = comp;
+            document.getElementById('pendingCount').innerText = pend;
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
