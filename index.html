@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,74 +31,92 @@
         </nav>
         
         <div class="p-6 border-t border-blue-800 space-y-3 bg-[#1c357e]">
-            <p class="text-xs text-[#a0ffb6] font-semibold italic text-center leading-tight">"Strategic Wisdom. <br> Global Growth."</p>
-            <hr class="border-blue-700">
             <div class="text-center">
-                <p class="text-[10px] text-yellow-400 font-bold uppercase tracking-wider mb-1">Developed By</p>
+                <p class="text-[10px] text-yellow-400 font-bold uppercase mb-1">Developed By</p>
                 <p class="text-sm font-bold text-white tracking-wide">Genius Kamlesh Yadav</p>
             </div>
         </div>
     </div>
 
     <div class="flex-1 p-8 overflow-y-auto">
+        
         <div id="dashboard" class="section active">
-            <h2 class="text-3xl font-bold mb-8 text-gray-800 uppercase tracking-wide">Compliance Control Center</h2>
+            <h2 class="text-3xl font-bold mb-8 text-gray-800 uppercase">Compliance Control Center</h2>
             
             <div class="grid grid-cols-4 gap-6 mb-8 text-center">
                 <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-blue-600">
-                    <p class="text-gray-400 font-bold uppercase text-xs">All Assignments</p>
+                    <p class="text-gray-400 font-bold text-xs">ALL WORKS</p>
                     <p id="totalCount" class="text-4xl font-bold text-blue-900 mt-2">0</p>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-green-500">
-                    <p class="text-gray-400 font-bold uppercase text-xs">Completed</p>
+                    <p class="text-gray-400 font-bold text-xs">COMPLETED</p>
                     <p id="completedCount" class="text-4xl font-bold text-green-600 mt-2">0</p>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-red-500">
-                    <p class="text-gray-400 font-bold uppercase text-xs">Pending</p>
+                    <p class="text-gray-400 font-bold text-xs">PENDING</p>
                     <p id="pendingCount" class="text-4xl font-bold text-red-600 mt-2">0</p>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-yellow-500">
-                    <p class="text-gray-400 font-bold uppercase text-xs">Firm Status</p>
+                    <p class="text-gray-400 font-bold text-xs">STATUS</p>
                     <p class="text-2xl font-bold text-yellow-500 mt-2">ACTIVE</p>
                 </div>
             </div>
 
             <div class="bg-white p-8 rounded-2xl shadow-lg mb-8 border border-gray-100">
-                <h3 id="formHeader" class="font-bold mb-6 text-xl text-blue-900 border-l-4 border-blue-900 pl-3 uppercase">Enter Work Details</h3>
+                <h3 class="font-bold mb-6 text-xl text-blue-900 border-l-4 border-blue-900 pl-3 uppercase">New Entry</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <input id="clientName" type="text" placeholder="Client Name" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
-                    <input id="serviceType" type="text" placeholder="Service (GST, MCA, IT)" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="serviceType" type="text" placeholder="Service (GST, MCA, ITR)" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
                     <input id="dueDate" type="date" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
-                    <select id="status" class="border-2 border-gray-100 p-3 rounded-xl outline-none bg-white">
+                    <select id="status" class="border-2 border-gray-100 p-3 rounded-xl bg-white">
                         <option value="Pending">Pending</option>
                         <option value="Completed">Completed</option>
                     </select>
-                    <input id="remarks" type="text" placeholder="Remarks/Notes" class="md:col-span-2 border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="remarks" type="text" placeholder="Remarks" class="md:col-span-2 border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
                 </div>
-                <div class="mt-6">
-                    <button onclick="handleDataSubmit()" id="submitBtn" class="bg-[#1e3a8a] text-white px-8 py-3 rounded-lg font-bold shadow-md hover:bg-blue-700 transition">Update Dashboard</button>
-                </div>
+                <button onclick="handleDataSubmit()" id="submitBtn" class="mt-6 bg-[#1e3a8a] text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition">Update Dashboard</button>
             </div>
 
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
                 <table class="w-full text-left">
-                    <thead class="bg-gray-50 border-b text-gray-600 uppercase text-[10px]">
-                        <tr>
-                            <th class="p-4">Client Name</th>
-                            <th class="p-4">Service</th>
-                            <th class="p-4">Target Date</th>
-                            <th class="p-4">Remarks</th>
-                            <th class="p-4">Updated (IST)</th>
-                            <th class="p-4 text-center">Status</th>
-                        </tr>
+                    <thead class="bg-gray-50 border-b text-gray-600 text-[10px] uppercase">
+                        <tr><th class="p-4">Client</th><th class="p-4">Service</th><th class="p-4">Target Date</th><th class="p-4">Remarks</th><th class="p-4 text-center">Status</th></tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </div>
-        <div id="gst" class="section"></div>
-        <div id="mca" class="section"></div>
-        <div id="it" class="section"></div>
+
+        <div id="gst" class="section">
+            <h2 class="text-3xl font-bold mb-8 text-gray-800 uppercase">GST Management</h2>
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b text-[10px] uppercase"><tr><th class="p-4">Client</th><th class="p-4">Target Date</th><th class="p-4">Remarks</th><th class="p-4 text-center">Status</th></tr></thead>
+                    <tbody id="gstTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="mca" class="section">
+            <h2 class="text-3xl font-bold mb-8 text-gray-800 uppercase">MCA Compliance</h2>
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b text-[10px] uppercase"><tr><th class="p-4">Client</th><th class="p-4">Target Date</th><th class="p-4">Remarks</th><th class="p-4 text-center">Status</th></tr></thead>
+                    <tbody id="mcaTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="it" class="section">
+            <h2 class="text-3xl font-bold mb-8 text-gray-800 uppercase">Income Tax Control</h2>
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b text-[10px] uppercase"><tr><th class="p-4">Client</th><th class="p-4">Target Date</th><th class="p-4">Remarks</th><th class="p-4 text-center">Status</th></tr></thead>
+                    <tbody id="itTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -107,13 +126,9 @@
         window.onload = loadData;
 
         async function loadData() {
-            try {
-                const res = await fetch(scriptURL);
-                dataList = await res.json();
-                refreshUI();
-            } catch (e) {
-                console.error("Data load nahi hua!");
-            }
+            const res = await fetch(scriptURL);
+            dataList = await res.json();
+            refreshUI();
         }
 
         async function handleDataSubmit() {
@@ -126,54 +141,41 @@
                 remark: document.getElementById('remarks').value || "-",
                 timestamp: new Date().toLocaleString('en-IN')
             };
-
-            if(!record.name || !record.service || !record.date) return alert("Please fill Name, Service and Date!");
-
-            btn.disabled = true;
-            btn.innerText = "Syncing...";
-
-            try {
-                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(record) });
-                alert("Data Updated Successfully!");
-                location.reload();
-            } catch (e) {
-                alert("Error: Check Connection!");
-                btn.disabled = false;
-                btn.innerText = "Update Dashboard";
-            }
+            if(!record.name || !record.service) return alert("Fill Name and Service!");
+            btn.disabled = true; btn.innerText = "Syncing...";
+            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(record) });
+            location.reload();
         }
 
         function refreshUI() {
-            const table = document.getElementById('tableBody');
-            table.innerHTML = "";
+            const mainBody = document.getElementById('tableBody');
+            const gstBody = document.getElementById('gstTableBody');
+            const mcaBody = document.getElementById('mcaTableBody');
+            const itBody = document.getElementById('itTableBody');
+            
+            mainBody.innerHTML = ""; gstBody.innerHTML = ""; mcaBody.innerHTML = ""; itBody.innerHTML = "";
             let comp = 0, pend = 0;
 
-            // Naya data upar dikhane ke liye reverse kiya hai
             [...dataList].reverse().forEach(item => {
                 if(item.status === 'Completed') comp++; else pend++;
                 
-                // DATE FORMAT FIX: Technical date ko DD/MM/YYYY mein badla
-                let formattedDate = "-";
-                if(item.date) {
-                    const d = new Date(item.date);
-                    formattedDate = !isNaN(d) ? d.toLocaleDateString('en-GB') : item.date;
-                }
+                let d = new Date(item.date);
+                let fDate = !isNaN(d) ? d.toLocaleDateString('en-GB') : item.date;
+                let srv = item.service.toLowerCase();
 
-                table.innerHTML += `
-                    <tr class="border-b hover:bg-blue-50 transition">
-                        <td class="p-4 font-semibold text-gray-800">${item.name}</td>
-                        <td class="p-4 text-sm font-bold text-blue-600">${item.service.toUpperCase()}</td>
-                        <td class="p-4 font-medium text-gray-700">${formattedDate}</td>
-                        <td class="p-4 italic text-xs text-gray-500">${item.remark}</td>
-                        <td class="p-4 text-[10px] text-gray-400">${item.timestamp}</td>
-                        <td class="p-4 text-center">
-                            <span class="px-3 py-1 rounded-full text-[10px] font-bold ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">
-                                ${item.status}
-                            </span>
-                        </td>
-                    </tr>`;
+                let rowHTML = `<tr class="border-b hover:bg-blue-50"><td class="p-4 font-semibold">${item.name}</td><td class="p-4 text-blue-600 font-bold">${item.service.toUpperCase()}</td><td class="p-4">${fDate}</td><td class="p-4 text-xs italic">${item.remark}</td><td class="p-4 text-center"><span class="px-2 py-1 rounded-full text-[10px] font-bold ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${item.status}</span></td></tr>`;
+                
+                // Dashboard mein sab dikhega
+                mainBody.innerHTML += rowHTML;
+
+                // Filtering logic
+                let simpleRow = `<tr class="border-b hover:bg-blue-50"><td class="p-4 font-semibold">${item.name}</td><td class="p-4">${fDate}</td><td class="p-4 text-xs italic">${item.remark}</td><td class="p-4 text-center"><span class="px-2 py-1 rounded-full text-[10px] font-bold ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${item.status}</span></td></tr>`;
+                
+                if(srv.includes('gst')) gstBody.innerHTML += simpleRow;
+                else if(srv.includes('mca')) mcaBody.innerHTML += simpleRow;
+                else if(srv.includes('it')) itBody.innerHTML += simpleRow;
             });
-            
+
             document.getElementById('totalCount').innerText = dataList.length;
             document.getElementById('completedCount').innerText = comp;
             document.getElementById('pendingCount').innerText = pend;
