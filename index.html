@@ -16,7 +16,9 @@
 
     <div class="w-72 bg-[#1e3a8a] text-white flex flex-col shadow-2xl">
         <div class="p-8 pb-3 border-b border-blue-800 flex flex-col items-center text-center">
-            <img src="logo.png" alt="Logo" class="w-24 h-24 mb-3 border-2 border-yellow-400 p-1 rounded-2xl shadow-lg bg-white">
+            <div class="w-24 h-24 mb-3 border-2 border-yellow-400 p-2 rounded-2xl shadow-lg bg-white flex items-center justify-center">
+                <i class="fas fa-shield-alt text-blue-900 text-4xl"></i>
+            </div>
             <h1 class="text-xl font-bold text-yellow-400 leading-tight uppercase">Witcorp India <br> Advisor LLP</h1>
         </div>
         
@@ -63,10 +65,10 @@
             <div class="bg-white p-8 rounded-2xl shadow-lg mb-8 border border-gray-100">
                 <h3 id="formHeader" class="font-bold mb-6 text-xl text-blue-900 border-l-4 border-blue-900 pl-3 uppercase">Enter Work Details</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <input type="hidden" id="editIndex" value="-1">
+                    <input type="hidden" id="editRowId" value="">
                     <input id="clientName" type="text" placeholder="Client Name" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
                     <input id="serviceType" type="text" placeholder="Service (GST, MCA, IT)" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
-                    <input id="dueDate" type="text" placeholder="Target Date" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="dueDate" type="text" placeholder="Target Date (e.g. 21/02/2026)" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
                     <select id="status" class="border-2 border-gray-100 p-3 rounded-xl outline-none bg-white">
                         <option value="Pending">Pending</option>
                         <option value="Completed">Completed</option>
@@ -113,63 +115,7 @@
                 const res = await fetch(scriptURL);
                 dataList = await res.json();
                 refreshUI();
-            } catch (e) { console.error("Load failed"); }
-        }
-
-        function showSection(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
-            const btns = document.querySelectorAll('.nav-btn');
-            btns.forEach(btn => {
-                const txt = btn.innerText.toLowerCase();
-                if(txt.includes(id) || (id==='it' && txt.includes('income tax'))) btn.classList.add('active');
-            });
-            refreshUI();
-        }
-
-        function getIST() {
-            return new Intl.DateTimeFormat('en-IN', {
-                timeZone: 'Asia/Kolkata',
-                day: '2-digit', month: 'short', year: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-            }).format(new Date());
-        }
-
-        async function handleDataSubmit() {
-            const name = document.getElementById('clientName').value;
-            const service = document.getElementById('serviceType').value;
-            const date = document.getElementById('dueDate').value;
-            const status = document.getElementById('status').value;
-            const remark = document.getElementById('remarks').value;
-            const editIdx = document.getElementById('editIndex').value;
-
-            if(!name || !service || !date) { alert("Fields required!"); return; }
-
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerText = "Syncing...";
-
-            const record = { 
-                action: editIdx === "-1" ? "add" : "edit",
-                rowId: editIdx === "-1" ? null : dataList[editIdx].rowId,
-                name, service, date, status, 
-                remark: remark || "-", 
-                timestamp: getIST() 
-            };
-
-            try {
-                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(record) });
-                resetForm();
-                await loadData();
-                alert("System Updated Successfully!");
-            } catch (e) {
-                alert("Error connecting to sheet!");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Update Dashboard";
-            }
+            } catch (e) { console.error("Sync failed"); }
         }
 
         function refreshUI() {
@@ -184,20 +130,33 @@
 
             let comp = 0, pend = 0;
 
-            [...dataList].reverse().forEach((item, index) => {
-                const actualIndex = dataList.length - 1 - index;
+            [...dataList].reverse().forEach((item) => {
                 if(item.status === 'Completed') comp++; else pend++;
 
-                const actionBtns = `<td class="p-4 text-center"><button onclick="startEdit(${actualIndex})" class="text-blue-500 mx-1"><i class="fas fa-edit"></i></button><button onclick="deleteRow(${actualIndex})" class="text-red-400 mx-1"><i class="fas fa-trash-alt"></i></button></td>`;
+                // Clean Date format logic
+                let displayDate = item.date;
+                if(displayDate.includes('T')) displayDate = new Date(displayDate).toLocaleDateString('en-GB');
 
-                mainTable.innerHTML += `<tr class="border-b hover:bg-blue-50"><td class="p-4 font-semibold">${item.name}</td><td class="p-4">${item.service}</td><td class="p-4">${item.date}</td><td class="p-4 italic text-xs">${item.remark}</td><td class="p-4 text-[10px] text-blue-800">${item.timestamp}</td><td class="p-4 text-center"><span class="px-2 py-1 rounded-full text-[9px] font-bold uppercase ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${item.status}</span></td>${actionBtns}</tr>`;
+                const rowContent = `
+                    <td class="p-4 font-semibold">${item.name}</td>
+                    <td class="p-4 text-blue-700 font-bold">${item.service.toUpperCase()}</td>
+                    <td class="p-4">${displayDate}</td>
+                    <td class="p-4 italic text-xs text-gray-500">${item.remark}</td>
+                    <td class="p-4 text-[10px] text-blue-800">${item.timestamp}</td>
+                    <td class="p-4 text-center">
+                        <span class="px-2 py-1 rounded-full text-[9px] font-bold uppercase ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${item.status}</span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <button onclick="startEdit('${item.rowId}')" class="text-blue-500 mx-1 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteRow('${item.rowId}')" class="text-red-400 mx-1 hover:text-red-600"><i class="fas fa-trash-alt"></i></button>
+                    </td>`;
 
-                const subRow = `<tr class="border-b hover:bg-gray-50"><td class="p-4 font-semibold">${item.name}</td><td class="p-4">${item.date}</td><td class="p-4 italic text-xs">${item.remark}</td><td class="p-4 text-[10px] text-blue-800">${item.timestamp}</td><td class="p-4 text-center"><span class="px-2 py-1 rounded-full text-[9px] font-bold uppercase ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${item.status}</span></td>${actionBtns}</tr>`;
+                mainTable.innerHTML += `<tr class="border-b hover:bg-blue-50">${rowContent}</tr>`;
 
                 let s = item.service.toLowerCase();
-                if(s.includes('gst')) document.getElementById('gstBody').innerHTML += subRow;
-                if(s.includes('mca')) document.getElementById('mcaBody').innerHTML += subRow;
-                if(s.includes('it') || s.includes('tax') || s.includes('income')) document.getElementById('itBody').innerHTML += subRow;
+                if(s.includes('gst')) document.getElementById('gstBody').innerHTML += `<tr class="border-b">${rowContent}</tr>`;
+                if(s.includes('mca')) document.getElementById('mcaBody').innerHTML += `<tr class="border-b">${rowContent}</tr>`;
+                if(s.includes('it') || s.includes('tax')) document.getElementById('itBody').innerHTML += `<tr class="border-b">${rowContent}</tr>`;
             });
 
             document.getElementById('totalCount').innerText = dataList.length;
@@ -205,36 +164,65 @@
             document.getElementById('pendingCount').innerText = pend;
         }
 
-        async function deleteRow(idx) {
-            if(confirm("Delete record?")) {
-                const rowId = dataList[idx].rowId;
-                await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: rowId }) });
+        async function handleDataSubmit() {
+            const btn = document.getElementById('submitBtn');
+            const rowId = document.getElementById('editRowId').value;
+            
+            const data = {
+                action: rowId ? "edit" : "add",
+                rowId: rowId || null,
+                name: document.getElementById('clientName').value,
+                service: document.getElementById('serviceType').value,
+                date: document.getElementById('dueDate').value,
+                status: document.getElementById('status').value,
+                remark: document.getElementById('remarks').value || "-",
+                timestamp: new Intl.DateTimeFormat('en-IN', {timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'}).format(new Date())
+            };
+
+            if(!data.name || !data.service) return alert("Fill Name and Service!");
+
+            btn.disabled = true; btn.innerText = "Syncing...";
+            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(data) });
+            resetForm();
+            await loadData();
+            btn.disabled = false; btn.innerText = "Update Dashboard";
+        }
+
+        async function deleteRow(id) {
+            if(confirm("Confirm Delete?")) {
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: id }) });
                 await loadData();
             }
         }
 
-        function startEdit(idx) {
-            const item = dataList[idx];
-            showSection('dashboard');
+        function startEdit(id) {
+            const item = dataList.find(x => x.rowId == id);
             document.getElementById('clientName').value = item.name;
             document.getElementById('serviceType').value = item.service;
             document.getElementById('dueDate').value = item.date;
             document.getElementById('status').value = item.status;
-            document.getElementById('remarks').value = item.remark === "-" ? "" : item.remark;
-            document.getElementById('editIndex').value = idx;
+            document.getElementById('remarks').value = item.remark;
+            document.getElementById('editRowId').value = id;
             document.getElementById('submitBtn').innerText = "Save Changes";
             document.getElementById('cancelBtn').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function resetForm() {
+            document.getElementById('editRowId').value = "";
             document.getElementById('clientName').value = "";
             document.getElementById('serviceType').value = "";
             document.getElementById('dueDate').value = "";
             document.getElementById('remarks').value = "";
-            document.getElementById('editIndex').value = "-1";
             document.getElementById('submitBtn').innerText = "Update Dashboard";
             document.getElementById('cancelBtn').classList.add('hidden');
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
         }
     </script>
 </body>
