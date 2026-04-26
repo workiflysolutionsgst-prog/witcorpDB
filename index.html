@@ -67,7 +67,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <input id="clientName" type="text" placeholder="Client Name" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
                     <input id="serviceType" type="text" placeholder="Service (GST, MCA, IT)" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
-                    <input id="dueDate" type="text" placeholder="Target Date" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="dueDate" type="date" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
                     <select id="status" class="border-2 border-gray-100 p-3 rounded-xl outline-none bg-white">
                         <option value="Pending">Pending</option>
                         <option value="Completed">Completed</option>
@@ -101,16 +101,19 @@
     </div>
 
     <script>
-        // PASTE YOUR URL FROM STEP 2 HERE
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzZ6v2jozpzPp4moINOxwvPJ0OCjBP8WhhQK3z1ZaX4pEop_393vKZpun5ZO7A-EKkmsQ/exec'; 
         let dataList = [];
 
         window.onload = loadData;
 
         async function loadData() {
-            const res = await fetch(scriptURL);
-            dataList = await res.json();
-            refreshUI();
+            try {
+                const res = await fetch(scriptURL);
+                dataList = await res.json();
+                refreshUI();
+            } catch (e) {
+                console.error("Data load nahi hua!");
+            }
         }
 
         async function handleDataSubmit() {
@@ -124,14 +127,20 @@
                 timestamp: new Date().toLocaleString('en-IN')
             };
 
-            if(!record.name || !record.service) return alert("Fill data!");
+            if(!record.name || !record.service || !record.date) return alert("Please fill Name, Service and Date!");
 
             btn.disabled = true;
             btn.innerText = "Syncing...";
 
-            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(record) });
-            alert("Updated!");
-            location.reload();
+            try {
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(record) });
+                alert("Data Updated Successfully!");
+                location.reload();
+            } catch (e) {
+                alert("Error: Check Connection!");
+                btn.disabled = false;
+                btn.innerText = "Update Dashboard";
+            }
         }
 
         function refreshUI() {
@@ -139,10 +148,32 @@
             table.innerHTML = "";
             let comp = 0, pend = 0;
 
-            dataList.reverse().forEach(item => {
+            // Naya data upar dikhane ke liye reverse kiya hai
+            [...dataList].reverse().forEach(item => {
                 if(item.status === 'Completed') comp++; else pend++;
-                table.innerHTML += `<tr class="border-b hover:bg-blue-50"><td class="p-4 font-semibold">${item.name}</td><td class="p-4">${item.service}</td><td class="p-4">${item.date}</td><td class="p-4 italic text-xs">${item.remark}</td><td class="p-4 text-[10px]">${item.timestamp}</td><td class="p-4 text-center"><span class="px-2 py-1 rounded-full text-[9px] font-bold ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${item.status}</span></td></tr>`;
+                
+                // DATE FORMAT FIX: Technical date ko DD/MM/YYYY mein badla
+                let formattedDate = "-";
+                if(item.date) {
+                    const d = new Date(item.date);
+                    formattedDate = !isNaN(d) ? d.toLocaleDateString('en-GB') : item.date;
+                }
+
+                table.innerHTML += `
+                    <tr class="border-b hover:bg-blue-50 transition">
+                        <td class="p-4 font-semibold text-gray-800">${item.name}</td>
+                        <td class="p-4 text-sm font-bold text-blue-600">${item.service.toUpperCase()}</td>
+                        <td class="p-4 font-medium text-gray-700">${formattedDate}</td>
+                        <td class="p-4 italic text-xs text-gray-500">${item.remark}</td>
+                        <td class="p-4 text-[10px] text-gray-400">${item.timestamp}</td>
+                        <td class="p-4 text-center">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">
+                                ${item.status}
+                            </span>
+                        </td>
+                    </tr>`;
             });
+            
             document.getElementById('totalCount').innerText = dataList.length;
             document.getElementById('completedCount').innerText = comp;
             document.getElementById('pendingCount').innerText = pend;
