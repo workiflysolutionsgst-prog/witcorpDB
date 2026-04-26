@@ -68,7 +68,7 @@
                     <input type="hidden" id="editRowId" value="">
                     <input id="clientName" type="text" placeholder="Client Name" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
                     <input id="serviceType" type="text" placeholder="Service (GST, MCA, IT)" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
-                    <input id="dueDate" type="text" placeholder="Target Date (e.g. 21/02/2026)" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="dueDate" type="date" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
                     <select id="status" class="border-2 border-gray-100 p-3 rounded-xl outline-none bg-white">
                         <option value="Pending">Pending</option>
                         <option value="Completed">Completed</option>
@@ -105,7 +105,8 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyBA-3t03IWoUHAa8Y5J5KT2t0UbqQnt3p7-Jac9gqyp3t2P2EiRzqGFDcmeO4jRqaKTA/exec';
+        // YOUR WEB APP URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyFl8qrbraB9vfqYorPfue4XedKzcra654KXGip3meMZpm1S4wW2lw2H2F8F_CEQst7oA/exec';
         let dataList = [];
         
         window.onload = loadData;
@@ -115,7 +116,7 @@
                 const res = await fetch(scriptURL);
                 dataList = await res.json();
                 refreshUI();
-            } catch (e) { console.error("Sync failed"); }
+            } catch (e) { console.error("Load failed"); }
         }
 
         function refreshUI() {
@@ -133,30 +134,30 @@
             [...dataList].reverse().forEach((item) => {
                 if(item.status === 'Completed') comp++; else pend++;
 
-                // Clean Date format logic
-                let displayDate = item.date;
-                if(displayDate.includes('T')) displayDate = new Date(displayDate).toLocaleDateString('en-GB');
+                // Date Formatting
+                let cleanDate = item.date;
+                if(cleanDate.includes('T')) cleanDate = new Date(cleanDate).toLocaleDateString('en-GB');
 
-                const rowContent = `
+                const rowHtml = `
                     <td class="p-4 font-semibold">${item.name}</td>
                     <td class="p-4 text-blue-700 font-bold">${item.service.toUpperCase()}</td>
-                    <td class="p-4">${displayDate}</td>
+                    <td class="p-4">${cleanDate}</td>
                     <td class="p-4 italic text-xs text-gray-500">${item.remark}</td>
                     <td class="p-4 text-[10px] text-blue-800">${item.timestamp}</td>
                     <td class="p-4 text-center">
                         <span class="px-2 py-1 rounded-full text-[9px] font-bold uppercase ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${item.status}</span>
                     </td>
                     <td class="p-4 text-center">
-                        <button onclick="startEdit('${item.rowId}')" class="text-blue-500 mx-1 hover:text-blue-700"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteRow('${item.rowId}')" class="text-red-400 mx-1 hover:text-red-600"><i class="fas fa-trash-alt"></i></button>
+                        <button onclick="startEdit('${item.rowId}')" class="text-blue-500 mx-1"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteRow('${item.rowId}')" class="text-red-400 mx-1"><i class="fas fa-trash-alt"></i></button>
                     </td>`;
 
-                mainTable.innerHTML += `<tr class="border-b hover:bg-blue-50">${rowContent}</tr>`;
+                mainTable.innerHTML += `<tr class="border-b hover:bg-blue-50">${rowHtml}</tr>`;
 
                 let s = item.service.toLowerCase();
-                if(s.includes('gst')) document.getElementById('gstBody').innerHTML += `<tr class="border-b">${rowContent}</tr>`;
-                if(s.includes('mca')) document.getElementById('mcaBody').innerHTML += `<tr class="border-b">${rowContent}</tr>`;
-                if(s.includes('it') || s.includes('tax')) document.getElementById('itBody').innerHTML += `<tr class="border-b">${rowContent}</tr>`;
+                if(s.includes('gst')) document.getElementById('gstBody').innerHTML += `<tr class="border-b">${rowHtml}</tr>`;
+                if(s.includes('mca')) document.getElementById('mcaBody').innerHTML += `<tr class="border-b">${rowHtml}</tr>`;
+                if(s.includes('it') || s.includes('tax')) document.getElementById('itBody').innerHTML += `<tr class="border-b">${rowHtml}</tr>`;
             });
 
             document.getElementById('totalCount').innerText = dataList.length;
@@ -165,10 +166,10 @@
         }
 
         async function handleDataSubmit() {
-            const btn = document.getElementById('submitBtn');
             const rowId = document.getElementById('editRowId').value;
+            const btn = document.getElementById('submitBtn');
             
-            const data = {
+            const payload = {
                 action: rowId ? "edit" : "add",
                 rowId: rowId || null,
                 name: document.getElementById('clientName').value,
@@ -179,10 +180,10 @@
                 timestamp: new Intl.DateTimeFormat('en-IN', {timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'}).format(new Date())
             };
 
-            if(!data.name || !data.service) return alert("Fill Name and Service!");
+            if(!payload.name || !payload.service) return alert("Missing Info!");
 
             btn.disabled = true; btn.innerText = "Syncing...";
-            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(data) });
+            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
             resetForm();
             await loadData();
             btn.disabled = false; btn.innerText = "Update Dashboard";
@@ -199,7 +200,14 @@
             const item = dataList.find(x => x.rowId == id);
             document.getElementById('clientName').value = item.name;
             document.getElementById('serviceType').value = item.service;
-            document.getElementById('dueDate').value = item.date;
+            
+            // Format date for the input
+            if(item.date.includes('T')) {
+                document.getElementById('dueDate').value = item.date.split('T')[0];
+            } else {
+                document.getElementById('dueDate').value = item.date;
+            }
+
             document.getElementById('status').value = item.status;
             document.getElementById('remarks').value = item.remark;
             document.getElementById('editRowId').value = id;
