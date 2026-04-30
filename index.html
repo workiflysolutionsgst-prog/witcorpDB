@@ -227,7 +227,9 @@ let row=`
 <td class="p-4">${item.remark}</td>
 <td class="p-4 text-purple-700">${item.assign||'-'}</td>
 <td class="p-4 text-xs">${new Date(item.timestamp).toLocaleString()}</td>
-<td class="p-4 text-center">${item.status}</td>
+<td class="p-4 text-center ${item.status==='Completed'?'text-green-600':'text-red-500'}">
+${item.status}
+</td>
 <td class="p-4 text-center space-x-2">
 <button onclick="startEdit('${item.rowId}')">✏️</button>
 <button onclick="deleteRow('${item.rowId}')">🗑️</button>
@@ -263,7 +265,7 @@ assign.value=item.assign||"";
 clientName.disabled=true;
 serviceType.disabled=true;
 dueDate.disabled=true;
-status.disabled=true;
+status.disabled=false;
 assign.disabled=true;
 
 editRowId.value=id;
@@ -292,7 +294,8 @@ if(editRowId.value){
 payload={
 action:"edit",
 rowId:editRowId.value,
-remark:remarks.value
+remark:remarks.value,
+status:status.value   // ✅ ADD THIS
 };
 }else{
 payload={
