@@ -21,6 +21,21 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* HIGH-TECH CARD STYLES */
+        .high-tech-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 4px solid;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .high-tech-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .tech-glow-blue { border-top-color: #2563eb; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2); }
+        .tech-glow-green { border-top-color: #10b981; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); }
+        .tech-glow-red { border-top-color: #f43f5e; box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2); }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden text-slate-700">
@@ -71,48 +86,44 @@
                 </div>
             </div>
             
-            <!-- NEW HIGH-TECH STATS CARDS -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-    <!-- Total Workload -->
-    <div class="high-tech-card tech-glow-blue p-8 rounded-3xl relative overflow-hidden group">
-        <div class="relative z-10">
-            <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Total Workload</p>
-            <h3 id="totalCount" class="text-6xl font-black text-slate-800 tracking-tighter">0</h3>
-            <div class="mt-4 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                <span class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Active Database</span>
-            </div>
-        </div>
-        <i class="fas fa-briefcase text-slate-50 text-8xl absolute -right-4 -bottom-4 transition-transform group-hover:scale-110"></i>
-    </div>
+            <!-- HIGH-TECH STATS CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="high-tech-card tech-glow-blue p-8 rounded-3xl relative overflow-hidden group">
+                    <div class="relative z-10">
+                        <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Total Workload</p>
+                        <h3 id="totalCount" class="text-6xl font-black text-slate-800 tracking-tighter">0</h3>
+                        <div class="mt-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                            <span class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Active Database</span>
+                        </div>
+                    </div>
+                    <i class="fas fa-briefcase text-slate-50 text-8xl absolute -right-4 -bottom-4 transition-transform group-hover:scale-110"></i>
+                </div>
 
-    <!-- Finalized -->
-    <div class="high-tech-card tech-glow-green p-8 rounded-3xl relative overflow-hidden group">
-        <div class="relative z-10">
-            <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Finalized</p>
-            <h3 id="completedCount" class="text-6xl font-black text-emerald-600 tracking-tighter">0</h3>
-            <div class="mt-4 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Synced to Cloud</span>
-            </div>
-        </div>
-        <i class="fas fa-check-double text-slate-50 text-8xl absolute -right-4 -bottom-4 transition-transform group-hover:scale-110"></i>
-    </div>
+                <div class="high-tech-card tech-glow-green p-8 rounded-3xl relative overflow-hidden group">
+                    <div class="relative z-10">
+                        <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Finalized</p>
+                        <h3 id="completedCount" class="text-6xl font-black text-emerald-600 tracking-tighter">0</h3>
+                        <div class="mt-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Synced to Cloud</span>
+                        </div>
+                    </div>
+                    <i class="fas fa-check-double text-slate-50 text-8xl absolute -right-4 -bottom-4 transition-transform group-hover:scale-110"></i>
+                </div>
 
-    <!-- In Progress -->
-    <div class="high-tech-card tech-glow-red p-8 rounded-3xl relative overflow-hidden group">
-        <div class="relative z-10">
-            <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">In Progress</p>
-            <h3 id="pendingCount" class="text-6xl font-black text-rose-600 tracking-tighter">0</h3>
-            <div class="mt-4 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-                <span class="text-[9px] font-bold text-rose-600 uppercase tracking-widest">Processing...</span>
+                <div class="high-tech-card tech-glow-red p-8 rounded-3xl relative overflow-hidden group">
+                    <div class="relative z-10">
+                        <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">In Progress</p>
+                        <h3 id="pendingCount" class="text-6xl font-black text-rose-600 tracking-tighter">0</h3>
+                        <div class="mt-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                            <span class="text-[9px] font-bold text-rose-600 uppercase tracking-widest">Processing...</span>
+                        </div>
+                    </div>
+                    <i class="fas fa-bolt text-slate-50 text-8xl absolute -right-4 -bottom-4 transition-transform group-hover:scale-110"></i>
+                </div>
             </div>
-        </div>
-        <i class="fas fa-bolt text-slate-50 text-8xl absolute -right-4 -bottom-4 transition-transform group-hover:scale-110"></i>
-    </div>
-</div>
-    
 
             <!-- FORM SECTION -->
             <div class="glass-card p-10 rounded-[2.5rem] shadow-2xl mb-12 border-none">
@@ -250,16 +261,16 @@
             const istTime = new Intl.DateTimeFormat('en-IN', options).format(new Date());
 
             const payload = {
-    action: rowId ? "edit" : "add",
-    rowId: rowId || null,
-    name: document.getElementById('clientName').value,
-    service: document.getElementById('serviceType').value,
-    date: document.getElementById('dueDate').value,
-    status: document.getElementById('status').value || dataList.find(x => x.rowId == rowId).status, // Fallback if disabled
-    assign: document.getElementById('assignTo').value,
-    remark: document.getElementById('remarks').value || "-",
-    timestamp: istTime
-};
+                action: rowId ? "edit" : "add",
+                rowId: rowId || null,
+                name: document.getElementById('clientName').value,
+                service: document.getElementById('serviceType').value,
+                date: document.getElementById('dueDate').value,
+                status: document.getElementById('status').value,
+                assign: document.getElementById('assignTo').value,
+                remark: document.getElementById('remarks').value || "-",
+                timestamp: istTime
+            };
 
             if(!payload.name) return alert("Bhai, Client ka naam toh likho!");
 
@@ -278,59 +289,47 @@
         }
 
         function startEdit(id) {
-    const item = dataList.find(x => x.rowId == id);
-    
-    const fields = {
-        'clientName': item.name,
-        'serviceType': item.service,
-        'dueDate': item.date ? item.date.split('T')[0] : "",
-        'status': item.status,
-        'assignTo': item.assign || "",
-        'remarks': item.remark
-    };
+            const item = dataList.find(x => x.rowId == id);
+            const fields = {
+                'clientName': item.name,
+                'serviceType': item.service,
+                'dueDate': item.date ? item.date.split('T')[0] : "",
+                'status': item.status,
+                'assignTo': item.assign || "",
+                'remarks': item.remark
+            };
 
-    Object.keys(fields).forEach(key => {
-        const el = document.getElementById(key);
-        el.value = fields[key];
-        
-        if (key !== 'remarks') {
-            el.readOnly = true; // Lock field
-            el.style.backgroundColor = "#fee2e2"; // Light Red background
-            el.style.borderColor = "#ef4444";     // Red border
-            el.style.cursor = "not-allowed";      // Mouse icon change
-            if(el.tagName === 'SELECT') el.disabled = true; // Select box lock
-        } else {
-            el.focus(); // Direct cursor Remarks par jayega
-            el.style.border = "2px solid #4f46e5"; // Remarks highlights in Blue
+            Object.keys(fields).forEach(key => {
+                const el = document.getElementById(key);
+                el.value = fields[key];
+                if (key !== 'remarks' && key !== 'status') {
+                    el.readOnly = true;
+                    el.style.backgroundColor = "#fee2e2";
+                    el.style.borderColor = "#ef4444";
+                    el.style.cursor = "not-allowed";
+                }
+            });
+
+            document.getElementById('editRowId').value = id;
+            document.getElementById('submitBtn').innerText = "Update Record";
+            document.getElementById('cancelBtn').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
-    });
 
-    document.getElementById('editRowId').value = id;
-    document.getElementById('submitBtn').innerText = "Update Remarks Only";
-    document.getElementById('cancelBtn').classList.remove('hidden');
-    
-    // Smooth scroll to form
-    window.scrollTo({top: 0, behavior: 'smooth'});
-}
-
-function resetForm() {
-    document.getElementById('editRowId').value = "";
-    
-    const inputIds = ['clientName', 'serviceType', 'dueDate', 'status', 'assignTo', 'remarks'];
-    
-    inputIds.forEach(id => {
-        const el = document.getElementById(id);
-        el.value = "";
-        el.readOnly = false;
-        el.disabled = false;
-        el.style.backgroundColor = "#f8fafc"; // Back to original slate-50
-        el.style.borderColor = "#f1f5f9";     // Back to original border
-        el.style.cursor = "text";
-    });
-
-    document.getElementById('submitBtn').innerText = "Sync to Cloud";
-    document.getElementById('cancelBtn').classList.add('hidden');
-}
+        function resetForm() {
+            document.getElementById('editRowId').value = "";
+            ['clientName', 'serviceType', 'dueDate', 'status', 'assignTo', 'remarks'].forEach(id => {
+                const el = document.getElementById(id);
+                el.value = "";
+                el.readOnly = false;
+                el.disabled = false;
+                el.style.backgroundColor = "#f8fafc";
+                el.style.borderColor = "#f1f5f9";
+                el.style.cursor = "text";
+            });
+            document.getElementById('submitBtn').innerText = "Sync to Cloud";
+            document.getElementById('cancelBtn').classList.add('hidden');
+        }
 
         function showSection(id, btn) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
