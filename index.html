@@ -52,7 +52,7 @@
 
 <h2 class="text-3xl font-bold mb-6">COMPLIANCE CONTROL CENTER</h2>
 
-<!-- TOP CARDS -->
+<!-- CARDS -->
 <div class="grid grid-cols-4 gap-6 mb-6">
 
 <div class="bg-white p-5 rounded-xl shadow border-b-4 border-blue-500 text-center">
@@ -79,7 +79,6 @@
 
 <!-- FORM -->
 <div class="bg-white p-6 rounded-xl shadow mb-6">
-
 <h3 class="font-semibold mb-4 border-l-4 border-blue-700 pl-2">ENTER WORK DETAILS</h3>
 
 <div class="grid grid-cols-3 gap-4 mb-4">
@@ -97,13 +96,11 @@
 </div>
 
 <button onclick="handleDataSubmit()" class="bg-blue-900 text-white px-6 py-2 rounded shadow">Update Dashboard</button>
-
 </div>
 
 <!-- TABLE -->
 <div class="bg-white rounded-xl shadow overflow-hidden">
 <table class="w-full text-left">
-
 <thead class="bg-gray-50 text-xs uppercase">
 <tr>
 <th class="p-4">Client</th>
@@ -116,46 +113,67 @@
 <th class="p-4 text-center">Actions</th>
 </tr>
 </thead>
-
 <tbody id="tableBody"></tbody>
-
 </table>
 </div>
 
 </div>
+
+<!-- COMMON TABLE TEMPLATE -->
+<script>
+function getTableHTML(bodyId){
+return `
+<div class="bg-white rounded-xl shadow overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-gray-50 text-xs uppercase">
+<tr>
+<th class="p-4">Client</th>
+<th class="p-4">Service</th>
+<th class="p-4">Date</th>
+<th class="p-4">Remark</th>
+<th class="p-4">Assign</th>
+<th class="p-4">Updated</th>
+<th class="p-4 text-center">Status</th>
+<th class="p-4 text-center">Actions</th>
+</tr>
+</thead>
+<tbody id="${bodyId}"></tbody>
+</table>
+</div>`;
+}
+</script>
 
 <!-- GST -->
 <div id="gst" class="section">
 <h2 class="text-xl font-bold mb-4">GST Data</h2>
-<table class="w-full bg-white shadow">
-<tbody id="gstBody"></tbody>
-</table>
+<div id="gstContainer"></div>
 </div>
 
 <!-- MCA -->
 <div id="mca" class="section">
 <h2 class="text-xl font-bold mb-4">MCA Data</h2>
-<table class="w-full bg-white shadow">
-<tbody id="mcaBody"></tbody>
-</table>
+<div id="mcaContainer"></div>
 </div>
 
 <!-- IT -->
 <div id="it" class="section">
 <h2 class="text-xl font-bold mb-4">Income Tax Data</h2>
-<table class="w-full bg-white shadow">
-<tbody id="itBody"></tbody>
-</table>
+<div id="itContainer"></div>
 </div>
 
 </div>
 
 <script>
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbyAgW9Far_P_XwbdXuhuU4p7HK7qupaYo0yzF4CodKDiCuTWBxHGs67F-cDJSmEg4-kSg/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbylhvtIDHpmKFf_OXjmRx7ITPMpUV-JIZcn08zFQUWzEwVWdh_6AMlytSz7h1Iyk7cv5Q/exec";
 let dataList=[];
 
-window.onload=loadData;
+window.onload=async ()=>{
+gstContainer.innerHTML=getTableHTML("gstBody");
+mcaContainer.innerHTML=getTableHTML("mcaBody");
+itContainer.innerHTML=getTableHTML("itBody");
+await loadData();
+};
 
 async function loadData(){
 let res=await fetch(scriptURL);
@@ -187,14 +205,11 @@ let row=`
 <td class="p-4 text-purple-700">${item.assign||'-'}</td>
 <td class="p-4 text-xs">${new Date(item.timestamp).toLocaleString()}</td>
 <td class="p-4 text-center">${item.status}</td>
-<td class="p-4 text-center">
-<button onclick="deleteRow('${item.rowId}')">🗑️</button>
-</td>
+<td class="p-4 text-center"><button onclick="deleteRow('${item.rowId}')">🗑️</button></td>
 </tr>`;
 
 tableBody.innerHTML+=row;
 
-// FILTER
 let s=item.service.toLowerCase();
 
 if(s.includes("gst")) gstBody.innerHTML+=row;
@@ -210,7 +225,6 @@ pendingCount.innerText=pending;
 }
 
 async function handleDataSubmit(){
-
 let payload={
 action:"add",
 name:clientName.value,
@@ -221,10 +235,8 @@ remark:remarks.value,
 assign:assign.value,
 timestamp:new Date().toISOString()
 };
-
 await fetch(scriptURL,{method:'POST',body:JSON.stringify(payload)});
 loadData();
-
 }
 
 async function deleteRow(id){
