@@ -4,117 +4,101 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compliance Control Center</title>
+<title>Compliance Dashboard</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-.nav-btn.active { background:#fbbf24; color:#1e3a8a; font-weight:bold; }
-.card { @apply bg-white rounded-xl shadow-md p-5; }
+.nav-btn.active{background:#fbbf24;color:#1e3a8a;font-weight:bold;}
+.section{display:none;}
+.section.active{display:block;}
 </style>
 </head>
 
-<body class="bg-gray-100 flex h-screen overflow-hidden font-sans">
+<body class="flex h-screen bg-gray-100">
 
 <!-- SIDEBAR -->
-<div class="w-72 bg-[#1e3a8a] text-white flex flex-col">
+<div class="w-72 bg-blue-900 text-white flex flex-col">
 
-<div class="p-8 text-center border-b border-blue-800">
-<div class="w-20 h-20 mx-auto mb-3 bg-white rounded-xl flex items-center justify-center">
-<i class="fas fa-shield-alt text-3xl text-blue-900"></i>
-</div>
-<h1 class="text-yellow-400 font-bold">WITCORP INDIA<br>ADVISOR LLP</h1>
+<div class="p-6 text-center border-b">
+<h1 class="text-yellow-400 font-bold">WITCORP INDIA</h1>
 </div>
 
-<div class="p-6 space-y-2">
-<button class="nav-btn active w-full text-left p-3 rounded">🏠 Dashboard</button>
-<button class="nav-btn w-full text-left p-3 rounded">📄 GST Management</button>
-<button class="nav-btn w-full text-left p-3 rounded">🏢 MCA Compliance</button>
-<button class="nav-btn w-full text-left p-3 rounded">% Income Tax</button>
-</div>
-
-<div class="mt-auto p-6 text-center text-xs">
-<p class="text-green-300 italic">Strategic Wisdom.<br>Global Growth.</p>
-<hr class="my-2 border-blue-700">
-<p class="text-yellow-400">Developed By</p>
-<p class="font-bold">Kamlesh Yadav</p>
+<div class="p-4 space-y-2">
+<button onclick="showSection('dashboard')" class="nav-btn active w-full p-3 text-left">Dashboard</button>
+<button onclick="showSection('gst')" class="nav-btn w-full p-3 text-left">GST</button>
+<button onclick="showSection('mca')" class="nav-btn w-full p-3 text-left">MCA</button>
+<button onclick="showSection('it')" class="nav-btn w-full p-3 text-left">Income Tax</button>
 </div>
 
 </div>
 
 <!-- MAIN -->
-<div class="flex-1 p-8 overflow-y-auto">
+<div class="flex-1 p-6 overflow-auto">
 
-<h2 class="text-3xl font-bold mb-6">COMPLIANCE CONTROL CENTER</h2>
+<!-- DASHBOARD -->
+<div id="dashboard" class="section active">
 
-<!-- TOP CARDS -->
-<div class="grid grid-cols-4 gap-6 mb-6">
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-blue-500 text-center">
-<p class="text-gray-400 text-sm">ALL ASSIGNMENTS</p>
-<h1 id="totalCount" class="text-3xl font-bold text-blue-700">0</h1>
-</div>
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-green-500 text-center">
-<p class="text-gray-400 text-sm">COMPLETED</p>
-<h1 id="completedCount" class="text-3xl font-bold text-green-600">0</h1>
-</div>
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-red-500 text-center">
-<p class="text-gray-400 text-sm">PENDING</p>
-<h1 id="pendingCount" class="text-3xl font-bold text-red-500">0</h1>
-</div>
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-yellow-400 text-center">
-<p class="text-gray-400 text-sm">FIRM STATUS</p>
-<h1 class="text-xl font-bold text-yellow-500">ACTIVE</h1>
-</div>
-
-</div>
+<h2 class="text-2xl font-bold mb-4">Dashboard</h2>
 
 <!-- FORM -->
-<div class="bg-white p-6 rounded-xl shadow mb-6">
+<div class="bg-white p-4 rounded shadow mb-4 grid grid-cols-3 gap-3">
 
-<h3 class="font-semibold mb-4 border-l-4 border-blue-700 pl-2">ENTER WORK DETAILS</h3>
+<input id="clientName" placeholder="Client Name" class="border p-2 rounded">
+<input id="serviceType" placeholder="Service (GST/MCA/IT)" class="border p-2 rounded">
+<input id="dueDate" type="date" class="border p-2 rounded">
 
-<div class="grid grid-cols-3 gap-4 mb-4">
-<input id="clientName" placeholder="Client Name" class="p-3 border rounded">
-<input id="serviceType" placeholder="Service (GST, MCA, IT)" class="p-3 border rounded">
-<input id="dueDate" type="date" class="p-3 border rounded">
-
-<select id="status" class="p-3 border rounded">
+<select id="status" class="border p-2 rounded">
 <option>Pending</option>
 <option>Completed</option>
 </select>
 
-<input id="remarks" placeholder="Remarks/Notes" class="p-3 border rounded">
-<input id="assign" placeholder="Assign To" class="p-3 border rounded">
-</div>
-
-<button onclick="handleDataSubmit()" class="bg-blue-900 text-white px-6 py-2 rounded shadow">Update Dashboard</button>
+<input id="remarks" placeholder="Remark" class="border p-2 rounded">
+<input id="assign" placeholder="Assign" class="border p-2 rounded">
 
 </div>
+
+<button onclick="handleDataSubmit()" class="bg-blue-900 text-white px-5 py-2 rounded">Submit</button>
 
 <!-- TABLE -->
-<div class="bg-white rounded-xl shadow overflow-hidden">
+<div class="bg-white mt-4 rounded shadow">
 <table class="w-full text-left">
-
-<thead class="bg-gray-50 text-xs uppercase">
+<thead class="bg-gray-200">
 <tr>
-<th class="p-4">Client</th>
-<th class="p-4">Service</th>
-<th class="p-4">Date</th>
-<th class="p-4">Remark</th>
-<th class="p-4">Assign</th>
-<th class="p-4">Updated</th>
-<th class="p-4 text-center">Status</th>
-<th class="p-4 text-center">Actions</th>
+<th class="p-2">Client</th>
+<th class="p-2">Service</th>
+<th class="p-2">Date</th>
+<th class="p-2">Status</th>
+<th class="p-2">Action</th>
 </tr>
 </thead>
-
 <tbody id="tableBody"></tbody>
+</table>
+</div>
 
+</div>
+
+<!-- GST -->
+<div id="gst" class="section">
+<h2 class="text-xl font-bold mb-4">GST Data</h2>
+<table class="w-full bg-white shadow">
+<tbody id="gstBody"></tbody>
+</table>
+</div>
+
+<!-- MCA -->
+<div id="mca" class="section">
+<h2 class="text-xl font-bold mb-4">MCA Data</h2>
+<table class="w-full bg-white shadow">
+<tbody id="mcaBody"></tbody>
+</table>
+</div>
+
+<!-- IT -->
+<div id="it" class="section">
+<h2 class="text-xl font-bold mb-4">Income Tax Data</h2>
+<table class="w-full bg-white shadow">
+<tbody id="itBody"></tbody>
 </table>
 </div>
 
@@ -122,7 +106,7 @@
 
 <script>
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbw_W9LTZUxxXxsYjU4bCagQKvwiNdDPRFbwUh0Yzz5psePxdSGOK00BNkix9o7zK3xRew/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbyy_O6WMxf3bBuafqRGMqxoB5c2ougfKKhp_VYjfPQ6y8hiKKZQcCcFvDQ1jXUuMNEkMg/exec";
 let dataList=[];
 
 window.onload=loadData;
@@ -130,42 +114,45 @@ window.onload=loadData;
 async function loadData(){
 let res=await fetch(scriptURL);
 dataList=await res.json();
-refreshUI();
+renderData();
 }
 
-function refreshUI(){
+function renderData(){
 
 tableBody.innerHTML="";
-
-let total=0,completed=0,pending=0;
+gstBody.innerHTML="";
+mcaBody.innerHTML="";
+itBody.innerHTML="";
 
 dataList.forEach(item=>{
 
-total++;
-if(item.status==="Completed") completed++;
-else pending++;
-
 let row=`
 <tr class="border-b">
-<td class="p-4">${item.name}</td>
-<td class="p-4 text-blue-700 font-bold">${item.service}</td>
-<td class="p-4">${item.date}</td>
-<td class="p-4">${item.remark}</td>
-<td class="p-4 text-purple-700">${item.assign||'-'}</td>
-<td class="p-4 text-xs">${new Date(item.timestamp).toLocaleString()}</td>
-<td class="p-4 text-center">${item.status}</td>
-<td class="p-4 text-center">
-<button onclick="deleteRow('${item.rowId}')">🗑️</button>
-</td>
+<td class="p-2">${item.name}</td>
+<td class="p-2">${item.service}</td>
+<td class="p-2">${item.date}</td>
+<td class="p-2">${item.status}</td>
+<td class="p-2"><button onclick="deleteRow('${item.rowId}')">🗑️</button></td>
 </tr>`;
 
 tableBody.innerHTML+=row;
 
-});
+// 🔥 FILTER LOGIC (MAIN CHEEZ)
+let service=item.service.toLowerCase();
 
-totalCount.innerText=total;
-completedCount.innerText=completed;
-pendingCount.innerText=pending;
+if(service.includes("gst")){
+gstBody.innerHTML+=row;
+}
+
+else if(service.includes("mca")){
+mcaBody.innerHTML+=row;
+}
+
+else if(service.includes("it") || service.includes("itr") || service.includes("tax")){
+itBody.innerHTML+=row;
+}
+
+});
 
 }
 
@@ -190,6 +177,11 @@ loadData();
 async function deleteRow(id){
 await fetch(scriptURL,{method:'POST',body:JSON.stringify({action:'delete',rowId:id})});
 loadData();
+}
+
+function showSection(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
 }
 
 </script>
