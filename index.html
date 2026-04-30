@@ -52,6 +52,31 @@
 
 <h2 class="text-3xl font-bold mb-6">COMPLIANCE CONTROL CENTER</h2>
 
+<!-- CARDS -->
+<div class="grid grid-cols-4 gap-6 mb-6">
+
+<div class="bg-white p-5 rounded-xl shadow border-b-4 border-blue-500 text-center">
+<p class="text-gray-400 text-sm">ALL ASSIGNMENTS</p>
+<h1 id="totalCount" class="text-3xl font-bold text-blue-700">0</h1>
+</div>
+
+<div class="bg-white p-5 rounded-xl shadow border-b-4 border-green-500 text-center">
+<p class="text-gray-400 text-sm">COMPLETED</p>
+<h1 id="completedCount" class="text-3xl font-bold text-green-600">0</h1>
+</div>
+
+<div class="bg-white p-5 rounded-xl shadow border-b-4 border-red-500 text-center">
+<p class="text-gray-400 text-sm">PENDING</p>
+<h1 id="pendingCount" class="text-3xl font-bold text-red-500">0</h1>
+</div>
+
+<div class="bg-white p-5 rounded-xl shadow border-b-4 border-yellow-400 text-center">
+<p class="text-gray-400 text-sm">FIRM STATUS</p>
+<h1 class="text-xl font-bold text-yellow-500">ACTIVE</h1>
+</div>
+
+</div>
+
 <input type="hidden" id="editRowId">
 
 <!-- FORM -->
@@ -168,7 +193,7 @@
 
 <script>
 
-const scriptURL="https://script.google.com/macros/s/AKfycbz2rAfllLlkOWF0fma7JjdvEPaE3h0rd36LlLrhSFPa6fatOfkyXORyX2nbFv9-6Vh1FQ/exec";
+const scriptURL="https://script.google.com/macros/s/AKfycbwnXIGk_KvlxXTUpab5ZPgNUrOu4pW25Yyeo7LiKAGPDPEQTuBlJD4MtvqGzY-xpwg40w/exec";
 let dataList=[];
 
 window.onload=loadData;
@@ -186,7 +211,13 @@ gstBody.innerHTML="";
 mcaBody.innerHTML="";
 itBody.innerHTML="";
 
+let total=0, completed=0, pending=0;
+
 dataList.forEach(item=>{
+
+total++;
+if(item.status==="Completed") completed++;
+else pending++;
 
 let row=`
 <tr class="border-b">
@@ -212,6 +243,11 @@ else if(s.includes("mca")) mcaBody.innerHTML+=row;
 else if(s.includes("it") || s.includes("itr")) itBody.innerHTML+=row;
 
 });
+
+totalCount.innerText=total;
+completedCount.innerText=completed;
+pendingCount.innerText=pending;
+
 }
 
 function startEdit(id){
