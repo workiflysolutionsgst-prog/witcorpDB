@@ -10,31 +10,31 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
         .sidebar-gradient { background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 100%); }
-        .nav-btn { transition: all 0.3s ease; border-radius: 12px; margin-bottom: 4px; }
+        .nav-btn { transition: all 0.3s ease; border-radius: 12px; margin-bottom: 4px; color: #94a3b8; }
         .nav-btn.active { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border-left: 4px solid #fbbf24; }
-        .nav-btn:hover:not(.active) { background: rgba(255, 255, 255, 0.05); transform: translateX(5px); }
         .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
-        .stat-card { transition: transform 0.3s ease; }
-        .stat-card:hover { transform: translateY(-5px); }
         .section { display: none; animation: fadeIn 0.4s ease-out; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        #dataModal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); }
+        .modal-content { animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
         .high-tech-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+            background: white;
             border-top: 4px solid;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
-        .high-tech-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        .tech-glow-blue { border-top-color: #2563eb; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2); }
-        .tech-glow-green { border-top-color: #10b981; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); }
-        .tech-glow-red { border-top-color: #f43f5e; box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2); }
+        .high-tech-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15); }
+        .tech-glow-blue { border-top-color: #2563eb; }
+        .tech-glow-green { border-top-color: #10b981; }
+        .tech-glow-red { border-top-color: #f43f5e; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden text-slate-700">
@@ -42,244 +42,254 @@
     <!-- SIDEBAR -->
     <div class="w-80 sidebar-gradient text-white flex flex-col shadow-2xl relative z-10">
         <div class="p-8 text-center border-b border-white/10">
-            <div class="w-20 h-20 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
+            <div class="w-20 h-20 mx-auto mb-4 bg-white rounded-3xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
                 <i class="fas fa-shield-halved text-[#1e3a8a] text-4xl"></i>
             </div>
-            <h1 class="text-xl font-extrabold tracking-tight text-white leading-tight uppercase">Witcorp India <span class="block text-yellow-400 text-sm font-medium">Advisor LLP</span></h1>
+            <h1 class="text-xl font-extrabold tracking-tight text-white uppercase">Witcorp India</h1>
+            <p class="text-yellow-400 text-xs font-bold tracking-[0.2em] mt-1">ADVISOR LLP</p>
         </div>
         
-        <nav class="flex-1 px-4 py-8 space-y-2">
+        <nav class="flex-1 px-4 py-8 space-y-2 overflow-y-auto">
             <button onclick="showSection('dashboard', this)" class="nav-btn active p-4 text-left w-full flex items-center gap-4">
-                <i class="fas fa-chart-pie w-5"></i> <span class="font-semibold">Control Center</span>
+                <i class="fas fa-chart-pie w-5"></i> <span class="font-bold">Control Center</span>
             </button>
-            <button onclick="showSection('gst', this)" class="nav-btn p-4 text-left w-full flex items-center gap-4 text-slate-300">
-                <i class="fas fa-receipt w-5"></i> <span class="font-semibold">GST Filings</span>
+            <button onclick="showSection('gst', this)" class="nav-btn p-4 text-left w-full flex items-center gap-4">
+                <i class="fas fa-receipt w-5"></i> <span class="font-bold">GST Filings</span>
             </button>
-            <button onclick="showSection('mca', this)" class="nav-btn p-4 text-left w-full flex items-center gap-4 text-slate-300">
-                <i class="fas fa-landmark w-5"></i> <span class="font-semibold">MCA / ROC</span>
+            <button onclick="showSection('mca', this)" class="nav-btn p-4 text-left w-full flex items-center gap-4">
+                <i class="fas fa-landmark w-5"></i> <span class="font-bold">MCA / ROC</span>
             </button>
-            <button onclick="showSection('it', this)" class="nav-btn p-4 text-left w-full flex items-center gap-4 text-slate-300">
-                <i class="fas fa-coins w-5"></i> <span class="font-semibold">Income Tax</span>
+            <button onclick="showSection('it', this)" class="nav-btn p-4 text-left w-full flex items-center gap-4">
+                <i class="fas fa-coins w-5"></i> <span class="font-bold">Income Tax</span>
             </button>
         </nav>
 
-        <div class="p-6">
-            <div class="bg-white/5 rounded-2xl p-4 border border-white/10 text-center">
-                <p class="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Developed By</p>
-                <p class="text-sm font-bold text-yellow-400">Kamlesh Yadav</p>
-            </div>
+        <div class="p-8 bg-black/20 text-center">
+            <p class="text-[10px] uppercase tracking-widest text-slate-400 mb-1">System Developed By</p>
+            <p class="text-sm font-black text-yellow-400">Kamlesh Yadav</p>
         </div>
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="flex-1 overflow-y-auto bg-[#f1f5f9]">
+    <div class="flex-1 overflow-y-auto bg-slate-50">
+        <!-- DASHBOARD SECTION -->
         <div id="dashboard" class="section active p-10">
-            <div class="flex justify-between items-center mb-10">
+            <div class="flex justify-between items-end mb-12">
                 <div>
-                    <h2 class="text-3xl font-extrabold text-slate-800">Compliance Dashboard</h2>
-                    <p class="text-slate-500 mt-1">Manage corporate filings and client reports</p>
+                    <h2 class="text-4xl font-black text-slate-800 tracking-tighter">Compliance Dashboard</h2>
+                    <p class="text-slate-500 font-medium mt-2 italic">Managing your corporate world with precision</p>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search Client..." class="pl-12 pr-6 py-3 rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none w-64 text-sm">
-                    </div>
-                    <div class="bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-3">
-                        <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-                        <span id="currentIST" class="font-bold text-slate-700 text-sm italic">Live IST Sync</span>
-                    </div>
+                <div class="bg-white px-8 py-4 rounded-[2rem] shadow-xl border border-slate-100 flex items-center gap-4">
+                    <div class="w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
+                    <span id="currentIST" class="font-mono font-bold text-slate-700 text-lg">00:00:00</span>
                 </div>
             </div>
             
             <!-- STATS CARDS -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div onclick="filterByStatus('all')" class="high-tech-card tech-glow-blue p-8 rounded-3xl relative overflow-hidden group cursor-pointer active:scale-95 transition-all">
-                    <div class="relative z-10">
-                        <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Total Workload</p>
-                        <h3 id="totalCount" class="text-6xl font-black text-slate-800 tracking-tighter">0</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+                <div onclick="openModal('Complete Portfolio', 'all')" class="high-tech-card tech-glow-blue p-10 rounded-[2.5rem]">
+                    <p class="text-slate-400 text-xs font-black uppercase tracking-[0.3em] mb-4">Total Workload</p>
+                    <h3 id="totalCount" class="text-7xl font-black text-slate-800 tracking-tighter">0</h3>
+                    <div class="mt-6 flex items-center text-blue-600 font-extrabold text-sm uppercase tracking-wider">
+                        <span>Show All Data</span> <i class="fas fa-arrow-right ml-2"></i>
                     </div>
-                    <i class="fas fa-briefcase text-slate-50 text-8xl absolute -right-4 -bottom-4"></i>
                 </div>
 
-                <div onclick="filterByStatus('Completed')" class="high-tech-card tech-glow-green p-8 rounded-3xl relative overflow-hidden group cursor-pointer active:scale-95 transition-all">
-                    <div class="relative z-10">
-                        <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Finalized</p>
-                        <h3 id="completedCount" class="text-6xl font-black text-emerald-600 tracking-tighter">0</h3>
+                <div onclick="openModal('Finalized Compliance', 'Completed')" class="high-tech-card tech-glow-green p-10 rounded-[2.5rem]">
+                    <p class="text-slate-400 text-xs font-black uppercase tracking-[0.3em] mb-4">Finalized</p>
+                    <h3 id="completedCount" class="text-7xl font-black text-emerald-600 tracking-tighter">0</h3>
+                    <div class="mt-6 flex items-center text-emerald-600 font-extrabold text-sm uppercase tracking-wider">
+                        <span>Show Completed</span> <i class="fas fa-check ml-2"></i>
                     </div>
-                    <i class="fas fa-check-double text-slate-50 text-8xl absolute -right-4 -bottom-4"></i>
                 </div>
 
-                <div onclick="filterByStatus('Pending')" class="high-tech-card tech-glow-red p-8 rounded-3xl relative overflow-hidden group cursor-pointer active:scale-95 transition-all">
-                    <div class="relative z-10">
-                        <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">In Progress</p>
-                        <h3 id="pendingCount" class="text-6xl font-black text-rose-600 tracking-tighter">0</h3>
+                <div onclick="openModal('Pending Filings', 'Pending')" class="high-tech-card tech-glow-red p-10 rounded-[2.5rem]">
+                    <p class="text-slate-400 text-xs font-black uppercase tracking-[0.3em] mb-4">In Progress</p>
+                    <h3 id="pendingCount" class="text-7xl font-black text-rose-600 tracking-tighter">0</h3>
+                    <div class="mt-6 flex items-center text-rose-600 font-extrabold text-sm uppercase tracking-wider">
+                        <span>Show Pending</span> <i class="fas fa-bolt ml-2"></i>
                     </div>
-                    <i class="fas fa-bolt text-slate-50 text-8xl absolute -right-4 -bottom-4"></i>
                 </div>
             </div>
 
-            <!-- FORM SECTION -->
-            <div class="glass-card p-10 rounded-[2.5rem] shadow-2xl mb-12 border-none">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-plus text-indigo-600"></i>
+            <!-- ADD TASK FORM -->
+            <div class="glass-card p-12 rounded-[3rem] shadow-2xl border-none">
+                <div class="flex items-center gap-4 mb-10">
+                    <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+                        <i class="fas fa-plus text-white text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Add New Compliance Task</h3>
+                    <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Add New Compliance</h3>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <input type="hidden" id="editRowId">
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Client Name</label>
-                        <input id="clientName" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-inner">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Client Name</label>
+                        <input id="clientName" class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Service Type</label>
-                        <input id="serviceType" placeholder="e.g. GST, MCA" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-inner">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Service Type</label>
+                        <input id="serviceType" placeholder="GST, MCA, etc." class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Deadline</label>
-                        <input id="dueDate" type="date" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-inner">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Deadline</label>
+                        <input id="dueDate" type="date" class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-slate-500">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Task Status</label>
-                        <select id="status" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-inner appearance-none cursor-pointer">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Status</label>
+                        <select id="status" class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold">
                             <option value="Pending">Pending</option>
                             <option value="Completed">Completed</option>
                         </select>
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Assigned To</label>
-                        <input id="assignTo" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-inner">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Assigned To</label>
+                        <input id="assignTo" class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Internal Remarks</label>
-                        <input id="remarks" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-inner">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Internal Remarks</label>
+                        <input id="remarks" class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold">
                     </div>
                 </div>
-                <div class="mt-10 flex gap-4">
-                    <button onclick="handleDataSubmit()" id="submitBtn" class="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-1 transition-all uppercase text-sm tracking-widest">
-                        Sync to Cloud
-                    </button>
-                    <button id="cancelBtn" onclick="resetForm()" class="hidden bg-slate-200 text-slate-600 px-8 py-4 rounded-2xl font-bold hover:bg-slate-300 transition-all uppercase text-sm tracking-widest">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-
-            <!-- DATA TABLE -->
-            <div class="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
-                <table class="w-full text-left border-collapse" id="mainDataTable">
-                    <thead>
-                        <tr class="bg-slate-50/50 border-b border-slate-100">
-                            <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Client Identity</th>
-                            <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Service</th>
-                            <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Deadline</th>
-                            <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Ownership</th>
-                            <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Last Sync</th>
-                            <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Status</th>
-                            <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-50"></tbody>
-                </table>
+                <button onclick="handleDataSubmit()" id="submitBtn" class="mt-12 bg-indigo-600 text-white px-12 py-5 rounded-2xl font-black shadow-2xl shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-1 transition-all uppercase tracking-widest text-sm">
+                    Sync to Cloud Database
+                </button>
             </div>
         </div>
 
-        <div id="gst" class="section p-10"><h2 class="text-3xl font-black text-slate-800 mb-8 uppercase tracking-tighter">GST Management</h2><div id="gstTable"></div></div>
-        <div id="mca" class="section p-10"><h2 class="text-3xl font-black text-slate-800 mb-8 uppercase tracking-tighter">Corporate Filing (MCA)</h2><div id="mcaTable"></div></div>
-        <div id="it" class="section p-10"><h2 class="text-3xl font-black text-slate-800 mb-8 uppercase tracking-tighter">Income Tax Compliance</h2><div id="itTable"></div></div>
+        <!-- SUB-SECTIONS -->
+        <div id="gst" class="section p-10"> 
+            <h2 class="text-4xl font-black text-slate-800 mb-10 tracking-tighter">GST FILINGS</h2>
+            <div id="gstTable" class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100"></div>
+        </div>
+        <div id="mca" class="section p-10"> 
+            <h2 class="text-4xl font-black text-slate-800 mb-10 tracking-tighter">MCA / ROC COMPLIANCE</h2>
+            <div id="mcaTable" class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100"></div>
+        </div>
+        <div id="it" class="section p-10"> 
+            <h2 class="text-4xl font-black text-slate-800 mb-10 tracking-tighter">INCOME TAX PORTAL</h2>
+            <div id="itTable" class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100"></div>
+        </div>
+    </div>
+
+    <!-- FULL SCREEN MODAL -->
+    <div id="dataModal">
+        <div class="flex items-center justify-center min-h-screen p-6">
+            <div class="modal-content bg-white w-full max-w-6xl rounded-[3rem] shadow-2xl flex flex-col max-h-[85vh]">
+                <div class="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <div>
+                        <h3 id="modalTitle" class="text-3xl font-black text-slate-800 tracking-tight">Detailed Report</h3>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Witcorp India Internal Database</p>
+                    </div>
+                    <button onclick="closeModal()" class="w-14 h-14 bg-white shadow-xl rounded-2xl flex items-center justify-center text-slate-400 hover:text-rose-500 hover:rotate-90 transition-all duration-300">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-10">
+                    <table class="w-full text-left">
+                        <thead class="sticky top-0 bg-white shadow-sm">
+                            <tr>
+                                <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client Name</th>
+                                <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Service</th>
+                                <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Deadline</th>
+                                <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalTableBody" class="divide-y divide-slate-50"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbz4rNdqjqfAgJe_w-2ZK-3kTp-GOoFaGi8VvSRQajtu7LOzTC3902obO-Bs4ScaUAi6/exec'; 
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzQj3dWB-evJ9-N03PgKCjHB3VLE1ngFaLQKxeC8K_fNJMu0Sic7Vr5oUCDv64m55R9Kw/exec'; 
         let dataList = [];
 
         async function loadData() {
             try {
                 const res = await fetch(scriptURL);
                 dataList = await res.json();
-                refreshUI();
+                updateUI();
             } catch (e) { console.error("Sync Error"); }
         }
 
-        function refreshUI(filteredData = null) {
-            const displayData = filteredData || [...dataList].reverse();
-            const mainTable = document.getElementById('tableBody');
-            mainTable.innerHTML = "";
-            
-            // Stats calculation from full list
-            let comp = 0, pend = 0;
-            dataList.forEach(item => {
-                if(item.status === 'Completed') comp++; else pend++;
-            });
+        function updateUI() {
+            // Update Stats
+            let comp = dataList.filter(x => x.Status === 'Completed').length;
+            let pend = dataList.filter(x => x.Status === 'Pending').length;
             document.getElementById('totalCount').innerText = dataList.length;
             document.getElementById('completedCount').innerText = comp;
             document.getElementById('pendingCount').innerText = pend;
 
-            // Render Table
-            displayData.forEach(item => {
-                const rowHtml = `
-                    <td class="p-6 font-bold text-slate-700">${item.name}</td>
-                    <td class="p-6"><span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-tight">${item.service}</span></td>
-                    <td class="p-6 text-xs text-slate-500 font-medium">${item.date ? new Date(item.date).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : '-'}</td>
-                    <td class="p-6"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold">${(item.assign || 'U')[0]}</div><span class="text-sm font-semibold">${item.assign || 'Unassigned'}</span></div></td>
-                    <td class="p-6 text-center text-[10px] font-mono text-slate-400 italic">${item.timestamp || '-'}</td>
-                    <td class="p-6 text-center">
-                        <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${item.status==='Completed'?'bg-emerald-100 text-emerald-700':'bg-rose-100 text-rose-700'}">${item.status}</span>
-                    </td>
-                    <td class="p-6 text-center">
-                        <div class="flex justify-center gap-2">
-                            <button onclick="startEdit('${item.rowId}')" class="w-9 h-9 rounded-xl flex items-center justify-center text-blue-500 hover:bg-blue-50 transition-colors"><i class="fas fa-edit"></i></button>
-                            <button onclick="deleteRow('${item.rowId}')" class="w-9 h-9 rounded-xl flex items-center justify-center text-rose-400 hover:bg-rose-50 transition-colors"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </td>`;
-                mainTable.innerHTML += `<tr class="hover:bg-slate-50/80 transition-all cursor-default">${rowHtml}</tr>`;
-            });
-
-            // Update sub-sections only if not filtered
-            if(!filteredData) updateSubSections();
+            // Render Sub-Sections
+            renderCategoryTable('gst', 'gstTable');
+            renderCategoryTable('mca', 'mcaTable');
+            renderCategoryTable('it', 'itTable');
         }
 
-        function updateSubSections() {
-            ['gst', 'mca', 'it'].forEach(c => {
-                const container = document.getElementById(c + 'Table');
-                container.innerHTML = `<div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border border-slate-100"><table class="w-full text-left"><thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-400"><tr><th class="p-6">Client</th><th class="p-6">Owner</th><th class="p-6">Sync Time</th><th class="p-6 text-center">Status</th><th class="p-6 text-center">Action</th></tr></thead><tbody id="${c}Body" class="divide-y divide-slate-50"></tbody></table></div>`;
-            });
-
-            dataList.forEach(item => {
-                let s = item.service.toLowerCase();
-                let catRow = `<td class="p-6 font-bold text-slate-700">${item.name}</td><td class="p-6 font-semibold">${item.assign || '-'}</td><td class="p-6 text-[10px] text-slate-400 font-mono">${item.timestamp || '-'}</td><td class="p-6 text-center"><span class="text-[10px] font-black uppercase ${item.status==='Completed'?'text-emerald-600':'text-rose-600'}">${item.status}</span></td><td class="p-6 text-center"><button onclick="startEdit('${item.rowId}')" class="text-blue-500">✏️</button></td>`;
-                
-                if(s.includes('gst')) document.getElementById('gstBody').innerHTML += `<tr class="hover:bg-slate-50 transition-all">${catRow}</tr>`;
-                if(s.includes('mca')) document.getElementById('mcaBody').innerHTML += `<tr class="hover:bg-slate-50 transition-all">${catRow}</tr>`;
-                if(s.includes('it') || s.includes('tax')) document.getElementById('itBody').innerHTML += `<tr class="hover:bg-slate-50 transition-all">${catRow}</tr>`;
-            });
-        }
-
-        function searchTable() {
-            const term = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = dataList.filter(item => item.name.toLowerCase().includes(term));
-            refreshUI(filtered);
-        }
-
-        function filterByStatus(status) {
-            if(status === 'all') {
-                refreshUI();
-            } else {
-                const filtered = dataList.filter(item => item.status === status);
-                refreshUI(filtered);
+        function renderCategoryTable(keyword, containerId) {
+            const container = document.getElementById(containerId);
+            const filtered = dataList.filter(x => x.Service.toLowerCase().includes(keyword));
+            
+            if(filtered.length === 0) {
+                container.innerHTML = `<div class="p-20 text-center font-bold text-slate-300 uppercase tracking-widest">No ${keyword.toUpperCase()} Data Found</div>`;
+                return;
             }
+
+            let html = `<table class="w-full text-left">
+                <thead class="bg-slate-50 border-b border-slate-100">
+                    <tr>
+                        <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client</th>
+                        <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Deadline</th>
+                        <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Assignee</th>
+                        <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Status</th>
+                    </tr>
+                </thead><tbody class="divide-y divide-slate-50">`;
+
+            filtered.forEach(item => {
+                html += `<tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="p-6 font-bold text-slate-700">${item.Name}</td>
+                    <td class="p-6 text-sm text-slate-500">${item.Date || '-'}</td>
+                    <td class="p-6 text-sm font-bold text-indigo-600">${item.Assign || '-'}</td>
+                    <td class="p-6 text-center">
+                        <span class="px-4 py-2 rounded-full text-[10px] font-black uppercase ${item.Status==='Completed'?'bg-emerald-100 text-emerald-700':'bg-rose-100 text-rose-700'}">${item.Status}</span>
+                    </td>
+                </tr>`;
+            });
+            html += `</tbody></table>`;
+            container.innerHTML = html;
         }
+
+        function openModal(title, filterType) {
+            const modal = document.getElementById('dataModal');
+            const tableBody = document.getElementById('modalTableBody');
+            document.getElementById('modalTitle').innerText = title;
+            tableBody.innerHTML = "";
+            modal.style.display = "block";
+
+            let filtered = filterType === 'all' ? dataList : dataList.filter(x => x.Status === filterType);
+
+            filtered.forEach(item => {
+                tableBody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-5 font-black text-slate-700">${item.Name}</td>
+                        <td class="p-5"><span class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase">${item.Service}</span></td>
+                        <td class="p-5 text-sm font-bold text-slate-400 font-mono">${item.Date || '-'}</td>
+                        <td class="p-5 text-center">
+                            <span class="px-4 py-2 rounded-full text-[10px] font-black uppercase ${item.Status==='Completed'?'bg-emerald-100 text-emerald-700':'bg-rose-100 text-rose-700'}">${item.Status}</span>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function closeModal() { document.getElementById('dataModal').style.display = "none"; }
 
         async function handleDataSubmit() {
-            const rowId = document.getElementById('editRowId').value;
             const btn = document.getElementById('submitBtn');
             const options = { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true };
             const istTime = new Intl.DateTimeFormat('en-IN', options).format(new Date());
 
             const payload = {
-                action: rowId ? "edit" : "add",
-                rowId: rowId || null,
+                action: "add",
                 name: document.getElementById('clientName').value,
                 service: document.getElementById('serviceType').value,
                 date: document.getElementById('dueDate').value,
@@ -289,44 +299,11 @@
                 timestamp: istTime
             };
 
-            if(!payload.name) return alert("Bhai, Client ka naam toh likho!");
+            if(!payload.name) return alert("Client Name missing!");
 
-            btn.disabled = true; btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Syncing...`;
+            btn.disabled = true; btn.innerText = "Syncing with Server...";
             await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
-            resetForm();
-            await loadData();
-            btn.disabled = false; btn.innerText = "Sync to Cloud";
-        }
-
-        async function deleteRow(id) {
-            if(confirm("Are you sure you want to remove this record?")) {
-                await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: id }) });
-                await loadData();
-            }
-        }
-
-        function startEdit(id) {
-            const item = dataList.find(x => x.rowId == id);
-            document.getElementById('editRowId').value = id;
-            document.getElementById('clientName').value = item.name;
-            document.getElementById('serviceType').value = item.service;
-            document.getElementById('dueDate').value = item.date ? item.date.split('T')[0] : "";
-            document.getElementById('status').value = item.status;
-            document.getElementById('assignTo').value = item.assign || "";
-            document.getElementById('remarks').value = item.remark;
-
-            document.getElementById('submitBtn').innerText = "Update Record";
-            document.getElementById('cancelBtn').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        function resetForm() {
-            document.getElementById('editRowId').value = "";
-            ['clientName', 'serviceType', 'dueDate', 'status', 'assignTo', 'remarks'].forEach(id => {
-                document.getElementById(id).value = "";
-            });
-            document.getElementById('submitBtn').innerText = "Sync to Cloud";
-            document.getElementById('cancelBtn').classList.add('hidden');
+            location.reload(); 
         }
 
         function showSection(id, btn) {
@@ -338,7 +315,7 @@
 
         setInterval(() => {
             const now = new Date();
-            document.getElementById('currentIST').innerText = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('currentIST').innerText = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
         }, 1000);
 
         window.onload = loadData;
