@@ -3,150 +3,187 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Witcorp India Advisor LLP</title>
+
+<title>Witcorp India Advisor LLP | Compliance Control</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-.nav-btn.active { background-color: #fbbf24; color: #1e3a8a; font-weight: bold; }
+.nav-btn.active { background:#fbbf24; color:#1e3a8a; font-weight:bold; }
 .section { display:none; }
 .section.active { display:block; }
 </style>
 </head>
 
-<body class="bg-gray-100 flex h-screen">
+<body class="bg-gray-100 flex h-screen overflow-hidden">
 
 <!-- SIDEBAR -->
 <div class="w-72 bg-[#1e3a8a] text-white flex flex-col">
 
-<div class="p-6 text-center border-b">
-<h1 class="text-yellow-400 font-bold">WITCORP INDIA</h1>
+<div class="p-8 text-center border-b border-blue-800">
+<h1 class="text-yellow-400 font-bold text-lg">WITCORP INDIA<br>ADVISOR LLP</h1>
 </div>
 
-<nav class="p-4 space-y-2">
-<button onclick="showSection('dashboard')" class="nav-btn active w-full p-2 text-left">Dashboard</button>
-<button onclick="showSection('gst')" class="nav-btn w-full p-2 text-left">GST</button>
-<button onclick="showSection('mca')" class="nav-btn w-full p-2 text-left">MCA</button>
-<button onclick="showSection('it')" class="nav-btn w-full p-2 text-left">IT</button>
-<button onclick="showSection('assign')" class="nav-btn w-full p-2 text-left">Assign</button>
+<nav class="p-6 space-y-2">
+<button onclick="showSection('dashboard')" class="nav-btn active w-full p-3 text-left">Dashboard</button>
+<button onclick="showSection('gst')" class="nav-btn w-full p-3 text-left">GST Management</button>
+<button onclick="showSection('mca')" class="nav-btn w-full p-3 text-left">MCA Compliance</button>
+<button onclick="showSection('it')" class="nav-btn w-full p-3 text-left">Income Tax</button>
 </nav>
 
-<div class="p-4 text-center border-t">
-<p>Kamlesh Yadav</p>
+<div class="p-6 border-t text-center">
+<p class="text-sm font-bold">Kamlesh Yadav</p>
 </div>
 
 </div>
 
 <!-- MAIN -->
-<div class="flex-1 p-6 overflow-auto">
+<div class="flex-1 p-8 overflow-y-auto">
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="section active">
 
+<h2 class="text-2xl font-bold mb-6">Compliance Control</h2>
+
 <input type="hidden" id="editRowId">
 
-<div class="grid grid-cols-3 gap-3 mb-4">
-<input id="clientName" placeholder="Client Name" class="p-2 border">
-<input id="serviceType" placeholder="Service" class="p-2 border">
-<input id="dueDate" type="date" class="p-2 border">
-<select id="status" class="p-2 border">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+<input id="clientName" placeholder="Client Name" class="p-3 border rounded">
+<input id="serviceType" placeholder="Service (GST/MCA/IT)" class="p-3 border rounded">
+<input id="dueDate" type="date" class="p-3 border rounded">
+
+<select id="status" class="p-3 border rounded">
 <option>Pending</option>
 <option>Completed</option>
 </select>
-<input id="remarks" placeholder="Remarks" class="p-2 border col-span-2">
+
+<input id="remarks" placeholder="Remarks" class="p-3 border rounded">
+<input id="assign" placeholder="Assign To" class="p-3 border rounded">
+
 </div>
 
-<button onclick="handleDataSubmit()" id="submitBtn" class="bg-blue-900 text-white px-4 py-2">Update</button>
-<button onclick="resetForm()" id="cancelBtn" class="hidden bg-gray-400 px-4 py-2">Cancel</button>
+<button onclick="handleDataSubmit()" id="submitBtn" class="bg-blue-900 text-white px-6 py-2 rounded">Update Dashboard</button>
+<button onclick="resetForm()" id="cancelBtn" class="hidden bg-gray-400 px-6 py-2 rounded ml-2">Cancel</button>
 
-<table class="w-full mt-4 bg-white">
-<thead>
+<!-- TABLE -->
+<div class="bg-white mt-6 rounded shadow overflow-hidden">
+<table class="w-full text-left">
+
+<thead class="bg-gray-50 text-xs uppercase">
 <tr>
-<th>Name</th><th>Service</th><th>Date</th><th>Remark</th><th>Time</th><th>Status</th><th>Action</th>
+<th class="p-4">Client</th>
+<th class="p-4">Service</th>
+<th class="p-4">Date</th>
+<th class="p-4">Remark</th>
+<th class="p-4">Assign</th>
+<th class="p-4">Updated (IST)</th>
+<th class="p-4 text-center">Status</th>
+<th class="p-4 text-center">Actions</th>
 </tr>
 </thead>
+
 <tbody id="tableBody"></tbody>
+
 </table>
+</div>
 
 </div>
 
 <!-- GST -->
-<div id="gst" class="section"><h2>GST</h2><table class="w-full bg-white"><tbody id="gstBody"></tbody></table></div>
+<div id="gst" class="section"><h2 class="text-xl font-bold mb-4">GST</h2><div id="gstTable"></div></div>
 
 <!-- MCA -->
-<div id="mca" class="section"><h2>MCA</h2><table class="w-full bg-white"><tbody id="mcaBody"></tbody></table></div>
+<div id="mca" class="section"><h2 class="text-xl font-bold mb-4">MCA</h2><div id="mcaTable"></div></div>
 
 <!-- IT -->
-<div id="it" class="section"><h2>IT</h2><table class="w-full bg-white"><tbody id="itBody"></tbody></table></div>
-
-<!-- ASSIGN -->
-<div id="assign" class="section"><h2>Assign Section Ready</h2></div>
+<div id="it" class="section"><h2 class="text-xl font-bold mb-4">IT</h2><div id="itTable"></div></div>
 
 </div>
 
 <script>
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbx-V5QGSwIikaXXlxuUe-ISlQsg6eKHavK40qPh_49VcinLw8SatZl8YOhXzwyA888o/exec";
-let dataList = [];
+const scriptURL = "PASTE_YOUR_SCRIPT_URL_HERE";
+let dataList=[];
 
-window.onload = loadData;
+window.onload=loadData;
 
 async function loadData(){
-let res = await fetch(scriptURL);
-dataList = await res.json();
+let res=await fetch(scriptURL);
+dataList=await res.json();
 refreshUI();
 }
 
 function formatIST(t){
-return new Date(t).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+return new Date(t).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
 }
 
 function refreshUI(){
 
 tableBody.innerHTML="";
-gstBody.innerHTML="";
-mcaBody.innerHTML="";
-itBody.innerHTML="";
+gstTable.innerHTML="";
+mcaTable.innerHTML="";
+itTable.innerHTML="";
+
+['gst','mca','it'].forEach(s=>{
+document.getElementById(s+'Table').innerHTML=`
+<table class="w-full bg-white shadow rounded">
+<thead class="bg-gray-50 text-xs uppercase">
+<tr>
+<th class="p-3">Client</th>
+<th class="p-3">Date</th>
+<th class="p-3">Remark</th>
+<th class="p-3">Assign</th>
+<th class="p-3">Time</th>
+<th class="p-3">Status</th>
+<th class="p-3">Action</th>
+</tr>
+</thead>
+<tbody id="${s}Body"></tbody>
+</table>`;
+});
 
 dataList.reverse().forEach(item=>{
 
-let date = item.date.includes("T") ? item.date.split("T")[0] : item.date;
+let cleanDate=item.date.includes('T')?item.date.split('T')[0]:item.date;
 
-let mainRow = `
-<tr>
-<td>${item.name}</td>
-<td>${item.service}</td>
-<td>${date}</td>
-<td>${item.remark}</td>
-<td>${formatIST(item.timestamp)}</td>
-<td>${item.status}</td>
-<td>
+let mainRow=`
+<tr class="border-b hover:bg-gray-50">
+<td class="p-4">${item.name}</td>
+<td class="p-4 font-bold text-blue-700">${item.service}</td>
+<td class="p-4">${cleanDate}</td>
+<td class="p-4 text-xs italic">${item.remark}</td>
+<td class="p-4 font-semibold text-purple-700">${item.assign||'-'}</td>
+<td class="p-4 text-xs">${formatIST(item.timestamp)}</td>
+<td class="p-4 text-center">${item.status}</td>
+<td class="p-4 text-center">
 <button onclick="startEdit('${item.rowId}')">✏️</button>
-<button onclick="deleteRow('${item.rowId}')">❌</button>
+<button onclick="deleteRow('${item.rowId}')">🗑️</button>
 </td>
 </tr>`;
 
-tableBody.innerHTML += mainRow;
+tableBody.innerHTML+=mainRow;
 
-let subRow = `
-<tr>
-<td>${item.name}</td>
-<td>${date}</td>
-<td>${item.remark}</td>
-<td>${formatIST(item.timestamp)}</td>
-<td>${item.status}</td>
-<td>
+let subRow=`
+<tr class="border-b">
+<td class="p-3">${item.name}</td>
+<td class="p-3">${cleanDate}</td>
+<td class="p-3">${item.remark}</td>
+<td class="p-3">${item.assign||'-'}</td>
+<td class="p-3 text-xs">${formatIST(item.timestamp)}</td>
+<td class="p-3">${item.status}</td>
+<td class="p-3">
 <button onclick="startEdit('${item.rowId}')">✏️</button>
-<button onclick="deleteRow('${item.rowId}')">❌</button>
+<button onclick="deleteRow('${item.rowId}')">🗑️</button>
 </td>
 </tr>`;
 
-let s = item.service.toLowerCase();
+let s=item.service.toLowerCase();
 
-if(s.includes("gst")) gstBody.innerHTML += subRow;
-if(s.includes("mca")) mcaBody.innerHTML += subRow;
-if(s.includes("it") || s.includes("tax")) itBody.innerHTML += subRow;
+if(s.includes('gst')) document.getElementById('gstBody').innerHTML+=subRow;
+if(s.includes('mca')) document.getElementById('mcaBody').innerHTML+=subRow;
+if(s.includes('it')||s.includes('tax')) document.getElementById('itBody').innerHTML+=subRow;
 
 });
 
@@ -154,13 +191,14 @@ if(s.includes("it") || s.includes("tax")) itBody.innerHTML += subRow;
 
 function startEdit(id){
 
-let item = dataList.find(x=>x.rowId==id);
+let item=dataList.find(x=>x.rowId==id);
 
-clientName.value = item.name;
-serviceType.value = item.service;
-dueDate.value = item.date.includes("T") ? item.date.split("T")[0] : item.date;
-status.value = item.status;
-remarks.value = item.remark;
+clientName.value=item.name;
+serviceType.value=item.service;
+dueDate.value=item.date.includes('T')?item.date.split('T')[0]:item.date;
+status.value=item.status;
+remarks.value=item.remark;
+assign.value=item.assign||"";
 
 clientName.disabled=true;
 serviceType.disabled=true;
@@ -168,9 +206,8 @@ dueDate.disabled=true;
 status.disabled=true;
 
 editRowId.value=id;
-
-submitBtn.innerText="Update Remark";
-cancelBtn.classList.remove("hidden");
+submitBtn.innerText="Update";
+cancelBtn.classList.remove('hidden');
 
 }
 
@@ -181,31 +218,33 @@ clientName.value="";
 serviceType.value="";
 dueDate.value="";
 remarks.value="";
+assign.value="";
 
 clientName.disabled=false;
 serviceType.disabled=false;
 dueDate.disabled=false;
 status.disabled=false;
 
-submitBtn.innerText="Update";
-cancelBtn.classList.add("hidden");
+submitBtn.innerText="Update Dashboard";
+cancelBtn.classList.add('hidden');
 
 }
 
 async function handleDataSubmit(){
 
 let payload={
-action: editRowId.value ? "edit" : "add",
-rowId: editRowId.value || null,
+action: editRowId.value?"edit":"add",
+rowId: editRowId.value||null,
 name: clientName.value,
 service: serviceType.value,
 date: dueDate.value,
 status: status.value,
 remark: remarks.value,
+assign: assign.value,
 timestamp: new Date().toISOString()
 };
 
-await fetch(scriptURL,{method:"POST",body:JSON.stringify(payload)});
+await fetch(scriptURL,{method:'POST',body:JSON.stringify(payload)});
 
 resetForm();
 loadData();
@@ -213,13 +252,15 @@ loadData();
 }
 
 async function deleteRow(id){
-await fetch(scriptURL,{method:"POST",body:JSON.stringify({action:"delete",rowId:id})});
+if(confirm("Delete?")){
+await fetch(scriptURL,{method:'POST',body:JSON.stringify({action:'delete',rowId:id})});
 loadData();
+}
 }
 
 function showSection(id){
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
 }
 
 </script>
