@@ -176,7 +176,7 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxUpJt9V31k29292LJqAthQbsUpP6fzNG4NsKqDC6hBILj7GvAepzMp9LLZwStnmY5lhw/exec'; 
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxfxXCIiLmUQ0a04MCDQtJ-gkWUge8rcZZo_V_uY2MFPGkaCP1grJbGRHYfhAllmfoFDA/exec'; 
         let dataList = [];
 
         async function loadData() {
@@ -238,16 +238,16 @@
             const istTime = new Intl.DateTimeFormat('en-IN', options).format(new Date());
 
             const payload = {
-                action: rowId ? "edit" : "add",
-                rowId: rowId || null,
-                name: document.getElementById('clientName').value,
-                service: document.getElementById('serviceType').value,
-                date: document.getElementById('dueDate').value,
-                status: document.getElementById('status').value,
-                assign: document.getElementById('assignTo').value,
-                remark: document.getElementById('remarks').value || "-",
-                timestamp: istTime
-            };
+    action: rowId ? "edit" : "add",
+    rowId: rowId || null,
+    name: document.getElementById('clientName').value,
+    service: document.getElementById('serviceType').value,
+    date: document.getElementById('dueDate').value,
+    status: document.getElementById('status').value || dataList.find(x => x.rowId == rowId).status, // Fallback if disabled
+    assign: document.getElementById('assignTo').value,
+    remark: document.getElementById('remarks').value || "-",
+    timestamp: istTime
+};
 
             if(!payload.name) return alert("Bhai, Client ka naam toh likho!");
 
@@ -268,7 +268,6 @@
         function startEdit(id) {
     const item = dataList.find(x => x.rowId == id);
     
-    // Fields fill karna
     const fields = {
         'clientName': item.name,
         'serviceType': item.service,
@@ -278,7 +277,6 @@
         'remarks': item.remark
     };
 
-    // Sirf Remarks ko chhod kar baki sabko Lock aur Red karna
     Object.keys(fields).forEach(key => {
         const el = document.getElementById(key);
         el.value = fields[key];
