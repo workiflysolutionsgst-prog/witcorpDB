@@ -7,12 +7,18 @@
 <title>Compliance Control Center</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
 .nav-btn.active { background:#fbbf24; color:#1e3a8a; font-weight:bold; }
 .section{display:none;}
 .section.active{display:block;}
+
+/* 🔴 LOCK STYLE */
+input:disabled, select:disabled {
+background:#fee2e2 !important;
+border:1px solid #ef4444 !important;
+cursor:not-allowed;
+}
 </style>
 </head>
 
@@ -21,25 +27,15 @@
 <!-- SIDEBAR -->
 <div class="w-72 bg-[#1e3a8a] text-white flex flex-col">
 
-<div class="p-8 text-center border-b border-blue-800">
-<div class="w-20 h-20 mx-auto mb-3 bg-white rounded-xl flex items-center justify-center">
-<i class="fas fa-shield-alt text-3xl text-blue-900"></i>
-</div>
+<div class="p-8 text-center border-b">
 <h1 class="text-yellow-400 font-bold">WITCORP INDIA<br>ADVISOR LLP</h1>
 </div>
 
 <div class="p-6 space-y-2">
-<button onclick="showSection('dashboard',this)" class="nav-btn active w-full text-left p-3 rounded">🏠 Dashboard</button>
-<button onclick="showSection('gst',this)" class="nav-btn w-full text-left p-3 rounded">📄 GST Management</button>
-<button onclick="showSection('mca',this)" class="nav-btn w-full text-left p-3 rounded">🏢 MCA Compliance</button>
-<button onclick="showSection('it',this)" class="nav-btn w-full text-left p-3 rounded">% Income Tax</button>
-</div>
-
-<div class="mt-auto p-6 text-center text-xs">
-<p class="text-green-300 italic">Strategic Wisdom.<br>Global Growth.</p>
-<hr class="my-2 border-blue-700">
-<p class="text-yellow-400">Developed By</p>
-<p class="font-bold">Kamlesh Yadav</p>
+<button onclick="showSection('dashboard',this)" class="nav-btn active w-full text-left p-3 rounded">Dashboard</button>
+<button onclick="showSection('gst',this)" class="nav-btn w-full text-left p-3 rounded">GST</button>
+<button onclick="showSection('mca',this)" class="nav-btn w-full text-left p-3 rounded">MCA</button>
+<button onclick="showSection('it',this)" class="nav-btn w-full text-left p-3 rounded">IT</button>
 </div>
 
 </div>
@@ -47,46 +43,34 @@
 <!-- MAIN -->
 <div class="flex-1 p-8 overflow-y-auto">
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="section active">
 
 <h2 class="text-3xl font-bold mb-6">COMPLIANCE CONTROL CENTER</h2>
 
 <!-- CARDS -->
 <div class="grid grid-cols-4 gap-6 mb-6">
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-blue-500 text-center">
-<p class="text-gray-400 text-sm">ALL ASSIGNMENTS</p>
-<h1 id="totalCount" class="text-3xl font-bold text-blue-700">0</h1>
+<div class="bg-white p-5 rounded shadow text-center">
+<p>ALL</p><h1 id="totalCount">0</h1>
 </div>
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-green-500 text-center">
-<p class="text-gray-400 text-sm">COMPLETED</p>
-<h1 id="completedCount" class="text-3xl font-bold text-green-600">0</h1>
+<div class="bg-white p-5 rounded shadow text-center">
+<p>COMPLETED</p><h1 id="completedCount">0</h1>
 </div>
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-red-500 text-center">
-<p class="text-gray-400 text-sm">PENDING</p>
-<h1 id="pendingCount" class="text-3xl font-bold text-red-500">0</h1>
+<div class="bg-white p-5 rounded shadow text-center">
+<p>PENDING</p><h1 id="pendingCount">0</h1>
 </div>
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-yellow-400 text-center">
-<p class="text-gray-400 text-sm">FIRM STATUS</p>
-<h1 class="text-xl font-bold text-yellow-500">ACTIVE</h1>
+<div class="bg-white p-5 rounded shadow text-center">
+<p>STATUS</p><h1>ACTIVE</h1>
 </div>
-
 </div>
 
 <input type="hidden" id="editRowId">
 
 <!-- FORM -->
-<div class="bg-white p-6 rounded-xl shadow mb-6">
-
-<h3 class="font-semibold mb-4 border-l-4 border-blue-700 pl-2">ENTER WORK DETAILS</h3>
+<div class="bg-white p-6 rounded shadow mb-6">
 
 <div class="grid grid-cols-3 gap-4 mb-4">
 <input id="clientName" placeholder="Client Name" class="p-3 border rounded">
-<input id="serviceType" placeholder="Service (GST, MCA, IT)" class="p-3 border rounded">
+<input id="serviceType" placeholder="Service" class="p-3 border rounded">
 <input id="dueDate" type="date" class="p-3 border rounded">
 
 <select id="status" class="p-3 border rounded">
@@ -94,106 +78,39 @@
 <option>Completed</option>
 </select>
 
-<input id="remarks" placeholder="Remarks/Notes" class="p-3 border rounded">
-<input id="assign" placeholder="Assign To" class="p-3 border rounded">
+<input id="remarks" placeholder="Remark" class="p-3 border rounded">
+<input id="assign" placeholder="Assign" class="p-3 border rounded">
 </div>
 
-<button onclick="handleDataSubmit()" class="bg-blue-900 text-white px-6 py-2 rounded shadow">Update Dashboard</button>
+<button onclick="handleDataSubmit()" class="bg-blue-900 text-white px-6 py-2 rounded">Submit</button>
 
 </div>
 
 <!-- TABLE -->
-<div class="bg-white rounded-xl shadow overflow-hidden">
-<table class="w-full text-left">
-<thead class="bg-gray-50 text-xs uppercase">
+<table class="w-full bg-white">
+<thead>
 <tr>
-<th class="p-4">Client</th>
-<th class="p-4">Service</th>
-<th class="p-4">Date</th>
-<th class="p-4">Remark</th>
-<th class="p-4">Assign</th>
-<th class="p-4">Updated</th>
-<th class="p-4 text-center">Status</th>
-<th class="p-4 text-center">Actions</th>
+<th>Client</th><th>Service</th><th>Date</th><th>Remark</th>
+<th>Assign</th><th>Updated</th><th>Status</th><th>Action</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
-</div>
 
 </div>
 
-<!-- GST -->
-<div id="gst" class="section">
-<h2 class="text-xl font-bold mb-4">GST Data</h2>
-<div class="bg-white rounded-xl shadow overflow-hidden">
-<table class="w-full text-left">
-<thead class="bg-gray-50 text-xs uppercase">
-<tr>
-<th class="p-4">Client</th>
-<th class="p-4">Service</th>
-<th class="p-4">Date</th>
-<th class="p-4">Remark</th>
-<th class="p-4">Assign</th>
-<th class="p-4">Updated</th>
-<th class="p-4 text-center">Status</th>
-<th class="p-4 text-center">Actions</th>
-</tr>
-</thead>
-<tbody id="gstBody"></tbody>
-</table>
-</div>
-</div>
+<!-- GST MCA IT SAME -->
+<div id="gst" class="section"><h2>GST</h2><table class="w-full bg-white"><thead><tr><th>Client</th><th>Service</th><th>Date</th><th>Remark</th><th>Assign</th><th>Updated</th><th>Status</th><th>Action</th></tr></thead><tbody id="gstBody"></tbody></table></div>
 
-<!-- MCA -->
-<div id="mca" class="section">
-<h2 class="text-xl font-bold mb-4">MCA Data</h2>
-<div class="bg-white rounded-xl shadow overflow-hidden">
-<table class="w-full text-left">
-<thead class="bg-gray-50 text-xs uppercase">
-<tr>
-<th class="p-4">Client</th>
-<th class="p-4">Service</th>
-<th class="p-4">Date</th>
-<th class="p-4">Remark</th>
-<th class="p-4">Assign</th>
-<th class="p-4">Updated</th>
-<th class="p-4 text-center">Status</th>
-<th class="p-4 text-center">Actions</th>
-</tr>
-</thead>
-<tbody id="mcaBody"></tbody>
-</table>
-</div>
-</div>
+<div id="mca" class="section"><h2>MCA</h2><table class="w-full bg-white"><thead><tr><th>Client</th><th>Service</th><th>Date</th><th>Remark</th><th>Assign</th><th>Updated</th><th>Status</th><th>Action</th></tr></thead><tbody id="mcaBody"></tbody></table></div>
 
-<!-- IT -->
-<div id="it" class="section">
-<h2 class="text-xl font-bold mb-4">Income Tax Data</h2>
-<div class="bg-white rounded-xl shadow overflow-hidden">
-<table class="w-full text-left">
-<thead class="bg-gray-50 text-xs uppercase">
-<tr>
-<th class="p-4">Client</th>
-<th class="p-4">Service</th>
-<th class="p-4">Date</th>
-<th class="p-4">Remark</th>
-<th class="p-4">Assign</th>
-<th class="p-4">Updated</th>
-<th class="p-4 text-center">Status</th>
-<th class="p-4 text-center">Actions</th>
-</tr>
-</thead>
-<tbody id="itBody"></tbody>
-</table>
-</div>
-</div>
+<div id="it" class="section"><h2>IT</h2><table class="w-full bg-white"><thead><tr><th>Client</th><th>Service</th><th>Date</th><th>Remark</th><th>Assign</th><th>Updated</th><th>Status</th><th>Action</th></tr></thead><tbody id="itBody"></tbody></table></div>
 
 </div>
 
 <script>
 
-const scriptURL="https://script.google.com/macros/s/AKfycbwnXIGk_KvlxXTUpab5ZPgNUrOu4pW25Yyeo7LiKAGPDPEQTuBlJD4MtvqGzY-xpwg40w/exec";
+const scriptURL="YOUR_SCRIPT_URL";
 let dataList=[];
 
 window.onload=loadData;
@@ -211,7 +128,7 @@ gstBody.innerHTML="";
 mcaBody.innerHTML="";
 itBody.innerHTML="";
 
-let total=0, completed=0, pending=0;
+let total=0,completed=0,pending=0;
 
 dataList.forEach(item=>{
 
@@ -220,15 +137,15 @@ if(item.status==="Completed") completed++;
 else pending++;
 
 let row=`
-<tr class="border-b">
-<td class="p-4">${item.name}</td>
-<td class="p-4 text-blue-700 font-bold">${item.service}</td>
-<td class="p-4">${item.date}</td>
-<td class="p-4">${item.remark}</td>
-<td class="p-4 text-purple-700">${item.assign||'-'}</td>
-<td class="p-4 text-xs">${new Date(item.timestamp).toLocaleString()}</td>
-<td class="p-4 text-center">${item.status}</td>
-<td class="p-4 text-center space-x-2">
+<tr>
+<td>${item.name}</td>
+<td>${item.service}</td>
+<td>${item.date}</td>
+<td>${item.remark}</td>
+<td>${item.assign||'-'}</td>
+<td>${new Date(item.timestamp).toLocaleString()}</td>
+<td>${item.status}</td>
+<td>
 <button onclick="startEdit('${item.rowId}')">✏️</button>
 <button onclick="deleteRow('${item.rowId}')">🗑️</button>
 </td>
@@ -240,7 +157,7 @@ let s=item.service.toLowerCase();
 
 if(s.includes("gst")) gstBody.innerHTML+=row;
 else if(s.includes("mca")) mcaBody.innerHTML+=row;
-else if(s.includes("it") || s.includes("itr")) itBody.innerHTML+=row;
+else if(s.includes("it")) itBody.innerHTML+=row;
 
 });
 
@@ -251,6 +168,7 @@ pendingCount.innerText=pending;
 }
 
 function startEdit(id){
+
 let item=dataList.find(x=>x.rowId==id);
 
 clientName.value=item.name;
@@ -263,7 +181,6 @@ assign.value=item.assign||"";
 clientName.disabled=true;
 serviceType.disabled=true;
 dueDate.disabled=true;
-status.disabled=true;
 assign.disabled=true;
 
 editRowId.value=id;
@@ -280,7 +197,6 @@ assign.value="";
 clientName.disabled=false;
 serviceType.disabled=false;
 dueDate.disabled=false;
-status.disabled=false;
 assign.disabled=false;
 }
 
@@ -292,7 +208,8 @@ if(editRowId.value){
 payload={
 action:"edit",
 rowId:editRowId.value,
-remark:remarks.value
+remark:remarks.value,
+status:status.value
 };
 }else{
 payload={
