@@ -71,36 +71,48 @@
                 </div>
             </div>
             
-            <!-- STATS CARDS -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div class="stat-card glass-card p-8 rounded-[2rem] shadow-xl border-l-8 border-blue-600">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Total Workload</p>
-                            <h3 id="totalCount" class="text-5xl font-black text-slate-800">0</h3>
-                        </div>
-                        <i class="fas fa-briefcase text-slate-100 text-6xl absolute right-6"></i>
-                    </div>
-                </div>
-                <div class="stat-card glass-card p-8 rounded-[2rem] shadow-xl border-l-8 border-emerald-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Finalized</p>
-                            <h3 id="completedCount" class="text-5xl font-black text-emerald-600">0</h3>
-                        </div>
-                        <i class="fas fa-check-double text-slate-100 text-6xl absolute right-6"></i>
-                    </div>
-                </div>
-                <div class="stat-card glass-card p-8 rounded-[2rem] shadow-xl border-l-8 border-rose-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">In Progress</p>
-                            <h3 id="pendingCount" class="text-5xl font-black text-rose-600">0</h3>
-                        </div>
-                        <i class="fas fa-clock text-slate-100 text-6xl absolute right-6"></i>
-                    </div>
-                </div>
+            <!-- NEW HIGH-TECH STATS CARDS -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+    <!-- Total Workload -->
+    <div class="high-tech-card tech-glow-blue p-8 rounded-3xl relative overflow-hidden group">
+        <div class="relative z-10">
+            <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Total Workload</p>
+            <h3 id="totalCount" class="text-6xl font-black text-slate-800 tracking-tighter">0</h3>
+            <div class="mt-4 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                <span class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Active Database</span>
             </div>
+        </div>
+        <i class="fas fa-briefcase text-slate-50 text-8xl absolute -right-4 -bottom-4 transition-transform group-hover:scale-110"></i>
+    </div>
+
+    <!-- Finalized -->
+    <div class="high-tech-card tech-glow-green p-8 rounded-3xl relative overflow-hidden group">
+        <div class="relative z-10">
+            <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Finalized</p>
+            <h3 id="completedCount" class="text-6xl font-black text-emerald-600 tracking-tighter">0</h3>
+            <div class="mt-4 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Synced to Cloud</span>
+            </div>
+        </div>
+        <i class="fas fa-check-double text-slate-50 text-8xl absolute -right-4 -bottom-4 transition-transform group-hover:scale-110"></i>
+    </div>
+
+    <!-- In Progress -->
+    <div class="high-tech-card tech-glow-red p-8 rounded-3xl relative overflow-hidden group">
+        <div class="relative z-10">
+            <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">In Progress</p>
+            <h3 id="pendingCount" class="text-6xl font-black text-rose-600 tracking-tighter">0</h3>
+            <div class="mt-4 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                <span class="text-[9px] font-bold text-rose-600 uppercase tracking-widest">Processing...</span>
+            </div>
+        </div>
+        <i class="fas fa-bolt text-slate-50 text-8xl absolute -right-4 -bottom-4 transition-transform group-hover:scale-110"></i>
+    </div>
+</div>
+    
 
             <!-- FORM SECTION -->
             <div class="glass-card p-10 rounded-[2.5rem] shadow-2xl mb-12 border-none">
