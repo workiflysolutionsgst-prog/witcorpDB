@@ -52,6 +52,7 @@
 
 <h2 class="text-3xl font-bold mb-6">COMPLIANCE CONTROL CENTER</h2>
 
+<!-- CARDS -->
 <div class="grid grid-cols-4 gap-6 mb-6">
 
 <div class="bg-white p-5 rounded-xl shadow border-b-4 border-blue-500 text-center">
@@ -78,6 +79,7 @@
 
 <input type="hidden" id="editRowId">
 
+<!-- FORM -->
 <div class="bg-white p-6 rounded-xl shadow mb-6">
 
 <h3 class="font-semibold mb-4 border-l-4 border-blue-700 pl-2">ENTER WORK DETAILS</h3>
@@ -100,6 +102,7 @@
 
 </div>
 
+<!-- TABLE -->
 <div class="bg-white rounded-xl shadow overflow-hidden">
 <table class="w-full text-left">
 <thead class="bg-gray-50 text-xs uppercase">
@@ -190,7 +193,7 @@
 
 <script>
 
-const scriptURL="https://script.google.com/macros/s/AKfycbzAl9M15UFzeI9kC9kcq5np8HGKO9AJ94nQkhIIcdXXbN0P84sh9rAfuAQMl9V5ktlplw/exec";
+const scriptURL="https://script.google.com/macros/s/AKfycbxn6Fba7tw0B3ZfvAKtGPZTadOXV3O7KLfQjbIJ8p-n57UdKyF54hUvsctF3x0wDiibeA/exec";
 let dataList=[];
 
 window.onload=loadData;
@@ -224,11 +227,7 @@ let row=`
 <td class="p-4">${item.remark}</td>
 <td class="p-4 text-purple-700">${item.assign||'-'}</td>
 <td class="p-4 text-xs">${new Date(item.timestamp).toLocaleString()}</td>
-
-<td class="p-4 text-center ${item.status==='Completed' ? 'text-green-600 font-bold' : 'text-red-500 font-bold'}">
-${item.status}
-</td>
-
+<td class="p-4 text-center">${item.status}</td>
 <td class="p-4 text-center space-x-2">
 <button onclick="startEdit('${item.rowId}')">✏️</button>
 <button onclick="deleteRow('${item.rowId}')">🗑️</button>
@@ -264,8 +263,7 @@ assign.value=item.assign||"";
 clientName.disabled=true;
 serviceType.disabled=true;
 dueDate.disabled=true;
-status.disabled=false; // FIX
-
+status.disabled=true;
 assign.disabled=true;
 
 editRowId.value=id;
@@ -294,8 +292,7 @@ if(editRowId.value){
 payload={
 action:"edit",
 rowId:editRowId.value,
-remark:remarks.value,
-status:status.value // FIX
+remark:remarks.value
 };
 }else{
 payload={
