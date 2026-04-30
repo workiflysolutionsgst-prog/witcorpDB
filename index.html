@@ -17,24 +17,18 @@
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        #dataModal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); }
-        .modal-content { animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        /* Modal Styles */
+        #dataModal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); }
+        .modal-content { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
 
         .high-tech-card {
-            background: white;
-            border-top: 4px solid;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            background: white; border-top: 4px solid; transition: all 0.4s ease; cursor: pointer;
         }
-        .high-tech-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15); }
+        .high-tech-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         .tech-glow-blue { border-top-color: #2563eb; }
         .tech-glow-green { border-top-color: #10b981; }
         .tech-glow-red { border-top-color: #f43f5e; }
-        
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden text-slate-700">
@@ -42,14 +36,13 @@
     <!-- SIDEBAR -->
     <div class="w-80 sidebar-gradient text-white flex flex-col shadow-2xl relative z-10">
         <div class="p-8 text-center border-b border-white/10">
-            <div class="w-20 h-20 mx-auto mb-4 bg-white rounded-3xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                <i class="fas fa-shield-halved text-[#1e3a8a] text-4xl"></i>
+            <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-shield-halved text-[#1e3a8a] text-3xl"></i>
             </div>
-            <h1 class="text-xl font-extrabold tracking-tight text-white uppercase">Witcorp India</h1>
-            <p class="text-yellow-400 text-xs font-bold tracking-[0.2em] mt-1">ADVISOR LLP</p>
+            <h1 class="text-lg font-extrabold tracking-tight text-white leading-tight uppercase">Witcorp India <span class="block text-yellow-400 text-xs font-medium">Advisor LLP</span></h1>
         </div>
         
-        <nav class="flex-1 px-4 py-8 space-y-2 overflow-y-auto">
+        <nav class="flex-1 px-4 py-8 space-y-2">
             <button onclick="showSection('dashboard', this)" class="nav-btn active p-4 text-left w-full flex items-center gap-4">
                 <i class="fas fa-chart-pie w-5"></i> <span class="font-bold">Control Center</span>
             </button>
@@ -63,137 +56,133 @@
                 <i class="fas fa-coins w-5"></i> <span class="font-bold">Income Tax</span>
             </button>
         </nav>
-
-        <div class="p-8 bg-black/20 text-center">
-            <p class="text-[10px] uppercase tracking-widest text-slate-400 mb-1">System Developed By</p>
-            <p class="text-sm font-black text-yellow-400">Kamlesh Yadav</p>
+        <div class="p-6 text-center border-t border-white/10">
+            <p class="text-[10px] uppercase text-slate-400">Developed By</p>
+            <p class="text-sm font-bold text-yellow-400">Kamlesh Yadav</p>
         </div>
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="flex-1 overflow-y-auto bg-slate-50">
-        <!-- DASHBOARD SECTION -->
+    <div class="flex-1 overflow-y-auto bg-[#f1f5f9]">
         <div id="dashboard" class="section active p-10">
-            <div class="flex justify-between items-end mb-12">
+            <div class="flex justify-between items-center mb-10">
                 <div>
-                    <h2 class="text-4xl font-black text-slate-800 tracking-tighter">Compliance Dashboard</h2>
-                    <p class="text-slate-500 font-medium mt-2 italic">Managing your corporate world with precision</p>
+                    <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Compliance Dashboard</h2>
+                    <p class="text-slate-500 font-medium">Manage your corporate filings and client reports</p>
                 </div>
-                <div class="bg-white px-8 py-4 rounded-[2rem] shadow-xl border border-slate-100 flex items-center gap-4">
-                    <div class="w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
-                    <span id="currentIST" class="font-mono font-bold text-slate-700 text-lg">00:00:00</span>
+                <div class="bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-3">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span id="currentIST" class="font-bold text-slate-700 text-sm">Live Time</span>
                 </div>
             </div>
             
             <!-- STATS CARDS -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
-                <div onclick="openModal('Complete Portfolio', 'all')" class="high-tech-card tech-glow-blue p-10 rounded-[2.5rem]">
-                    <p class="text-slate-400 text-xs font-black uppercase tracking-[0.3em] mb-4">Total Workload</p>
-                    <h3 id="totalCount" class="text-7xl font-black text-slate-800 tracking-tighter">0</h3>
-                    <div class="mt-6 flex items-center text-blue-600 font-extrabold text-sm uppercase tracking-wider">
-                        <span>Show All Data</span> <i class="fas fa-arrow-right ml-2"></i>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div onclick="openModal('All Tasks', 'all')" class="high-tech-card tech-glow-blue p-8 rounded-3xl relative overflow-hidden group">
+                    <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Total Workload</p>
+                    <h3 id="totalCount" class="text-6xl font-black text-slate-800 tracking-tighter">0</h3>
+                    <p class="text-blue-600 text-[10px] mt-4 font-bold tracking-widest"><i class="fas fa-circle mr-1 text-[6px] align-middle"></i> SHOW ALL DATA</p>
+                    <i class="fas fa-briefcase text-slate-50 text-8xl absolute -right-4 -bottom-4 opacity-10"></i>
                 </div>
 
-                <div onclick="openModal('Finalized Compliance', 'Completed')" class="high-tech-card tech-glow-green p-10 rounded-[2.5rem]">
-                    <p class="text-slate-400 text-xs font-black uppercase tracking-[0.3em] mb-4">Finalized</p>
-                    <h3 id="completedCount" class="text-7xl font-black text-emerald-600 tracking-tighter">0</h3>
-                    <div class="mt-6 flex items-center text-emerald-600 font-extrabold text-sm uppercase tracking-wider">
-                        <span>Show Completed</span> <i class="fas fa-check ml-2"></i>
-                    </div>
+                <div onclick="openModal('Finalized Tasks', 'Completed')" class="high-tech-card tech-glow-green p-8 rounded-3xl relative overflow-hidden group">
+                    <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Finalized</p>
+                    <h3 id="completedCount" class="text-6xl font-black text-emerald-600 tracking-tighter">0</h3>
+                    <p class="text-emerald-600 text-[10px] mt-4 font-bold tracking-widest"><i class="fas fa-circle mr-1 text-[6px] align-middle"></i> SHOW COMPLETED</p>
+                    <i class="fas fa-check-double text-slate-50 text-8xl absolute -right-4 -bottom-4 opacity-10"></i>
                 </div>
 
-                <div onclick="openModal('Pending Filings', 'Pending')" class="high-tech-card tech-glow-red p-10 rounded-[2.5rem]">
-                    <p class="text-slate-400 text-xs font-black uppercase tracking-[0.3em] mb-4">In Progress</p>
-                    <h3 id="pendingCount" class="text-7xl font-black text-rose-600 tracking-tighter">0</h3>
-                    <div class="mt-6 flex items-center text-rose-600 font-extrabold text-sm uppercase tracking-wider">
-                        <span>Show Pending</span> <i class="fas fa-bolt ml-2"></i>
-                    </div>
+                <div onclick="openModal('In Progress', 'Pending')" class="high-tech-card tech-glow-red p-8 rounded-3xl relative overflow-hidden group">
+                    <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">In Progress</p>
+                    <h3 id="pendingCount" class="text-6xl font-black text-rose-600 tracking-tighter">0</h3>
+                    <p class="text-rose-600 text-[10px] mt-4 font-bold tracking-widest"><i class="fas fa-circle mr-1 text-[6px] align-middle"></i> SHOW PENDING</p>
+                    <i class="fas fa-clock text-slate-50 text-8xl absolute -right-4 -bottom-4 opacity-10"></i>
                 </div>
             </div>
 
             <!-- ADD TASK FORM -->
-            <div class="glass-card p-12 rounded-[3rem] shadow-2xl border-none">
-                <div class="flex items-center gap-4 mb-10">
-                    <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
-                        <i class="fas fa-plus text-white text-xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Add New Compliance</h3>
+            <div class="glass-card p-10 rounded-[2.5rem] shadow-xl mb-12 border-none">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-plus text-xs"></i></div>
+                    <h3 class="text-xl font-bold text-slate-800 uppercase tracking-tight">Add New Compliance Task</h3>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Client Name</label>
-                        <input id="clientName" class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Client Name</label>
+                        <input id="clientName" class="w-full bg-slate-50 border border-slate-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Service Type</label>
-                        <input id="serviceType" placeholder="GST, MCA, etc." class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Service Type</label>
+                        <input id="serviceType" placeholder="e.g. GST, MCA" class="w-full bg-slate-50 border border-slate-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Deadline</label>
-                        <input id="dueDate" type="date" class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-slate-500">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Deadline</label>
+                        <input id="dueDate" type="date" class="w-full bg-slate-50 border border-slate-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-500">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Status</label>
-                        <select id="status" class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Task Status</label>
+                        <select id="status" class="w-full bg-slate-50 border border-slate-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
                             <option value="Pending">Pending</option>
                             <option value="Completed">Completed</option>
                         </select>
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Assigned To</label>
-                        <input id="assignTo" class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Assigned To</label>
+                        <input id="assignTo" class="w-full bg-slate-50 border border-slate-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Internal Remarks</label>
-                        <input id="remarks" class="w-full bg-slate-100/50 border-2 border-transparent p-5 rounded-2xl outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Internal Remarks</label>
+                        <input id="remarks" class="w-full bg-slate-50 border border-slate-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
                     </div>
                 </div>
-                <button onclick="handleDataSubmit()" id="submitBtn" class="mt-12 bg-indigo-600 text-white px-12 py-5 rounded-2xl font-black shadow-2xl shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-1 transition-all uppercase tracking-widest text-sm">
-                    Sync to Cloud Database
-                </button>
+                <button onclick="handleDataSubmit()" id="submitBtn" class="mt-8 bg-indigo-600 text-white px-10 py-4 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition-all uppercase text-sm tracking-widest">Update Master Database</button>
+            </div>
+
+            <!-- MAIN DATA TABLE (RESTORED AS PER REQUEST) -->
+            <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100">
+                <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                    <h3 class="font-bold text-slate-800 uppercase tracking-widest text-sm">Recent Task Activity</h3>
+                    <button onclick="loadData()" class="text-indigo-600 text-xs font-bold uppercase"><i class="fas fa-sync-alt mr-2"></i>Refresh List</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                <th class="p-6">Client Name</th>
+                                <th class="p-6">Service</th>
+                                <th class="p-6">Deadline</th>
+                                <th class="p-6">Assigned</th>
+                                <th class="p-6 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mainTableBody" class="divide-y divide-slate-50">
+                            <!-- Data will load here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- SUB-SECTIONS -->
-        <div id="gst" class="section p-10"> 
-            <h2 class="text-4xl font-black text-slate-800 mb-10 tracking-tighter">GST FILINGS</h2>
-            <div id="gstTable" class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100"></div>
-        </div>
-        <div id="mca" class="section p-10"> 
-            <h2 class="text-4xl font-black text-slate-800 mb-10 tracking-tighter">MCA / ROC COMPLIANCE</h2>
-            <div id="mcaTable" class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100"></div>
-        </div>
-        <div id="it" class="section p-10"> 
-            <h2 class="text-4xl font-black text-slate-800 mb-10 tracking-tighter">INCOME TAX PORTAL</h2>
-            <div id="itTable" class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100"></div>
-        </div>
+        <!-- OTHER SECTIONS -->
+        <div id="gst" class="section p-10"> <h2 class="text-3xl font-bold mb-8">GST Records</h2> <div id="gstTable"></div> </div>
+        <div id="mca" class="section p-10"> <h2 class="text-3xl font-bold mb-8">MCA Records</h2> <div id="mcaTable"></div> </div>
+        <div id="it" class="section p-10"> <h2 class="text-3xl font-bold mb-8">Income Tax Records</h2> <div id="itTable"></div> </div>
     </div>
 
-    <!-- FULL SCREEN MODAL -->
+    <!-- MODAL FOR DETAILED FILTERED VIEW -->
     <div id="dataModal">
         <div class="flex items-center justify-center min-h-screen p-6">
-            <div class="modal-content bg-white w-full max-w-6xl rounded-[3rem] shadow-2xl flex flex-col max-h-[85vh]">
-                <div class="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <div class="modal-content bg-white w-full max-w-5xl rounded-[3rem] shadow-2xl flex flex-col max-h-[85vh]">
+                <div class="p-10 border-b border-slate-100 flex justify-between items-center">
                     <div>
-                        <h3 id="modalTitle" class="text-3xl font-black text-slate-800 tracking-tight">Detailed Report</h3>
-                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Witcorp India Internal Database</p>
+                        <h3 id="modalTitle" class="text-2xl font-extrabold text-slate-800">Filtered View</h3>
+                        <p id="modalCountLabel" class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-1">Records Found</p>
                     </div>
-                    <button onclick="closeModal()" class="w-14 h-14 bg-white shadow-xl rounded-2xl flex items-center justify-center text-slate-400 hover:text-rose-500 hover:rotate-90 transition-all duration-300">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
+                    <button onclick="closeModal()" class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 hover:text-rose-500 transition-all"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="flex-1 overflow-y-auto p-10">
                     <table class="w-full text-left">
-                        <thead class="sticky top-0 bg-white shadow-sm">
-                            <tr>
-                                <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client Name</th>
-                                <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Service</th>
-                                <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Deadline</th>
-                                <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="modalTableBody" class="divide-y divide-slate-50"></tbody>
+                        <tbody id="modalTableBody" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
@@ -201,62 +190,46 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzQj3dWB-evJ9-N03PgKCjHB3VLE1ngFaLQKxeC8K_fNJMu0Sic7Vr5oUCDv64m55R9Kw/exec'; 
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzaYoDVDjms8y9rkesZP5kfUPmFS73aasv0G3swqLZToOeZYKkFQxMvnlBEoTnbYttrwg/exec'; // Replace with your URL
         let dataList = [];
 
         async function loadData() {
+            const mainTable = document.getElementById('mainTableBody');
+            mainTable.innerHTML = "<tr><td colspan='5' class='p-10 text-center font-bold text-slate-300'>SYNCING WITH CLOUD...</td></tr>";
             try {
                 const res = await fetch(scriptURL);
                 dataList = await res.json();
                 updateUI();
-            } catch (e) { console.error("Sync Error"); }
+            } catch (e) { mainTable.innerHTML = "Connection Error"; }
         }
 
         function updateUI() {
-            // Update Stats
+            // Update counts
             let comp = dataList.filter(x => x.Status === 'Completed').length;
             let pend = dataList.filter(x => x.Status === 'Pending').length;
             document.getElementById('totalCount').innerText = dataList.length;
             document.getElementById('completedCount').innerText = comp;
             document.getElementById('pendingCount').innerText = pend;
 
-            // Render Sub-Sections
-            renderCategoryTable('gst', 'gstTable');
-            renderCategoryTable('mca', 'mcaTable');
-            renderCategoryTable('it', 'itTable');
+            // Update Main Table
+            const mainTable = document.getElementById('mainTableBody');
+            mainTable.innerHTML = "";
+            dataList.slice().reverse().forEach(item => { // Show newest first
+                mainTable.innerHTML += renderRow(item);
+            });
         }
 
-        function renderCategoryTable(keyword, containerId) {
-            const container = document.getElementById(containerId);
-            const filtered = dataList.filter(x => x.Service.toLowerCase().includes(keyword));
-            
-            if(filtered.length === 0) {
-                container.innerHTML = `<div class="p-20 text-center font-bold text-slate-300 uppercase tracking-widest">No ${keyword.toUpperCase()} Data Found</div>`;
-                return;
-            }
-
-            let html = `<table class="w-full text-left">
-                <thead class="bg-slate-50 border-b border-slate-100">
-                    <tr>
-                        <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client</th>
-                        <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Deadline</th>
-                        <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Assignee</th>
-                        <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Status</th>
-                    </tr>
-                </thead><tbody class="divide-y divide-slate-50">`;
-
-            filtered.forEach(item => {
-                html += `<tr class="hover:bg-slate-50/50 transition-colors">
+        function renderRow(item) {
+            return `
+                <tr class="hover:bg-slate-50/50 transition-colors">
                     <td class="p-6 font-bold text-slate-700">${item.Name}</td>
-                    <td class="p-6 text-sm text-slate-500">${item.Date || '-'}</td>
-                    <td class="p-6 text-sm font-bold text-indigo-600">${item.Assign || '-'}</td>
+                    <td class="p-6"><span class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase">${item.Service}</span></td>
+                    <td class="p-6 text-xs font-semibold text-slate-400">${item.Date || '-'}</td>
+                    <td class="p-6 text-sm font-bold text-slate-600">${item.Assign || '-'}</td>
                     <td class="p-6 text-center">
-                        <span class="px-4 py-2 rounded-full text-[10px] font-black uppercase ${item.Status==='Completed'?'bg-emerald-100 text-emerald-700':'bg-rose-100 text-rose-700'}">${item.Status}</span>
+                        <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase ${item.Status==='Completed'?'bg-emerald-100 text-emerald-700':'bg-rose-100 text-rose-700'}">${item.Status}</span>
                     </td>
                 </tr>`;
-            });
-            html += `</tbody></table>`;
-            container.innerHTML = html;
         }
 
         function openModal(title, filterType) {
@@ -264,21 +237,14 @@
             const tableBody = document.getElementById('modalTableBody');
             document.getElementById('modalTitle').innerText = title;
             tableBody.innerHTML = "";
-            modal.style.display = "block";
-
+            
             let filtered = filterType === 'all' ? dataList : dataList.filter(x => x.Status === filterType);
+            document.getElementById('modalCountLabel').innerText = `${filtered.length} Records Found`;
 
             filtered.forEach(item => {
-                tableBody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-5 font-black text-slate-700">${item.Name}</td>
-                        <td class="p-5"><span class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase">${item.Service}</span></td>
-                        <td class="p-5 text-sm font-bold text-slate-400 font-mono">${item.Date || '-'}</td>
-                        <td class="p-5 text-center">
-                            <span class="px-4 py-2 rounded-full text-[10px] font-black uppercase ${item.Status==='Completed'?'bg-emerald-100 text-emerald-700':'bg-rose-100 text-rose-700'}">${item.Status}</span>
-                        </td>
-                    </tr>`;
+                tableBody.innerHTML += renderRow(item);
             });
+            modal.style.display = "block";
         }
 
         function closeModal() { document.getElementById('dataModal').style.display = "none"; }
@@ -301,7 +267,7 @@
 
             if(!payload.name) return alert("Client Name missing!");
 
-            btn.disabled = true; btn.innerText = "Syncing with Server...";
+            btn.disabled = true; btn.innerText = "Syncing...";
             await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
             location.reload(); 
         }
