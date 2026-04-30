@@ -22,7 +22,6 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-        /* HIGH-TECH CARD STYLES */
         .high-tech-card {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
@@ -86,7 +85,7 @@
                 </div>
             </div>
             
-            <!-- HIGH-TECH STATS CARDS -->
+            <!-- STATS CARDS -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div class="high-tech-card tech-glow-blue p-8 rounded-3xl relative overflow-hidden group">
                     <div class="relative z-10">
@@ -199,7 +198,7 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxjdiBDtJNFSwZ3IS9wOvbJ0UWp1ush3FMl4ROXBch7Ttw3ZMD8ihzIWlUBV3udAwV0kw/exec'; 
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxWb7ErTmV2arV8jzC-RRmLIfPKGmMnYv1UpbesvL0VQD10wRaGMRjAN_qN20V0WLuSKA/exec'; 
         let dataList = [];
 
         async function loadData() {
@@ -228,7 +227,7 @@
                     <td class="p-6"><span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-tight">${item.service}</span></td>
                     <td class="p-6 text-xs text-slate-500 font-medium">${item.date ? new Date(item.date).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : '-'}</td>
                     <td class="p-6"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-bold">${(item.assign || 'U')[0]}</div><span class="text-sm font-semibold">${item.assign || 'Unassigned'}</span></div></td>
-                    <td class="p-6 text-center text-[10px] font-mono text-slate-400 italic">${item.timestamp || '-'}</td>
+                    <td class="p-6 text-center text-[10px] font-mono text-slate-600 font-bold italic">${item.timestamp || '-'}</td>
                     <td class="p-6 text-center">
                         <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${item.status==='Completed'?'bg-emerald-100 text-emerald-700':'bg-rose-100 text-rose-700'}">${item.status}</span>
                     </td>
@@ -242,7 +241,7 @@
                 mainTable.innerHTML += `<tr class="hover:bg-slate-50/80 transition-all cursor-default">${rowHtml}</tr>`;
 
                 let s = item.service.toLowerCase();
-                let catRow = `<td class="p-6 font-bold text-slate-700">${item.name}</td><td class="p-6 font-semibold">${item.assign || '-'}</td><td class="p-6 text-[10px] text-slate-400 font-mono">${item.timestamp || '-'}</td><td class="p-6 text-center"><span class="text-[10px] font-black uppercase ${item.status==='Completed'?'text-emerald-600':'text-rose-600'}">${item.status}</span></td><td class="p-6 text-center"><button onclick="startEdit('${item.rowId}')" class="text-blue-500">✏️</button></td>`;
+                let catRow = `<td class="p-6 font-bold text-slate-700">${item.name}</td><td class="p-6 font-semibold">${item.assign || '-'}</td><td class="p-6 text-[10px] text-slate-600 font-bold font-mono italic">${item.timestamp || '-'}</td><td class="p-6 text-center"><span class="text-[10px] font-black uppercase ${item.status==='Completed'?'text-emerald-600':'text-rose-600'}">${item.status}</span></td><td class="p-6 text-center"><button onclick="startEdit('${item.rowId}')" class="text-blue-500">✏️</button></td>`;
                 
                 if(s.includes('gst')) document.getElementById('gstBody').innerHTML += `<tr class="hover:bg-slate-50 transition-all">${catRow}</tr>`;
                 if(s.includes('mca')) document.getElementById('mcaBody').innerHTML += `<tr class="hover:bg-slate-50 transition-all">${catRow}</tr>`;
@@ -257,7 +256,9 @@
         async function handleDataSubmit() {
             const rowId = document.getElementById('editRowId').value;
             const btn = document.getElementById('submitBtn');
-            const options = { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true };
+            
+            // Fixed IST Time Formatting for Payload
+            const options = { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
             const istTime = new Intl.DateTimeFormat('en-IN', options).format(new Date());
 
             const payload = {
