@@ -80,7 +80,6 @@
 <!-- TABLE -->
 <div class="bg-white rounded-xl shadow overflow-hidden">
 <table class="w-full text-left">
-
 <thead class="bg-gray-50 text-xs uppercase">
 <tr>
 <th class="p-4">Client</th>
@@ -93,24 +92,83 @@
 <th class="p-4 text-center">Actions</th>
 </tr>
 </thead>
-
 <tbody id="tableBody"></tbody>
-
 </table>
 </div>
 
 </div>
 
-<!-- GST / MCA / IT SAME TABLE STRUCTURE -->
-<div id="gst" class="section"><h2 class="text-xl font-bold mb-4">GST Data</h2><table class="w-full bg-white shadow"><tbody id="gstBody"></tbody></table></div>
-<div id="mca" class="section"><h2 class="text-xl font-bold mb-4">MCA Data</h2><table class="w-full bg-white shadow"><tbody id="mcaBody"></tbody></table></div>
-<div id="it" class="section"><h2 class="text-xl font-bold mb-4">Income Tax Data</h2><table class="w-full bg-white shadow"><tbody id="itBody"></tbody></table></div>
+<!-- GST -->
+<div id="gst" class="section">
+<h2 class="text-xl font-bold mb-4">GST Data</h2>
+<div class="bg-white rounded-xl shadow overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-gray-50 text-xs uppercase">
+<tr>
+<th class="p-4">Client</th>
+<th class="p-4">Service</th>
+<th class="p-4">Date</th>
+<th class="p-4">Remark</th>
+<th class="p-4">Assign</th>
+<th class="p-4">Updated</th>
+<th class="p-4 text-center">Status</th>
+<th class="p-4 text-center">Actions</th>
+</tr>
+</thead>
+<tbody id="gstBody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- MCA -->
+<div id="mca" class="section">
+<h2 class="text-xl font-bold mb-4">MCA Data</h2>
+<div class="bg-white rounded-xl shadow overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-gray-50 text-xs uppercase">
+<tr>
+<th class="p-4">Client</th>
+<th class="p-4">Service</th>
+<th class="p-4">Date</th>
+<th class="p-4">Remark</th>
+<th class="p-4">Assign</th>
+<th class="p-4">Updated</th>
+<th class="p-4 text-center">Status</th>
+<th class="p-4 text-center">Actions</th>
+</tr>
+</thead>
+<tbody id="mcaBody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- IT -->
+<div id="it" class="section">
+<h2 class="text-xl font-bold mb-4">Income Tax Data</h2>
+<div class="bg-white rounded-xl shadow overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-gray-50 text-xs uppercase">
+<tr>
+<th class="p-4">Client</th>
+<th class="p-4">Service</th>
+<th class="p-4">Date</th>
+<th class="p-4">Remark</th>
+<th class="p-4">Assign</th>
+<th class="p-4">Updated</th>
+<th class="p-4 text-center">Status</th>
+<th class="p-4 text-center">Actions</th>
+</tr>
+</thead>
+<tbody id="itBody"></tbody>
+</table>
+</div>
+</div>
 
 </div>
 
 <script>
 
-const scriptURL="https://script.google.com/macros/s/AKfycbzyUlvTN9Jkvo0e20n67Ou_Mhp5vIr54Yc8pv4t01nnxCG03sIA92xg_0rg_faBzplQDw/exec";
+const scriptURL="https://script.google.com/macros/s/AKfycbz2rAfllLlkOWF0fma7JjdvEPaE3h0rd36LlLrhSFPa6fatOfkyXORyX2nbFv9-6Vh1FQ/exec";
 let dataList=[];
 
 window.onload=loadData;
@@ -157,7 +215,6 @@ else if(s.includes("it") || s.includes("itr")) itBody.innerHTML+=row;
 }
 
 function startEdit(id){
-
 let item=dataList.find(x=>x.rowId==id);
 
 clientName.value=item.name;
@@ -177,7 +234,6 @@ editRowId.value=id;
 }
 
 function resetForm(){
-
 editRowId.value="";
 clientName.value="";
 serviceType.value="";
@@ -197,15 +253,12 @@ async function handleDataSubmit(){
 let payload;
 
 if(editRowId.value){
-
 payload={
 action:"edit",
 rowId:editRowId.value,
 remark:remarks.value
 };
-
 }else{
-
 payload={
 action:"add",
 name:clientName.value,
@@ -216,7 +269,6 @@ remark:remarks.value,
 assign:assign.value,
 timestamp:new Date().toISOString()
 };
-
 }
 
 await fetch(scriptURL,{method:'POST',body:JSON.stringify(payload)});
