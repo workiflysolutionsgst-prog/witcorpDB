@@ -52,33 +52,11 @@
 
 <h2 class="text-3xl font-bold mb-6">COMPLIANCE CONTROL CENTER</h2>
 
-<!-- CARDS -->
-<div class="grid grid-cols-4 gap-6 mb-6">
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-blue-500 text-center">
-<p class="text-gray-400 text-sm">ALL ASSIGNMENTS</p>
-<h1 id="totalCount" class="text-3xl font-bold text-blue-700">0</h1>
-</div>
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-green-500 text-center">
-<p class="text-gray-400 text-sm">COMPLETED</p>
-<h1 id="completedCount" class="text-3xl font-bold text-green-600">0</h1>
-</div>
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-red-500 text-center">
-<p class="text-gray-400 text-sm">PENDING</p>
-<h1 id="pendingCount" class="text-3xl font-bold text-red-500">0</h1>
-</div>
-
-<div class="bg-white p-5 rounded-xl shadow border-b-4 border-yellow-400 text-center">
-<p class="text-gray-400 text-sm">FIRM STATUS</p>
-<h1 class="text-xl font-bold text-yellow-500">ACTIVE</h1>
-</div>
-
-</div>
+<input type="hidden" id="editRowId">
 
 <!-- FORM -->
 <div class="bg-white p-6 rounded-xl shadow mb-6">
+
 <h3 class="font-semibold mb-4 border-l-4 border-blue-700 pl-2">ENTER WORK DETAILS</h3>
 
 <div class="grid grid-cols-3 gap-4 mb-4">
@@ -96,11 +74,13 @@
 </div>
 
 <button onclick="handleDataSubmit()" class="bg-blue-900 text-white px-6 py-2 rounded shadow">Update Dashboard</button>
+
 </div>
 
 <!-- TABLE -->
 <div class="bg-white rounded-xl shadow overflow-hidden">
 <table class="w-full text-left">
+
 <thead class="bg-gray-50 text-xs uppercase">
 <tr>
 <th class="p-4">Client</th>
@@ -113,67 +93,27 @@
 <th class="p-4 text-center">Actions</th>
 </tr>
 </thead>
+
 <tbody id="tableBody"></tbody>
+
 </table>
 </div>
 
 </div>
 
-<!-- COMMON TABLE TEMPLATE -->
-<script>
-function getTableHTML(bodyId){
-return `
-<div class="bg-white rounded-xl shadow overflow-hidden">
-<table class="w-full text-left">
-<thead class="bg-gray-50 text-xs uppercase">
-<tr>
-<th class="p-4">Client</th>
-<th class="p-4">Service</th>
-<th class="p-4">Date</th>
-<th class="p-4">Remark</th>
-<th class="p-4">Assign</th>
-<th class="p-4">Updated</th>
-<th class="p-4 text-center">Status</th>
-<th class="p-4 text-center">Actions</th>
-</tr>
-</thead>
-<tbody id="${bodyId}"></tbody>
-</table>
-</div>`;
-}
-</script>
-
-<!-- GST -->
-<div id="gst" class="section">
-<h2 class="text-xl font-bold mb-4">GST Data</h2>
-<div id="gstContainer"></div>
-</div>
-
-<!-- MCA -->
-<div id="mca" class="section">
-<h2 class="text-xl font-bold mb-4">MCA Data</h2>
-<div id="mcaContainer"></div>
-</div>
-
-<!-- IT -->
-<div id="it" class="section">
-<h2 class="text-xl font-bold mb-4">Income Tax Data</h2>
-<div id="itContainer"></div>
-</div>
+<!-- GST / MCA / IT SAME TABLE STRUCTURE -->
+<div id="gst" class="section"><h2 class="text-xl font-bold mb-4">GST Data</h2><table class="w-full bg-white shadow"><tbody id="gstBody"></tbody></table></div>
+<div id="mca" class="section"><h2 class="text-xl font-bold mb-4">MCA Data</h2><table class="w-full bg-white shadow"><tbody id="mcaBody"></tbody></table></div>
+<div id="it" class="section"><h2 class="text-xl font-bold mb-4">Income Tax Data</h2><table class="w-full bg-white shadow"><tbody id="itBody"></tbody></table></div>
 
 </div>
 
 <script>
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbylhvtIDHpmKFf_OXjmRx7ITPMpUV-JIZcn08zFQUWzEwVWdh_6AMlytSz7h1Iyk7cv5Q/exec";
+const scriptURL="https://script.google.com/macros/s/AKfycbzyUlvTN9Jkvo0e20n67Ou_Mhp5vIr54Yc8pv4t01nnxCG03sIA92xg_0rg_faBzplQDw/exec";
 let dataList=[];
 
-window.onload=async ()=>{
-gstContainer.innerHTML=getTableHTML("gstBody");
-mcaContainer.innerHTML=getTableHTML("mcaBody");
-itContainer.innerHTML=getTableHTML("itBody");
-await loadData();
-};
+window.onload=loadData;
 
 async function loadData(){
 let res=await fetch(scriptURL);
@@ -188,13 +128,7 @@ gstBody.innerHTML="";
 mcaBody.innerHTML="";
 itBody.innerHTML="";
 
-let total=0,completed=0,pending=0;
-
 dataList.forEach(item=>{
-
-total++;
-if(item.status==="Completed") completed++;
-else pending++;
 
 let row=`
 <tr class="border-b">
@@ -205,7 +139,10 @@ let row=`
 <td class="p-4 text-purple-700">${item.assign||'-'}</td>
 <td class="p-4 text-xs">${new Date(item.timestamp).toLocaleString()}</td>
 <td class="p-4 text-center">${item.status}</td>
-<td class="p-4 text-center"><button onclick="deleteRow('${item.rowId}')">🗑️</button></td>
+<td class="p-4 text-center space-x-2">
+<button onclick="startEdit('${item.rowId}')">✏️</button>
+<button onclick="deleteRow('${item.rowId}')">🗑️</button>
+</td>
 </tr>`;
 
 tableBody.innerHTML+=row;
@@ -214,18 +151,62 @@ let s=item.service.toLowerCase();
 
 if(s.includes("gst")) gstBody.innerHTML+=row;
 else if(s.includes("mca")) mcaBody.innerHTML+=row;
-else if(s.includes("it") || s.includes("itr") || s.includes("tax")) itBody.innerHTML+=row;
+else if(s.includes("it") || s.includes("itr")) itBody.innerHTML+=row;
 
 });
+}
 
-totalCount.innerText=total;
-completedCount.innerText=completed;
-pendingCount.innerText=pending;
+function startEdit(id){
 
+let item=dataList.find(x=>x.rowId==id);
+
+clientName.value=item.name;
+serviceType.value=item.service;
+dueDate.value=item.date;
+status.value=item.status;
+remarks.value=item.remark;
+assign.value=item.assign||"";
+
+clientName.disabled=true;
+serviceType.disabled=true;
+dueDate.disabled=true;
+status.disabled=true;
+assign.disabled=true;
+
+editRowId.value=id;
+}
+
+function resetForm(){
+
+editRowId.value="";
+clientName.value="";
+serviceType.value="";
+dueDate.value="";
+remarks.value="";
+assign.value="";
+
+clientName.disabled=false;
+serviceType.disabled=false;
+dueDate.disabled=false;
+status.disabled=false;
+assign.disabled=false;
 }
 
 async function handleDataSubmit(){
-let payload={
+
+let payload;
+
+if(editRowId.value){
+
+payload={
+action:"edit",
+rowId:editRowId.value,
+remark:remarks.value
+};
+
+}else{
+
+payload={
 action:"add",
 name:clientName.value,
 service:serviceType.value,
@@ -235,7 +216,11 @@ remark:remarks.value,
 assign:assign.value,
 timestamp:new Date().toISOString()
 };
+
+}
+
 await fetch(scriptURL,{method:'POST',body:JSON.stringify(payload)});
+resetForm();
 loadData();
 }
 
