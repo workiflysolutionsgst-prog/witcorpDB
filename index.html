@@ -10,30 +10,36 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-.nav-btn.active { background:#fbbf24; color:#1e3a8a; font-weight:bold; }
-.section { display:none; }
-.section.active { display:block; }
+.nav-btn.active { background-color:#fbbf24; color:#1e3a8a; font-weight:bold; }
+.section{display:none;}
+.section.active{display:block;}
 </style>
 </head>
 
-<body class="bg-gray-100 flex h-screen overflow-hidden">
+<body class="bg-gray-100 font-sans flex h-screen overflow-hidden">
 
 <!-- SIDEBAR -->
-<div class="w-72 bg-[#1e3a8a] text-white flex flex-col">
+<div class="w-72 bg-[#1e3a8a] text-white flex flex-col shadow-2xl">
 
-<div class="p-8 text-center border-b border-blue-800">
-<h1 class="text-yellow-400 font-bold text-lg">WITCORP INDIA<br>ADVISOR LLP</h1>
+<div class="p-8 pb-3 border-b border-blue-800 flex flex-col items-center text-center">
+<div class="w-24 h-24 mb-3 border-2 border-yellow-400 p-2 rounded-2xl bg-white flex items-center justify-center">
+<i class="fas fa-shield-alt text-blue-900 text-4xl"></i>
+</div>
+<h1 class="text-xl font-bold text-yellow-400 uppercase">Witcorp India<br>Advisor LLP</h1>
 </div>
 
-<nav class="p-6 space-y-2">
-<button onclick="showSection('dashboard')" class="nav-btn active w-full p-3 text-left">Dashboard</button>
-<button onclick="showSection('gst')" class="nav-btn w-full p-3 text-left">GST Management</button>
-<button onclick="showSection('mca')" class="nav-btn w-full p-3 text-left">MCA Compliance</button>
-<button onclick="showSection('it')" class="nav-btn w-full p-3 text-left">Income Tax</button>
+<nav class="flex-1 p-6 space-y-2 mt-4">
+<button onclick="showSection('dashboard')" class="nav-btn active p-3 w-full text-left flex gap-2"><i class="fas fa-home"></i>Dashboard</button>
+<button onclick="showSection('gst')" class="nav-btn p-3 w-full text-left flex gap-2"><i class="fas fa-file-invoice"></i>GST Management</button>
+<button onclick="showSection('mca')" class="nav-btn p-3 w-full text-left flex gap-2"><i class="fas fa-building"></i>MCA Compliance</button>
+<button onclick="showSection('it')" class="nav-btn p-3 w-full text-left flex gap-2"><i class="fas fa-percentage"></i>Income Tax</button>
 </nav>
 
-<div class="p-6 border-t text-center">
-<p class="text-sm font-bold">Kamlesh Yadav</p>
+<div class="p-6 border-t bg-[#1c357e] text-center">
+<p class="text-xs text-[#a0ffb6] italic">"Strategic Wisdom.<br>Global Growth."</p>
+<hr class="my-2 border-blue-700">
+<p class="text-xs text-yellow-400">Developed By</p>
+<p class="font-bold">Kamlesh Yadav</p>
 </div>
 
 </div>
@@ -41,10 +47,9 @@
 <!-- MAIN -->
 <div class="flex-1 p-8 overflow-y-auto">
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="section active">
 
-<h2 class="text-2xl font-bold mb-6">Compliance Control</h2>
+<h2 class="text-3xl font-bold mb-6">Compliance Control Center</h2>
 
 <input type="hidden" id="editRowId">
 
@@ -104,7 +109,7 @@
 
 <script>
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbyQdUQEwj0p3oZV9buYlRa8zj0TC1PRzdFnPz8T2MTX4J7DuVF9N-yonEwJl07Tnts8KA/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbw-u6ZH7R9vQ1zDRp1_Z_zw4TUdilQYOJqm9KpbXKtc8JFo9Y-UIsGf0ZNcXLXeAk4vng/exec";
 let dataList=[];
 
 window.onload=loadData;
@@ -146,15 +151,15 @@ document.getElementById(s+'Table').innerHTML=`
 
 dataList.reverse().forEach(item=>{
 
-let cleanDate=item.date.includes('T')?item.date.split('T')[0]:item.date;
+let d=item.date.includes('T')?item.date.split('T')[0]:item.date;
 
-let mainRow=`
-<tr class="border-b hover:bg-gray-50">
+let row=`
+<tr class="border-b align-middle">
 <td class="p-4">${item.name}</td>
 <td class="p-4 font-bold text-blue-700">${item.service}</td>
-<td class="p-4">${cleanDate}</td>
-<td class="p-4 text-xs italic">${item.remark}</td>
-<td class="p-4 font-semibold text-purple-700">${item.assign||'-'}</td>
+<td class="p-4">${d}</td>
+<td class="p-4 text-sm">${item.remark}</td>
+<td class="p-4 text-purple-700 font-semibold">${item.assign||'-'}</td>
 <td class="p-4 text-xs">${formatIST(item.timestamp)}</td>
 <td class="p-4 text-center">${item.status}</td>
 <td class="p-4 text-center">
@@ -163,34 +168,20 @@ let mainRow=`
 </td>
 </tr>`;
 
-tableBody.innerHTML+=mainRow;
+tableBody.innerHTML+=row;
 
-let subRow=`
-<tr class="border-b">
-<td class="p-3">${item.name}</td>
-<td class="p-3">${cleanDate}</td>
-<td class="p-3">${item.remark}</td>
-<td class="p-3">${item.assign||'-'}</td>
-<td class="p-3 text-xs">${formatIST(item.timestamp)}</td>
-<td class="p-3">${item.status}</td>
-<td class="p-3">
-<button onclick="startEdit('${item.rowId}')">✏️</button>
-<button onclick="deleteRow('${item.rowId}')">🗑️</button>
-</td>
-</tr>`;
-
+let sub=row.replace('p-4','p-3');
 let s=item.service.toLowerCase();
 
-if(s.includes('gst')) document.getElementById('gstBody').innerHTML+=subRow;
-if(s.includes('mca')) document.getElementById('mcaBody').innerHTML+=subRow;
-if(s.includes('it')||s.includes('tax')) document.getElementById('itBody').innerHTML+=subRow;
+if(s.includes('gst')) document.getElementById('gstBody').innerHTML+=sub;
+if(s.includes('mca')) document.getElementById('mcaBody').innerHTML+=sub;
+if(s.includes('it')||s.includes('tax')) document.getElementById('itBody').innerHTML+=sub;
 
 });
 
 }
 
 function startEdit(id){
-
 let item=dataList.find(x=>x.rowId==id);
 
 clientName.value=item.name;
@@ -206,13 +197,10 @@ dueDate.disabled=true;
 status.disabled=true;
 
 editRowId.value=id;
-submitBtn.innerText="Update";
 cancelBtn.classList.remove('hidden');
-
 }
 
 function resetForm(){
-
 editRowId.value="";
 clientName.value="";
 serviceType.value="";
@@ -225,9 +213,7 @@ serviceType.disabled=false;
 dueDate.disabled=false;
 status.disabled=false;
 
-submitBtn.innerText="Update Dashboard";
 cancelBtn.classList.add('hidden');
-
 }
 
 async function handleDataSubmit(){
@@ -241,14 +227,12 @@ date: dueDate.value,
 status: status.value,
 remark: remarks.value,
 assign: assign.value,
-timestamp: new Date().toISOString()
+timestamp:new Date().toISOString()
 };
 
 await fetch(scriptURL,{method:'POST',body:JSON.stringify(payload)});
-
 resetForm();
 loadData();
-
 }
 
 async function deleteRow(id){
