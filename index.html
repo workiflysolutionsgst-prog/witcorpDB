@@ -266,29 +266,61 @@
         }
 
         function startEdit(id) {
-            const item = dataList.find(x => x.rowId == id);
-            document.getElementById('clientName').value = item.name;
-            document.getElementById('serviceType').value = item.service;
-            document.getElementById('dueDate').value = item.date ? item.date.split('T')[0] : "";
-            document.getElementById('status').value = item.status;
-            document.getElementById('assignTo').value = item.assign || "";
-            document.getElementById('remarks').value = item.remark;
-            document.getElementById('editRowId').value = id;
-            document.getElementById('submitBtn').innerText = "Update Record";
-            document.getElementById('cancelBtn').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
+    const item = dataList.find(x => x.rowId == id);
+    
+    // Fields fill karna
+    const fields = {
+        'clientName': item.name,
+        'serviceType': item.service,
+        'dueDate': item.date ? item.date.split('T')[0] : "",
+        'status': item.status,
+        'assignTo': item.assign || "",
+        'remarks': item.remark
+    };
 
-        function resetForm() {
-            document.getElementById('editRowId').value = "";
-            document.getElementById('clientName').value = "";
-            document.getElementById('serviceType').value = "";
-            document.getElementById('dueDate').value = "";
-            document.getElementById('remarks').value = "";
-            document.getElementById('assignTo').value = "";
-            document.getElementById('submitBtn').innerText = "Sync to Cloud";
-            document.getElementById('cancelBtn').classList.add('hidden');
+    // Sirf Remarks ko chhod kar baki sabko Lock aur Red karna
+    Object.keys(fields).forEach(key => {
+        const el = document.getElementById(key);
+        el.value = fields[key];
+        
+        if (key !== 'remarks') {
+            el.readOnly = true; // Lock field
+            el.style.backgroundColor = "#fee2e2"; // Light Red background
+            el.style.borderColor = "#ef4444";     // Red border
+            el.style.cursor = "not-allowed";      // Mouse icon change
+            if(el.tagName === 'SELECT') el.disabled = true; // Select box lock
+        } else {
+            el.focus(); // Direct cursor Remarks par jayega
+            el.style.border = "2px solid #4f46e5"; // Remarks highlights in Blue
         }
+    });
+
+    document.getElementById('editRowId').value = id;
+    document.getElementById('submitBtn').innerText = "Update Remarks Only";
+    document.getElementById('cancelBtn').classList.remove('hidden');
+    
+    // Smooth scroll to form
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetForm() {
+    document.getElementById('editRowId').value = "";
+    
+    const inputIds = ['clientName', 'serviceType', 'dueDate', 'status', 'assignTo', 'remarks'];
+    
+    inputIds.forEach(id => {
+        const el = document.getElementById(id);
+        el.value = "";
+        el.readOnly = false;
+        el.disabled = false;
+        el.style.backgroundColor = "#f8fafc"; // Back to original slate-50
+        el.style.borderColor = "#f1f5f9";     // Back to original border
+        el.style.cursor = "text";
+    });
+
+    document.getElementById('submitBtn').innerText = "Sync to Cloud";
+    document.getElementById('cancelBtn').classList.add('hidden');
+}
 
         function showSection(id, btn) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
