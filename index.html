@@ -90,15 +90,15 @@
 <input id="dueDate" type="date" class="p-3 border rounded">
 
 <select id="status" class="p-3 border rounded">
-<option>Pending</option>
-<option>Completed</option>
+<option value="Pending">Pending</option>
+<option value="Completed">Completed</option>
 </select>
 
 <input id="remarks" placeholder="Remarks/Notes" class="p-3 border rounded">
 <input id="assign" placeholder="Assign To" class="p-3 border rounded">
 </div>
 
-<button onclick="handleDataSubmit()" class="bg-blue-900 text-white px-6 py-2 rounded shadow">Update Dashboard</button>
+<button onclick="handleDataSubmit()" class="bg-blue-900 text-white px-6 py-2 rounded shadow hover:bg-blue-800">Update Dashboard</button>
 
 </div>
 
@@ -193,7 +193,7 @@
 
 <script>
 
-const scriptURL="https://script.google.com/macros/s/AKfycbxn6Fba7tw0B3ZfvAKtGPZTadOXV3O7KLfQjbIJ8p-n57UdKyF54hUvsctF3x0wDiibeA/exec";
+const scriptURL="https://script.google.com/macros/s/AKfycbzu6eqD3mruNVla6TSVTr8LPPyJyIb6jQNY5ziLFPxDekxdJS-3XZVHJH9U0uC6isVIow/exec";
 let dataList=[];
 
 window.onload=loadData;
@@ -216,6 +216,7 @@ let total=0, completed=0, pending=0;
 dataList.forEach(item=>{
 
 total++;
+let statusColor = item.status === "Completed" ? "text-green-600 font-bold" : "text-red-500 font-bold";
 if(item.status==="Completed") completed++;
 else pending++;
 
@@ -227,7 +228,7 @@ let row=`
 <td class="p-4">${item.remark}</td>
 <td class="p-4 text-purple-700">${item.assign||'-'}</td>
 <td class="p-4 text-xs">${new Date(item.timestamp).toLocaleString()}</td>
-<td class="p-4 text-center">${item.status}</td>
+<td class="p-4 text-center ${statusColor}">${item.status}</td>
 <td class="p-4 text-center space-x-2">
 <button onclick="startEdit('${item.rowId}')">✏️</button>
 <button onclick="deleteRow('${item.rowId}')">🗑️</button>
@@ -260,10 +261,11 @@ status.value=item.status;
 remarks.value=item.remark;
 assign.value=item.assign||"";
 
+// Editing ke waqt bhi status change karne dena chahiye
 clientName.disabled=true;
 serviceType.disabled=true;
 dueDate.disabled=true;
-status.disabled=true;
+status.disabled=false; 
 assign.disabled=true;
 
 editRowId.value=id;
@@ -292,7 +294,8 @@ if(editRowId.value){
 payload={
 action:"edit",
 rowId:editRowId.value,
-remark:remarks.value
+remark:remarks.value,
+status:status.value // Status update bhi add kiya
 };
 }else{
 payload={
@@ -313,8 +316,10 @@ loadData();
 }
 
 async function deleteRow(id){
-await fetch(scriptURL,{method:'POST',body:JSON.stringify({action:'delete',rowId:id})});
-loadData();
+if(confirm("Are you sure you want to delete this?")){
+    await fetch(scriptURL,{method:'POST',body:JSON.stringify({action:'delete',rowId:id})});
+    loadData();
+}
 }
 
 function showSection(id,btn){
