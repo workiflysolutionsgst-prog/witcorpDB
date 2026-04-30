@@ -106,7 +106,7 @@
                         <h3 id="completedCount" class="text-6xl font-black text-emerald-600 tracking-tighter">0</h3>
                         <div class="mt-4 flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                            <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Synced to Cloud</span>
+                            <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Submit</span>
                         </div>
                     </div>
                     <i class="fas fa-check-double text-slate-50 text-8xl absolute -right-4 -bottom-4 transition-transform group-hover:scale-110"></i>
@@ -181,7 +181,7 @@
                             <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Client Identity</th>
                             <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Service</th>
                             <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Deadline</th>
-                            <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Ownership</th>
+                            <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Assigned</th>
                             <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Last Sync</th>
                             <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Status</th>
                             <th class="p-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Actions</th>
@@ -345,7 +345,7 @@
         setInterval(() => {
             const now = new Date();
             document.getElementById('currentIST').innerText = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        }, 1000);
+        }, 100000);
 
         window.onload = loadData;
     </script>
