@@ -115,16 +115,16 @@
     </div>
 
     <script>
-        // STEP: APNI DETAILS YAHAN DALO
         const SUPABASE_URL = 'https://rymnmigplbeotbfnhkxi.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_AJlEpmRCyKtAx65lYAY-Tw__jvtRoEF';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // FIX 1: createClient initialization fixed
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let dataList = [];
 
-        // Data Load Karo
         async function loadData() {
-            const { data, error } = await supabase.from('tasks').select('*').order('id', { ascending: false });
+            const { data, error } = await supabaseClient.from('tasks').select('*').order('id', { ascending: false });
             if (!error) {
                 dataList = data;
                 refreshUI();
@@ -138,11 +138,12 @@
 
             dataList.forEach(item => {
                 if(item.status === 'Completed') comp++; else pend++;
+                // FIX 2: Correcting property names from DB (due_date)
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition-all">
-                        <td class="p-6 font-bold">${item.name}</td>
-                        <td class="p-6"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-xs font-bold">${item.service}</span></td>
-                        <td class="p-6 text-sm text-slate-500">${item.date}</td>
+                        <td class="p-6 font-bold">${item.name || 'N/A'}</td>
+                        <td class="p-6"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-xs font-bold">${item.service || 'N/A'}</span></td>
+                        <td class="p-6 text-sm text-slate-500">${item.due_date || 'N/A'}</td>
                         <td class="p-6 text-center">
                             <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase ${item.status==='Completed'?'bg-emerald-100 text-emerald-700':'bg-rose-100 text-rose-700'}">${item.status}</span>
                         </td>
@@ -159,20 +160,21 @@
 
         async function handleDataSubmit() {
             const rowId = document.getElementById('editRowId').value;
+            // FIX 3: Mapping keys to match image_c90890.png (due_date)
             const payload = {
                 name: document.getElementById('clientName').value,
                 service: document.getElementById('serviceType').value,
-                date: document.getElementById('dueDate').value,
+                due_date: document.getElementById('dueDate').value, 
                 status: document.getElementById('status').value,
+                // Make sure these columns exist in your Supabase table as well
                 assign: document.getElementById('assignTo').value,
-                remark: document.getElementById('remarks').value,
-                timestamp: new Date().toISOString()
+                remark: document.getElementById('remarks').value
             };
 
             if (rowId) {
-                await supabase.from('tasks').update(payload).eq('id', rowId);
+                await supabaseClient.from('tasks').update(payload).eq('id', rowId);
             } else {
-                await supabase.from('tasks').insert([payload]);
+                await supabaseClient.from('tasks').insert([payload]);
             }
             
             clearForm();
@@ -180,8 +182,8 @@
         }
 
         async function deleteRow(id) {
-            if(confirm("Pakka delete karna hai?")) {
-                await supabase.from('tasks').delete().eq('id', id);
+            if(confirm("Confirm Delete?")) {
+                await supabaseClient.from('tasks').delete().eq('id', id);
                 loadData();
             }
         }
@@ -190,13 +192,19 @@
             const item = dataList.find(x => x.id == id);
             document.getElementById('clientName').value = item.name;
             document.getElementById('serviceType').value = item.service;
+            document.getElementById('dueDate').value = item.due_date;
+            document.getElementById('status').value = item.status;
+            document.getElementById('assignTo').value = item.assign || "";
+            document.getElementById('remarks').value = item.remark || "";
             document.getElementById('editRowId').value = item.id;
             document.getElementById('submitBtn').innerText = "UPDATE RECORD";
         }
 
         function clearForm() {
             document.querySelectorAll('input').forEach(i => i.value = "");
+            document.getElementById('status').value = "Pending";
             document.getElementById('submitBtn').innerText = "SYNC TO CLOUD";
+            document.getElementById('editRowId').value = "";
         }
 
         function showSection(id, btn) {
