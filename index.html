@@ -38,10 +38,10 @@
         <div id="dashboard" class="section active">
             <h2 class="text-3xl font-bold mb-8 text-gray-800 uppercase tracking-wide">Compliance Control Center</h2>
             
-            <!-- TOP BOXES (THE CARDS YOU WANTED) -->
+            <!-- STATS CARDS -->
             <div class="grid grid-cols-4 gap-6 mb-8 text-center">
                 <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-blue-600">
-                    <p class="text-gray-400 font-bold uppercase text-xs">All Assignments</p>
+                    <p class="text-gray-400 font-bold uppercase text-xs">Total Tasks</p>
                     <p id="totalCount" class="text-4xl font-bold text-blue-900 mt-2">0</p>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-green-500">
@@ -60,7 +60,7 @@
 
             <!-- FORM -->
             <div class="bg-white p-8 rounded-2xl shadow-lg mb-8 border border-gray-100">
-                <h3 id="formHeader" class="font-bold mb-6 text-xl text-blue-900 border-l-4 border-blue-900 pl-3 uppercase">Enter Work Details</h3>
+                <h3 class="font-bold mb-6 text-xl text-blue-900 border-l-4 border-blue-900 pl-3 uppercase">Enter Work Details</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <input type="hidden" id="editRowId">
                     <input id="clientName" placeholder="Client Name" class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
@@ -70,15 +70,16 @@
                         <option value="Pending">Pending</option>
                         <option value="Completed">Completed</option>
                     </select>
-                    <input id="assignTo" placeholder="Assign To (Name)" class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
-                    <input id="remarks" placeholder="Remarks/Notes" class="md:col-span-1 border-2 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="assignTo" placeholder="Assign To" class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="remarks" placeholder="Remarks" class="border-2 p-3 rounded-xl outline-none focus:border-blue-500">
                 </div>
                 <div class="mt-6">
                     <button onclick="handleDataSubmit()" id="submitBtn" class="bg-[#1e3a8a] text-white px-8 py-3 rounded-lg font-bold shadow-md hover:bg-blue-700 transition uppercase">Update Dashboard</button>
+                    <button id="cancelBtn" onclick="resetForm()" class="hidden bg-gray-400 text-white px-6 py-3 rounded-lg font-bold ml-2">Cancel</button>
                 </div>
             </div>
 
-            <!-- MAIN TABLE -->
+            <!-- TABLE -->
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
                 <table class="w-full text-left">
                     <thead class="bg-gray-50 border-b text-gray-600 uppercase text-[10px]">
@@ -87,6 +88,7 @@
                             <th class="p-4">Service</th>
                             <th class="p-4">Target Date</th>
                             <th class="p-4">Assign To</th>
+                            <th class="p-4">Last Updated (IST)</th>
                             <th class="p-4 text-center">Status</th>
                             <th class="p-4 text-center">Actions</th>
                         </tr>
@@ -96,22 +98,19 @@
             </div>
         </div>
 
-        <!-- CATEGORY SECTIONS -->
-        <div id="gst" class="section"><h2 class="text-3xl font-bold mb-6 border-l-8 border-yellow-500 pl-4 uppercase">GST Management</h2><div id="gstTable"></div></div>
-        <div id="mca" class="section"><h2 class="text-3xl font-bold mb-6 border-l-8 border-blue-900 pl-4 uppercase">MCA Compliance</h2><div id="mcaTable"></div></div>
-        <div id="it" class="section"><h2 class="text-3xl font-bold mb-6 border-l-8 border-green-600 pl-4 uppercase">Income Tax</h2><div id="itTable"></div></div>
+        <div id="gst" class="section"><h2 class="text-3xl font-bold mb-6">GST Management</h2><div id="gstTable"></div></div>
+        <div id="mca" class="section"><h2 class="text-3xl font-bold mb-6">MCA Compliance</h2><div id="mcaTable"></div></div>
+        <div id="it" class="section"><h2 class="text-3xl font-bold mb-6">Income Tax</h2><div id="itTable"></div></div>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwvazAY3u-HOy3PjtB-4zi7qPhbKEjOUg2J5G2WO-OHZQ58qaMZsKX39bg5FyOR7_6BVg/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbx57dm7Jz0Vb4GzLfqQCQQUNZrL8SsTpHH-VXKWp-w8fnljLzIOv8EgcNU_7li1tmB1Sg/exec'; // Replace with your URL
         let dataList = [];
 
         async function loadData() {
-            try {
-                const res = await fetch(scriptURL);
-                dataList = await res.json();
-                refreshUI();
-            } catch (e) { console.error("Load failed"); }
+            const res = await fetch(scriptURL);
+            dataList = await res.json();
+            refreshUI();
         }
 
         function refreshUI() {
@@ -120,7 +119,7 @@
             
             const cats = ['gst', 'mca', 'it'];
             cats.forEach(c => {
-                document.getElementById(c + 'Table').innerHTML = `<div class="bg-white rounded-2xl shadow-md overflow-hidden"><table class="w-full text-left"><thead class="bg-gray-50 border-b text-[10px] uppercase text-gray-600"><tr><th class="p-4">Client</th><th class="p-4">Assign To</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Actions</th></tr></thead><tbody id="${c}Body"></tbody></table></div>`;
+                document.getElementById(c + 'Table').innerHTML = `<div class="bg-white rounded-2xl shadow-md overflow-hidden"><table class="w-full text-left"><thead class="bg-gray-50 border-b text-[10px] uppercase"><tr><th class="p-4">Client</th><th class="p-4">Assign To</th><th class="p-4">Updated At</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Actions</th></tr></thead><tbody id="${c}Body"></tbody></table></div>`;
             });
 
             let comp = 0, pend = 0;
@@ -128,14 +127,12 @@
             [...dataList].reverse().forEach(item => {
                 if(item.status === 'Completed') comp++; else pend++;
 
-                let cleanDate = item.date;
-                if(cleanDate && cleanDate.includes('T')) cleanDate = new Date(cleanDate).toLocaleDateString('en-GB');
-
-                const rowContent = `
+                const rowHtml = `
                     <td class="p-4 font-semibold">${item.name}</td>
                     <td class="p-4 text-blue-700 font-bold uppercase text-xs">${item.service}</td>
-                    <td class="p-4 text-xs">${cleanDate || '-'}</td>
-                    <td class="p-4 font-bold text-purple-700"><i class="fas fa-user-tie mr-1 text-gray-400"></i> ${item.assign || 'None'}</td>
+                    <td class="p-4 text-xs">${item.date ? new Date(item.date).toLocaleDateString('en-GB') : '-'}</td>
+                    <td class="p-4 font-bold text-purple-700"><i class="fas fa-user-circle mr-1"></i> ${item.assign || 'None'}</td>
+                    <td class="p-4 text-[10px] font-mono text-gray-500">${item.timestamp || '-'}</td>
                     <td class="p-4 text-center">
                         <span class="px-3 py-1 rounded-full text-[9px] font-bold uppercase ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${item.status}</span>
                     </td>
@@ -144,10 +141,15 @@
                         <button onclick="deleteRow('${item.rowId}')" class="text-red-400 mx-1"><i class="fas fa-trash-alt"></i></button>
                     </td>`;
 
-                mainTable.innerHTML += `<tr class="border-b hover:bg-blue-50">${rowContent}</tr>`;
+                mainTable.innerHTML += `<tr class="border-b hover:bg-blue-50 transition">${rowHtml}</tr>`;
 
                 let s = item.service.toLowerCase();
-                let catRow = `<td class="p-4 font-bold">${item.name}</td><td class="p-4 text-purple-700 font-bold">${item.assign || '-'}</td><td class="p-4 text-center">${item.status}</td><td class="p-4 text-center"><button onclick="startEdit('${item.rowId}')">✏️</button></td>`;
+                let catRow = `
+                    <td class="p-4 font-bold">${item.name}</td>
+                    <td class="p-4 text-purple-700 font-bold">${item.assign || '-'}</td>
+                    <td class="p-4 text-[9px] font-mono text-gray-400">${item.timestamp || '-'}</td>
+                    <td class="p-4 text-center">${item.status}</td>
+                    <td class="p-4 text-center"><button onclick="startEdit('${item.rowId}')">✏️</button></td>`;
                 
                 if(s.includes('gst')) document.getElementById('gstBody').innerHTML += `<tr class="border-b">${catRow}</tr>`;
                 if(s.includes('mca')) document.getElementById('mcaBody').innerHTML += `<tr class="border-b">${catRow}</tr>`;
@@ -162,6 +164,11 @@
         async function handleDataSubmit() {
             const rowId = document.getElementById('editRowId').value;
             const btn = document.getElementById('submitBtn');
+            
+            // Generate Indian Standard Time (IST)
+            const now = new Date();
+            const istTime = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
+
             const payload = {
                 action: rowId ? "edit" : "add",
                 rowId: rowId || null,
@@ -171,10 +178,8 @@
                 status: document.getElementById('status').value,
                 assign: document.getElementById('assignTo').value,
                 remark: document.getElementById('remarks').value || "-",
-                timestamp: new Date().toLocaleString('en-IN')
+                timestamp: istTime // Yahan India ka time ja raha hai
             };
-
-            if(!payload.name) return alert("Client Name dalo!");
 
             btn.disabled = true; btn.innerText = "Syncing...";
             await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
@@ -200,7 +205,7 @@
             document.getElementById('remarks').value = item.remark;
             document.getElementById('editRowId').value = id;
             document.getElementById('submitBtn').innerText = "Save Changes";
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            document.getElementById('cancelBtn').classList.remove('hidden');
         }
 
         function resetForm() {
@@ -211,6 +216,7 @@
             document.getElementById('remarks').value = "";
             document.getElementById('assignTo').value = "";
             document.getElementById('submitBtn').innerText = "Update Dashboard";
+            document.getElementById('cancelBtn').classList.add('hidden');
         }
 
         function showSection(id, btn) {
