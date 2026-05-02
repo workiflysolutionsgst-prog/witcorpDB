@@ -3,362 +3,535 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witcorp India Advisors LLP | Compliance Portal</title>
+    <title>Witcorp India Advisors LLP | Full Compliance Portal</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
-        
         body { 
             font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc;
         }
 
+        /* Sidebar Navigation Active State */
         .nav-btn.active { 
             background-color: #fbbf24; 
             color: #1e3a8a; 
-            font-weight: bold; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+            font-weight: 800; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: scale(1.02);
         }
 
+        /* Section Visibility Toggle */
         .section { 
             display: none; 
-            transition: opacity 0.3s ease-in-out; 
+            animation: fadeIn 0.4s ease-in-out;
         }
 
         .section.active { 
             display: block; 
-            opacity: 1; 
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar Styling */
         .custom-scroll::-webkit-scrollbar { 
-            width: 6px; 
+            width: 8px; 
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
         }
 
         .custom-scroll::-webkit-scrollbar-thumb { 
             background: #cbd5e1; 
-            border-radius: 10px; 
+            border-radius: 100px; 
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Button Hover Effects */
+        .nav-btn { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
         .nav-btn:hover:not(.active) { 
-            background-color: rgba(255,255,255,0.1); 
-            transform: translateX(5px); 
+            background-color: rgba(255, 255, 255, 0.1); 
+            padding-left: 1.75rem;
         }
 
-        .nav-btn { 
-            transition: all 0.2s ease; 
-        }
-
+        /* Form Input States */
         input:disabled, select:disabled {
             background-color: #f1f5f9 !important;
             color: #94a3b8 !important;
             cursor: not-allowed;
             border-color: #e2e8f0 !important;
         }
+
+        /* Search Input Focus Glow */
+        #globalSearch:focus {
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
+            border-color: #1e3a8a;
+        }
+
+        /* Card Hover */
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
-<body class="bg-[#f8fafc] flex h-screen overflow-hidden">
+<body class="flex h-screen overflow-hidden">
 
-    <!-- SIDEBAR NAVIGATION -->
-    <aside class="w-80 bg-[#1e3a8a] text-white flex flex-col shadow-2xl z-50">
-        <div class="p-8 pb-6 border-b border-blue-800/50 flex flex-col items-center">
-            <div class="w-24 h-24 mb-4 border-4 border-yellow-400 p-1 rounded-3xl shadow-2xl bg-white flex items-center justify-center rotate-3 hover:rotate-0 transition-transform duration-500">
-                <i class="fas fa-shield-alt text-blue-900 text-4xl"></i>
+    <!-- SIDEBAR COMPONENT -->
+    <aside class="w-80 bg-[#1e3a8a] text-white flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.1)] z-50">
+        <!-- Logo Section -->
+        <div class="p-8 pb-10 border-b border-blue-800/50 flex flex-col items-center">
+            <div class="w-24 h-24 mb-6 border-4 border-yellow-400 p-2 rounded-[2rem] shadow-2xl bg-white flex items-center justify-center rotate-3 hover:rotate-0 transition-all duration-500 cursor-pointer">
+                <i class="fas fa-landmark text-blue-900 text-4xl"></i>
             </div>
-            <h1 class="text-xl font-black text-yellow-400 text-center leading-tight uppercase tracking-tighter">
+            <h1 class="text-2xl font-black text-yellow-400 text-center leading-tight uppercase tracking-tighter">
                 Witcorp India <br> 
-                <span class="text-white text-sm font-light tracking-[0.2em]">Advisors LLP</span>
+                <span class="text-white text-sm font-medium tracking-[0.25em] opacity-80">Advisors LLP</span>
             </h1>
         </div>
         
-        <nav id="sidebarNav" class="flex-1 p-6 space-y-3 mt-4 custom-scroll overflow-y-auto">
-            <button onclick="showSection('dashboard')" class="nav-btn active p-4 rounded-xl text-left w-full flex items-center gap-4">
-                <i class="fas fa-th-large w-5"></i> Dashboard
+        <!-- Navigation Menu -->
+        <nav id="sidebarNav" class="flex-1 p-6 space-y-4 mt-6 custom-scroll overflow-y-auto">
+            <button onclick="showSection('dashboard')" class="nav-btn active p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
+                <i class="fas fa-grid-2 w-6 text-xl group-hover:rotate-12 transition-transform"></i> 
+                <span class="tracking-wide">Main Dashboard</span>
             </button>
             
-            <button onclick="showSection('gst')" class="nav-btn p-4 rounded-xl text-left w-full flex items-center gap-4">
-                <i class="fas fa-file-invoice-dollar w-5 text-yellow-400"></i> GST Management
+            <button onclick="showSection('gst')" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
+                <i class="fas fa-receipt w-6 text-xl text-yellow-400 group-hover:scale-110 transition-transform"></i> 
+                <span class="tracking-wide">GST Management</span>
             </button>
             
-            <button onclick="showSection('mca')" class="nav-btn p-4 rounded-xl text-left w-full flex items-center gap-4">
-                <i class="fas fa-building w-5 text-blue-300"></i> MCA Compliance
+            <button onclick="showSection('mca')" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
+                <i class="fas fa-university w-6 text-xl text-blue-300 group-hover:scale-110 transition-transform"></i> 
+                <span class="tracking-wide">MCA & ROC Filings</span>
             </button>
             
-            <button onclick="showSection('it')" class="nav-btn p-4 rounded-xl text-left w-full flex items-center gap-4">
-                <i class="fas fa-chart-line w-5 text-green-400"></i> Income Tax
+            <button onclick="showSection('it')" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
+                <i class="fas fa-coins w-6 text-xl text-emerald-400 group-hover:scale-110 transition-transform"></i> 
+                <span class="tracking-wide">Income Tax (IT)</span>
             </button>
 
-            <button onclick="showSection('pt')" class="nav-btn p-4 rounded-xl text-left w-full flex items-center gap-4">
-                <i class="fas fa-briefcase w-5 text-orange-400"></i> PT (Professional Tax)
+            <button onclick="showSection('pt')" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
+                <i class="fas fa-stamp w-6 text-xl text-orange-400 group-hover:scale-110 transition-transform"></i> 
+                <span class="tracking-wide">Professional Tax</span>
             </button>
         </nav>
         
-        <div class="p-8 border-t border-blue-800/50 bg-[#1a337a]">
-            <div class="bg-blue-900/50 p-4 rounded-2xl mb-4 border border-blue-700">
-                <p class="text-[11px] text-blue-200 font-medium italic text-center leading-relaxed">
-                    "Strategic Wisdom. Global Growth."
+        <!-- Footer Info -->
+        <div class="p-8 border-t border-blue-800/50 bg-[#162a63]">
+            <div class="bg-blue-900/60 p-5 rounded-2xl mb-6 border border-blue-700/50">
+                <p class="text-[11px] text-blue-100 font-medium italic text-center leading-relaxed">
+                    "Providing Strategic Wisdom for Your Global Growth"
                 </p>
             </div>
             <div class="text-center">
-                <p class="text-[10px] text-yellow-500 font-bold uppercase tracking-[0.3em] mb-1">Developed By</p>
-                <p class="text-sm font-black text-white">Kamlesh Yadav</p>
+                <p class="text-[10px] text-yellow-500 font-black uppercase tracking-[0.4em] mb-2">Architected By</p>
+                <p class="text-base font-black text-white tracking-tight">Kamlesh Yadav</p>
             </div>
         </div>
     </aside>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 overflow-y-auto custom-scroll relative">
+    <!-- MAIN VIEWPORT -->
+    <main class="flex-1 overflow-y-auto custom-scroll bg-slate-50 relative">
         
-        <div id="dashboard" class="section active p-10">
-            <header class="flex justify-between items-center mb-10">
-                <div>
-                    <h2 class="text-3xl font-black text-slate-800 tracking-tight uppercase">Compliance Dashboard</h2>
-                    <p class="text-slate-400 font-medium">Real-time tracking and management portal</p>
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboard" class="section active p-12">
+            
+            <!-- HEADER WITH SEARCH -->
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+                <div class="space-y-1">
+                    <h2 class="text-4xl font-black text-slate-800 tracking-tight uppercase">Control Center</h2>
+                    <p class="text-slate-500 font-semibold flex items-center gap-2">
+                        <span class="w-2 h-2 bg-blue-600 rounded-full"></span> 
+                        Witcorp Hub - Data Management Portal
+                    </p>
                 </div>
-                <div class="bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-                    <div class="text-right">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">System Status</p>
-                        <p class="text-sm font-black text-green-500">CLOUD SYNC ACTIVE</p>
+
+                <!-- NEW SEARCH FEATURE -->
+                <div class="relative w-full md:w-[450px]">
+                    <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                        <i class="fas fa-magnifying-glass text-slate-400 text-lg"></i>
                     </div>
-                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <input type="text" id="globalSearch" onkeyup="handleSearch()" 
+                           placeholder="Search Company, Staff or Service..." 
+                           class="w-full bg-white border-2 border-slate-200 pl-16 pr-8 py-5 rounded-[2rem] outline-none transition-all shadow-sm font-semibold text-slate-700 placeholder:text-slate-300">
+                </div>
+
+                <div class="hidden lg:flex bg-white px-8 py-4 rounded-[2rem] shadow-sm border border-slate-200 items-center gap-6">
+                    <div class="text-right">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Network Status</p>
+                        <p class="text-sm font-extrabold text-emerald-600 uppercase">Secure Sync Active</p>
+                    </div>
+                    <div class="relative">
+                        <div class="w-4 h-4 bg-emerald-500 rounded-full animate-ping absolute"></div>
+                        <div class="w-4 h-4 bg-emerald-500 rounded-full relative"></div>
+                    </div>
                 </div>
             </header>
             
-            <!-- COUNTERS -->
-            <div class="grid grid-cols-4 gap-8 mb-12">
-                <div class="bg-white p-7 rounded-[2rem] shadow-sm border-b-8 border-blue-600">
-                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Total Cases</p>
-                    <p id="totalCount" class="text-5xl font-black text-slate-800 mt-2">0</p>
+            <!-- ANALYTICS COUNTERS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+                <div class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-blue-600">
+                    <div class="flex justify-between items-start">
+                        <p class="text-slate-400 font-black uppercase text-[11px] tracking-[0.2em]">Total Portfolios</p>
+                        <i class="fas fa-folder-open text-blue-100 text-2xl"></i>
+                    </div>
+                    <p id="totalCount" class="text-6xl font-black text-slate-800 mt-4 tracking-tighter">0</p>
                 </div>
-                <div class="bg-white p-7 rounded-[2rem] shadow-sm border-b-8 border-emerald-500">
-                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Completed</p>
-                    <p id="completedCount" class="text-5xl font-black text-emerald-600 mt-2">0</p>
+                
+                <div class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-emerald-500">
+                    <div class="flex justify-between items-start">
+                        <p class="text-slate-400 font-black uppercase text-[11px] tracking-[0.2em]">Task Success</p>
+                        <i class="fas fa-check-double text-emerald-100 text-2xl"></i>
+                    </div>
+                    <p id="completedCount" class="text-6xl font-black text-emerald-600 mt-4 tracking-tighter">0</p>
                 </div>
-                <div class="bg-white p-7 rounded-[2rem] shadow-sm border-b-8 border-rose-500">
-                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Pending</p>
-                    <p id="pendingCount" class="text-5xl font-black text-rose-600 mt-2">0</p>
+
+                <div class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-rose-500">
+                    <div class="flex justify-between items-start">
+                        <p class="text-slate-400 font-black uppercase text-[11px] tracking-[0.2em]">Awaiting Action</p>
+                        <i class="fas fa-clock text-rose-100 text-2xl"></i>
+                    </div>
+                    <p id="pendingCount" class="text-6xl font-black text-rose-600 mt-4 tracking-tighter">0</p>
                 </div>
-                <div class="bg-white p-7 rounded-[2rem] shadow-sm border-b-8 border-amber-400">
-                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Portal Status</p>
-                    <p class="text-2xl font-black text-amber-500 mt-4 uppercase">Live Sync</p>
+
+                <div class="stat-card bg-[#1e3a8a] p-8 rounded-[2.5rem] shadow-2xl">
+                    <p class="text-blue-300 font-black uppercase text-[11px] tracking-[0.2em]">Operational Mode</p>
+                    <div class="flex items-center gap-3 mt-6 text-white">
+                        <i class="fas fa-bolt text-yellow-400 text-3xl"></i>
+                        <span class="text-2xl font-black uppercase tracking-tight">Real-Time</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- FORM -->
-            <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl mb-12 border border-slate-50 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-3 h-full bg-blue-900"></div>
-                <h3 id="formHeader" class="text-xl font-black mb-8 text-slate-800 uppercase flex items-center gap-3">
-                    <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-sm"><i class="fas fa-plus"></i></span>
-                    Register New Record
-                </h3>
+            <!-- INPUT FORM COMPONENT -->
+            <div class="bg-white p-12 rounded-[3rem] shadow-xl mb-16 border border-slate-100 relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-4 h-full bg-[#1e3a8a] group-hover:bg-yellow-400 transition-colors duration-500"></div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="flex items-center gap-4 mb-10">
+                    <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+                        <i class="fas fa-database text-xl"></i>
+                    </div>
+                    <h3 id="formHeader" class="text-2xl font-black text-slate-800 uppercase tracking-tight">Entry Management System</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
                     <input type="hidden" id="editRowId">
                     
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Client Name</label>
-                        <input id="clientName" type="text" class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    <div class="space-y-3">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Client Name / Entity</label>
+                        <input id="clientName" type="text" placeholder="e.g. Witcorp Pvt Ltd" 
+                               class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold">
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Service Type</label>
-                        <input id="serviceType" type="text" placeholder="GST / MCA / IT / PT" class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    <div class="space-y-3">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Type of Service</label>
+                        <input id="serviceType" type="text" placeholder="GST, MCA, IT, etc." 
+                               class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold uppercase">
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Deadline Date</label>
-                        <input id="dueDate" type="date" class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all text-slate-600">
+                    <div class="space-y-3">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Compliance Deadline</label>
+                        <input id="dueDate" type="date" 
+                               class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-slate-600">
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Job Status</label>
-                        <select id="status" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white appearance-none font-bold">
-                            <option value="Pending">🔴 Pending</option>
-                            <option value="Completed">🟢 Completed</option>
+                    <div class="space-y-3">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Current Status</label>
+                        <select id="status" class="w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-2xl outline-none focus:border-blue-500 focus:bg-white appearance-none font-black text-slate-700">
+                            <option value="Pending">🔴 PENDING ACTION</option>
+                            <option value="Completed">🟢 TASK COMPLETED</option>
                         </select>
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Assign To</label>
-                        <input id="assignTo" type="text" placeholder="Employee Name" class="edit-lock w-full bg-slate-50 border-2 border-blue-200 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-black text-blue-800 uppercase">
+                    <div class="space-y-3">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Assigned Specialist</label>
+                        <input id="assignTo" type="text" placeholder="Staff Name" 
+                               class="edit-lock w-full bg-blue-50/50 border-2 border-blue-100 p-5 rounded-2xl outline-none focus:border-blue-600 focus:bg-white transition-all font-black text-blue-900 uppercase">
                     </div>
 
-                    <div class="space-y-2 md:col-span-3">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Professional Remarks</label>
-                        <input id="remarks" type="text" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    <div class="space-y-3 lg:col-span-3">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Executive Remarks & Notes</label>
+                        <input id="remarks" type="text" placeholder="Add specific filing details or instructions..." 
+                               class="w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-medium">
                     </div>
                 </div>
 
-                <div class="mt-10 flex gap-5">
-                    <button onclick="handleDataSubmit()" id="submitBtn" class="bg-[#1e3a8a] text-white px-12 py-4 rounded-2xl font-black shadow-xl hover:bg-blue-700 hover:-translate-y-1 active:scale-95 transition-all uppercase tracking-widest text-sm">Sync To Cloud</button>
-                    <button id="cancelBtn" onclick="resetForm()" class="hidden bg-slate-200 text-slate-600 px-10 py-4 rounded-2xl font-bold hover:bg-slate-300 transition-all uppercase text-sm">Cancel Edit</button>
+                <div class="mt-12 flex flex-wrap gap-6">
+                    <button onclick="handleDataSubmit()" id="submitBtn" 
+                            class="bg-[#1e3a8a] text-white px-14 py-5 rounded-2xl font-black shadow-[0_15px_30px_rgba(30,58,138,0.3)] hover:bg-blue-700 hover:-translate-y-1 active:scale-95 transition-all uppercase tracking-[0.2em] text-sm flex items-center gap-3">
+                        <i class="fas fa-cloud-upload-alt"></i> Sync To Cloud
+                    </button>
+                    <button id="cancelBtn" onclick="resetForm()" 
+                            class="hidden bg-slate-200 text-slate-600 px-10 py-5 rounded-2xl font-black hover:bg-slate-300 transition-all uppercase tracking-widest text-xs">
+                        Discard Changes
+                    </button>
                 </div>
             </div>
 
-            <!-- MAIN TABLE -->
-            <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100">
+            <!-- PRIMARY DATA TABLE -->
+            <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-slate-100">
+                <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+                    <h4 class="font-black text-slate-700 uppercase tracking-widest text-sm flex items-center gap-3">
+                        <i class="fas fa-list-ul text-blue-600"></i> Active Master Records
+                    </h4>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Showing last updated entries first</span>
+                </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left">
                         <thead>
-                            <tr class="bg-slate-50/50 border-b border-slate-100">
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client Name</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Service</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Assign</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Deadline</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Remarks</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Updated (IST)</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Status</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Actions</th>
+                            <tr class="bg-white border-b border-slate-100">
+                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Client Name</th>
+                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Service</th>
+                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Assign</th>
+                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Deadline</th>
+                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Remarks</th>
+                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Log (IST)</th>
+                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Status</th>
+                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Manage</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody" class="divide-y divide-slate-50"></tbody>
+                        <tbody id="tableBody" class="divide-y divide-slate-50">
+                            <!-- Rows loaded by JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- CATEGORY SECTIONS (Bina Change ke) -->
-        <div id="gst" class="section p-10">
-            <h2 class="text-3xl font-black mb-10 border-l-8 border-yellow-400 pl-6 uppercase tracking-tight">GST Filings</h2>
+        <!-- CATEGORICAL SUB-SECTIONS -->
+        <div id="gst" class="section p-12">
+            <div class="flex items-center gap-6 mb-12">
+                <div class="w-16 h-16 bg-yellow-400 rounded-3xl flex items-center justify-center shadow-lg shadow-yellow-200">
+                    <i class="fas fa-file-invoice text-blue-900 text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Goods & Services Tax (GST)</h2>
+            </div>
             <div id="gstTable"></div>
         </div>
 
-        <div id="mca" class="section p-10">
-            <h2 class="text-3xl font-black mb-10 border-l-8 border-blue-900 pl-6 uppercase tracking-tight">MCA & ROC</h2>
+        <div id="mca" class="section p-12">
+            <div class="flex items-center gap-6 mb-12">
+                <div class="w-16 h-16 bg-blue-900 rounded-3xl flex items-center justify-center shadow-lg shadow-blue-200 text-white">
+                    <i class="fas fa-building text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-black text-slate-800 uppercase tracking-tight">MCA & ROC Compliance</h2>
+            </div>
             <div id="mcaTable"></div>
         </div>
 
-        <div id="it" class="section p-10">
-            <h2 class="text-3xl font-black mb-10 border-l-8 border-emerald-500 pl-6 uppercase tracking-tight">Income Tax</h2>
+        <div id="it" class="section p-12">
+            <div class="flex items-center gap-6 mb-12">
+                <div class="w-16 h-16 bg-emerald-500 rounded-3xl flex items-center justify-center shadow-lg shadow-emerald-200 text-white">
+                    <i class="fas fa-chart-pie text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Income Tax Filings</h2>
+            </div>
             <div id="itTable"></div>
         </div>
 
-        <div id="pt" class="section p-10">
-            <h2 class="text-3xl font-black mb-10 border-l-8 border-orange-500 pl-6 uppercase tracking-tight">Professional Tax (PT)</h2>
+        <div id="pt" class="section p-12">
+            <div class="flex items-center gap-6 mb-12">
+                <div class="w-16 h-16 bg-orange-500 rounded-3xl flex items-center justify-center shadow-lg shadow-orange-200 text-white">
+                    <i class="fas fa-briefcase text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Professional Tax (PT)</h2>
+            </div>
             <div id="ptTable"></div>
         </div>
 
     </main>
 
+    <!-- SYSTEM SCRIPTS -->
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxfwWERksMg6-jECixBT868LLoIhSxbwIm33Nc9u96YXI3Lr2Xn_4Ex_WnXgbr33mC9Tw/exec';
-        let dataList = [];
+        // REPLACE WITH YOUR APPS SCRIPT URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwvThPfhaVXrjLjX6XRaiMtbUDKy4ILlUX5jfvRmarYtKImMxSW0beZIcgjgDhOauJLxA/exec';
         
-        window.onload = loadData;
+        let dataList = [];
+        let searchResults = [];
+        let isSearching = false;
 
+        // Auto Load on Init
+        window.addEventListener('DOMContentLoaded', loadData);
+
+        // Fetch Data from Google Sheets
         async function loadData() {
             try {
-                const res = await fetch(scriptURL);
-                dataList = await res.json();
-                refreshUI();
-            } catch (e) { 
-                console.error("Database connection failed"); 
+                const response = await fetch(scriptURL);
+                dataList = await response.json();
+                renderUI();
+            } catch (err) {
+                console.error("Critical: Data retrieval failed.", err);
+                alert("Database link down. Check script URL.");
             }
         }
 
-        // --- NEW INDIAN TIME FORMATTER ---
-        function formatIndianTime(timeVal) {
-            if(!timeVal) return '---';
-            const d = new Date(timeVal);
-            if(isNaN(d.getTime())) return timeVal; // Agar pehle se string hai toh wahi dikhao
-            return d.toLocaleString('en-IN', {
-                day: '2-digit', month: 'short', year: 'numeric',
-                hour: '2-digit', minute: '2-digit', hour12: true
+        // Global Search Logic
+        function handleSearch() {
+            const query = document.getElementById('globalSearch').value.toLowerCase().trim();
+            if (query.length > 0) {
+                isSearching = true;
+                searchResults = dataList.filter(item => {
+                    return (
+                        item.name.toLowerCase().includes(query) || 
+                        item.assign.toLowerCase().includes(query) ||
+                        item.service.toLowerCase().includes(query)
+                    );
+                });
+            } else {
+                isSearching = false;
+            }
+            renderUI();
+        }
+
+        // IST Time Formatter
+        function formatTimeIST(val) {
+            if (!val) return '---';
+            const date = new Date(val);
+            if (isNaN(date.getTime())) return val;
+            return date.toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+                timeZone: 'Asia/Kolkata'
             });
         }
 
-        function refreshUI() {
-            const mainTable = document.getElementById('tableBody');
-            mainTable.innerHTML = "";
+        // Dynamic UI Rendering
+        function renderUI() {
+            const mainTbody = document.getElementById('tableBody');
+            mainTbody.innerHTML = "";
             
-            const sections = ['gst', 'mca', 'it', 'pt'];
-            sections.forEach(s => {
-                const cont = document.getElementById(s + 'Table');
-                if(cont) {
-                    cont.innerHTML = `
-                        <div class="bg-white rounded-[2rem] shadow-lg overflow-hidden border border-slate-100">
-                            <table class="w-full text-left">
-                                <thead class="bg-slate-50 border-b text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                    <tr>
-                                        <th class="p-6">Client Name</th>
-                                        <th class="p-6 text-center">Assign</th>
-                                        <th class="p-6">Remarks</th>
-                                        <th class="p-6 text-center">Deadline</th>
-                                        <th class="p-6 text-center">Updated (IST)</th>
-                                        <th class="p-6 text-center">Status</th>
-                                        <th class="p-6 text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="${s}Body" class="divide-y divide-slate-50"></tbody>
-                            </table>
-                        </div>`;
+            // Clear categorical tables
+            const categories = ['gst', 'mca', 'it', 'pt'];
+            categories.forEach(cat => {
+                const container = document.getElementById(cat + 'Table');
+                if (container) {
+                    container.innerHTML = createTableTemplate(cat);
                 }
             });
 
-            dataList.slice().reverse().forEach((item) => {
-                let cleanDate = item.date;
-                if(cleanDate && cleanDate.includes('T')) {
-                    cleanDate = new Date(cleanDate).toLocaleDateString('en-GB');
-                }
+            const sourceData = isSearching ? searchResults : dataList;
 
-                // Updated IST Formatting
-                const displayTime = formatIndianTime(item.timestamp);
+            sourceData.slice().reverse().forEach((item) => {
+                const deadline = item.date ? new Date(item.date).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'}) : '---';
+                const logTime = formatTimeIST(item.timestamp);
+                const statusClass = item.status === 'Completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100';
 
-                const rowHtml = `
-                    <td class="p-6"><div class="font-bold text-slate-700">${item.name}</div></td>
-                    <td class="p-6 text-center"><span class="bg-blue-50 text-blue-700 px-4 py-1.5 rounded-lg font-black text-[10px] uppercase border border-blue-100">${item.service}</span></td>
-                    <td class="p-6 text-center font-black text-blue-600 text-[11px] uppercase">${item.assign || '---'}</td>
-                    <td class="p-6 text-center font-bold text-slate-500">${cleanDate || '---'}</td>
-                    <td class="p-6"><div class="text-xs italic text-slate-400 max-w-[150px] truncate" title="${item.remark}">${item.remark}</div></td>
-                    <td class="p-6 font-black text-[10px] text-blue-900/60">${displayTime}</td>
-                    <td class="p-6 text-center">
-                        <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${item.status==='Completed'?'bg-emerald-50 text-emerald-600 border-emerald-100':'bg-rose-50 text-rose-600 border-rose-100'}">${item.status}</span>
+                const rowContent = `
+                    <td class="p-8 font-extrabold text-slate-800 text-base">${item.name}</td>
+                    <td class="p-8 text-center">
+                        <span class="bg-blue-50 text-blue-700 px-5 py-2 rounded-xl font-black text-[10px] uppercase border border-blue-100 tracking-tighter">
+                            ${item.service}
+                        </span>
                     </td>
-                    <td class="p-6 text-center">
-                        <div class="flex justify-center gap-2">
-                            <button onclick="startEdit('${item.rowId}')" class="w-9 h-9 flex items-center justify-center bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all"><i class="fas fa-edit text-xs"></i></button>
-                            <button onclick="deleteRow('${item.rowId}')" class="w-9 h-9 flex items-center justify-center bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-600 hover:text-white transition-all"><i class="fas fa-trash text-xs"></i></button>
+                    <td class="p-8 text-center font-black text-blue-600 text-[11px] uppercase tracking-wide">
+                        <i class="fas fa-user-circle mr-2 opacity-30"></i>${item.assign || 'UNASSIGNED'}
+                    </td>
+                    <td class="p-8 text-center font-bold text-slate-500">${deadline}</td>
+                    <td class="p-8 text-xs font-medium text-slate-400 italic max-w-[200px] truncate">${item.remark}</td>
+                    <td class="p-8 font-black text-[10px] text-blue-900/60 leading-tight">${logTime}</td>
+                    <td class="p-8 text-center">
+                        <span class="px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.15em] border ${statusClass}">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td class="p-8 text-center">
+                        <div class="flex justify-center gap-3">
+                            <button onclick="startEdit('${item.rowId}')" class="w-10 h-10 flex items-center justify-center bg-blue-50 text-blue-600 rounded-2xl hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                                <i class="fas fa-pencil-alt text-sm"></i>
+                            </button>
+                            <button onclick="deleteEntry('${item.rowId}')" class="w-10 h-10 flex items-center justify-center bg-rose-50 text-rose-600 rounded-2xl hover:bg-rose-600 hover:text-white transition-all shadow-sm">
+                                <i class="fas fa-trash-alt text-sm"></i>
+                            </button>
                         </div>
-                    </td>`;
-
-                mainTable.innerHTML += `<tr class="hover:bg-blue-50/50 transition-colors">${rowHtml}</tr>`;
-
-                const sectionRow = `
-                    <td class="p-6 font-bold text-slate-700">${item.name}</td>
-                    <td class="p-6 text-center font-black text-blue-600 text-[11px] uppercase">${item.assign || '---'}</td>
-                    <td class="p-6 italic text-xs text-slate-400">${item.remark}</td>
-                    <td class="p-6 text-center font-bold text-slate-500">${cleanDate || '---'}</td>
-                    <td class="p-6 text-center font-black text-[10px] text-blue-900/60">${displayTime}</td>
-                    <td class="p-6 text-center">
-                        <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase border ${item.status==='Completed'?'bg-emerald-50 text-emerald-600 border-emerald-100':'bg-rose-50 text-rose-600 border-rose-100'}">${item.status}</span>
                     </td>
-                    <td class="p-6 text-center">
-                        <button onclick="startEdit('${item.rowId}')" class="text-blue-500 hover:scale-110 transition-transform"><i class="fas fa-edit"></i></button>
-                    </td>`;
+                `;
 
-                let s = item.service.toLowerCase();
-                if(s.includes('gst')) document.getElementById('gstBody').innerHTML += `<tr>${sectionRow}</tr>`;
-                else if(s.includes('mca') || s.includes('roc')) document.getElementById('mcaBody').innerHTML += `<tr>${sectionRow}</tr>`;
-                else if(s.includes('it') || s.includes('tax') || s.includes('income')) document.getElementById('itBody').innerHTML += `<tr>${sectionRow}</tr>`;
-                else if(s.includes('pt')) document.getElementById('ptBody').innerHTML += `<tr>${sectionRow}</tr>`;
+                mainTbody.innerHTML += `<tr class="hover:bg-slate-50/80 transition-colors group">${rowContent}</tr>`;
+
+                // Push to sub-tables
+                distributeToCategories(item, deadline, logTime, statusClass);
             });
 
-            const completed = dataList.filter(x => x.status === 'Completed').length;
+            // Update Counters
             document.getElementById('totalCount').innerText = dataList.length;
-            document.getElementById('completedCount').innerText = completed;
-            document.getElementById('pendingCount').innerText = dataList.length - completed;
+            document.getElementById('completedCount').innerText = dataList.filter(x => x.status === 'Completed').length;
+            document.getElementById('pendingCount').innerText = dataList.length - dataList.filter(x => x.status === 'Completed').length;
+        }
+
+        function createTableTemplate(id) {
+            return `
+                <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50/50 border-b text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            <tr>
+                                <th class="p-8">Entity</th>
+                                <th class="p-8 text-center">Specialist</th>
+                                <th class="p-8">Notes</th>
+                                <th class="p-8 text-center">Deadline</th>
+                                <th class="p-8 text-center">Sync Log</th>
+                                <th class="p-8 text-center">Status</th>
+                                <th class="p-8 text-center">Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="${id}Body" class="divide-y divide-slate-50"></tbody>
+                    </table>
+                </div>`;
+        }
+
+        function distributeToCategories(item, deadline, logTime, statusClass) {
+            const subRow = `
+                <td class="p-8 font-bold text-slate-800">${item.name}</td>
+                <td class="p-8 text-center font-black text-blue-600 text-[11px] uppercase">${item.assign || '-'}</td>
+                <td class="p-8 italic text-xs text-slate-400">${item.remark}</td>
+                <td class="p-8 text-center font-bold text-slate-500">${deadline}</td>
+                <td class="p-8 text-center font-black text-[10px] text-blue-900/40">${logTime}</td>
+                <td class="p-8 text-center">
+                    <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase border ${statusClass}">${item.status}</span>
+                </td>
+                <td class="p-8 text-center">
+                    <button onclick="startEdit('${item.rowId}')" class="text-blue-500 hover:scale-125 transition-transform"><i class="fas fa-external-link-alt"></i></button>
+                </td>`;
+            
+            const service = item.service.toLowerCase();
+            const targetBody = service.includes('gst') ? 'gstBody' : 
+                               (service.includes('mca') || service.includes('roc')) ? 'mcaBody' :
+                               (service.includes('it') || service.includes('tax')) ? 'itBody' :
+                               service.includes('pt') ? 'ptBody' : null;
+
+            if (targetBody && document.getElementById(targetBody)) {
+                document.getElementById(targetBody).innerHTML += `<tr>${subRow}</tr>`;
+            }
         }
 
         async function handleDataSubmit() {
             const rowId = document.getElementById('editRowId').value;
             const btn = document.getElementById('submitBtn');
+            const istNow = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
             
-            // Indian Time for Sheet
-            const istTime = new Date().toLocaleString('en-IN', {
-                day: '2-digit', month: 'short', year: 'numeric',
-                hour: '2-digit', minute: '2-digit', hour12: true,
-                timeZone: 'Asia/Kolkata'
-            });
-
             const payload = {
                 action: rowId ? "edit" : "add",
                 rowId: rowId || null,
@@ -366,71 +539,70 @@
                 service: document.getElementById('serviceType').value,
                 date: document.getElementById('dueDate').value,
                 status: document.getElementById('status').value,
-                assign: document.getElementById('assignTo').value || "-",
+                assign: document.getElementById('assignTo').value || "N/A",
                 remark: document.getElementById('remarks').value || "-",
-                timestamp: istTime
+                timestamp: istNow
             };
 
-            if(!payload.name || !payload.service) return alert("Details bhariye vai!");
+            if (!payload.name || !payload.service) return alert("Bhai, Client aur Service field bharna zaroori hai!");
 
-            btn.disabled = true; 
-            btn.innerText = "Syncing...";
-            
-            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
-            resetForm();
-            await loadData();
-            btn.disabled = false; 
-            btn.innerText = "Sync To Cloud";
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Syncing Data...`;
+
+            try {
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+                resetForm();
+                await loadData();
+            } catch (e) {
+                alert("Sync Error. Check Internet.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Sync To Cloud`;
+            }
         }
 
         function startEdit(id) {
-            const item = dataList.find(x => x.rowId == id);
-            
+            const entry = dataList.find(x => x.rowId == id);
+            if (!entry) return;
+
             document.getElementById('editRowId').value = id;
-            document.getElementById('clientName').value = item.name;
-            document.getElementById('serviceType').value = item.service;
-            document.getElementById('dueDate').value = item.date ? item.date.split('T')[0] : "";
-            document.getElementById('status').value = item.status;
-            document.getElementById('assignTo').value = item.assign || "";
-            document.getElementById('remarks').value = item.remark;
-            
-            document.querySelectorAll('.edit-lock').forEach(input => input.disabled = true);
-            
-            document.getElementById('formHeader').innerHTML = '✏️ Edit Mode (Client & Assign Locked)';
-            document.getElementById('submitBtn').innerText = "Update Cloud";
+            document.getElementById('clientName').value = entry.name;
+            document.getElementById('serviceType').value = entry.service;
+            document.getElementById('dueDate').value = entry.date ? entry.date.split('T')[0] : "";
+            document.getElementById('status').value = entry.status;
+            document.getElementById('assignTo').value = entry.assign || "";
+            document.getElementById('remarks').value = entry.remark;
+
+            document.querySelectorAll('.edit-lock').forEach(el => el.disabled = true);
+            document.getElementById('formHeader').innerHTML = '<i class="fas fa-edit text-yellow-500"></i> Modifying Existing Entry';
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-check-circle"></i> Commit Changes`;
             document.getElementById('cancelBtn').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function resetForm() {
             document.getElementById('editRowId').value = "";
-            document.getElementById('clientName').value = "";
-            document.getElementById('serviceType').value = "";
-            document.getElementById('dueDate').value = "";
-            document.getElementById('remarks').value = "";
-            document.getElementById('assignTo').value = "";
-            
-            document.querySelectorAll('.edit-lock').forEach(input => input.disabled = false);
-            
-            document.getElementById('formHeader').innerHTML = 'Register New Record';
-            document.getElementById('submitBtn').innerText = "Sync To Cloud";
+            document.querySelectorAll('input').forEach(inp => inp.value = "");
+            document.querySelectorAll('.edit-lock').forEach(el => el.disabled = false);
+            document.getElementById('formHeader').innerHTML = '<i class="fas fa-database text-blue-600"></i> Entry Management System';
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Sync To Cloud`;
             document.getElementById('cancelBtn').classList.add('hidden');
         }
 
-        async function deleteRow(id) {
-            if(confirm("Delete this record permanently?")) {
+        async function deleteEntry(id) {
+            if (confirm("Are you sure? This will remove the record from Witcorp Database.")) {
                 await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: id }) });
                 await loadData();
             }
         }
 
-        function showSection(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => {
-                b.classList.remove('active');
-                if(b.getAttribute('onclick').includes(id)) b.classList.add('active');
-            });
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
         }
     </script>
 </body>
