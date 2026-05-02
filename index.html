@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witcorp India Advisors LLP | Compliance Portal</title>
+    <title>Witcorp India Advisor LLP | Compliance Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -241,7 +241,8 @@
     </main>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyuIY12hFZ3QmFKRByxQ8jFbFJXJSyWjV4-tbXevrDNuD5o8ygckPmQKmKykkG7Um6CMg/exec';
+        // UPDATE WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxlpjSMOhPXBjbJLrD4jcJd2Hr-yPywnngWStLwN0fCEhIjh0ndrISCnXBghcYDIj1yjw/exec';
         let dataList = [];
         
         window.onload = loadData;
@@ -266,22 +267,19 @@
                 if(cont) {
                     cont.innerHTML = `
                         <div class="bg-white rounded-[2rem] shadow-lg overflow-hidden border border-slate-100">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
-                                    <thead class="bg-slate-50 border-b text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                        <tr>
-                                            <th class="p-6">Client Name</th>
-                                            <th class="p-6 text-center">Assign</th>
-                                            <th class="p-6">Remarks</th>
-                                            <th class="p-6 text-center">Deadline</th>
-                                            <th class="p-6">Updated (IST)</th>
-                                            <th class="p-6 text-center">Status</th>
-                                            <th class="p-6 text-center">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="${s}Body" class="divide-y divide-slate-50"></tbody>
-                                </table>
-                            </div>
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 border-b text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    <tr>
+                                        <th class="p-6">Client Name</th>
+                                        <th class="p-6 text-center">Assign</th>
+                                        <th class="p-6">Remarks</th>
+                                        <th class="p-6 text-center">Deadline</th>
+                                        <th class="p-6 text-center">Status</th>
+                                        <th class="p-6 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="${s}Body" class="divide-y divide-slate-50"></tbody>
+                            </table>
                         </div>`;
                 }
             });
@@ -316,12 +314,11 @@
                     <td class="p-6 text-center font-black text-blue-600 text-[11px] uppercase">${item.assign || '---'}</td>
                     <td class="p-6 italic text-xs text-slate-400">${item.remark}</td>
                     <td class="p-6 text-center font-bold text-slate-500">${cleanDate || '---'}</td>
-                    <td class="p-6 font-black text-[10px] text-blue-900/60">${item.timestamp}</td>
                     <td class="p-6 text-center">
                         <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase border ${item.status==='Completed'?'bg-emerald-50 text-emerald-600 border-emerald-100':'bg-rose-50 text-rose-600 border-rose-100'}">${item.status}</span>
                     </td>
                     <td class="p-6 text-center">
-                        <button onclick="startEdit('${item.rowId}', true)" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all"><i class="fas fa-edit text-xs"></i></button>
+                        <button onclick="startEdit('${item.rowId}')" class="text-blue-500 hover:scale-110 transition-transform"><i class="fas fa-edit"></i></button>
                     </td>`;
 
                 let s = item.service.toLowerCase();
@@ -371,14 +368,9 @@
             btn.innerText = "Sync To Cloud";
         }
 
-        function startEdit(id, fromSection = false) {
+        function startEdit(id) {
             const item = dataList.find(x => x.rowId == id);
             
-            // Go to dashboard if coming from another section
-            if(fromSection) {
-                showSection('dashboard');
-            }
-
             document.getElementById('editRowId').value = id;
             document.getElementById('clientName').value = item.name;
             document.getElementById('serviceType').value = item.service;
@@ -387,6 +379,7 @@
             document.getElementById('assignTo').value = item.assign || "";
             document.getElementById('remarks').value = item.remark;
             
+            // LOCKING FIELDS: Client Info aur Assign lock ho jayenge
             document.querySelectorAll('.edit-lock').forEach(input => input.disabled = true);
             
             document.getElementById('formHeader').innerHTML = '✏️ Edit Mode (Client & Assign Locked)';
@@ -403,6 +396,7 @@
             document.getElementById('remarks').value = "";
             document.getElementById('assignTo').value = "";
             
+            // UNLOCK FIELDS
             document.querySelectorAll('.edit-lock').forEach(input => input.disabled = false);
             
             document.getElementById('formHeader').innerHTML = 'Register New Record';
