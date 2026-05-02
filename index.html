@@ -14,6 +14,7 @@
 </head>
 <body class="bg-gray-100 font-sans flex h-screen overflow-hidden">
 
+    <!-- Sidebar -->
     <div class="w-72 bg-[#1e3a8a] text-white flex flex-col shadow-2xl">
         <div class="p-8 pb-3 border-b border-blue-800 flex flex-col items-center text-center">
             <div class="w-24 h-24 mb-3 border-2 border-yellow-400 p-2 rounded-2xl shadow-lg bg-white flex items-center justify-center">
@@ -26,6 +27,7 @@
             <button onclick="showSection('dashboard')" class="nav-btn active p-3 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-home w-5"></i> Dashboard</button>
             <button onclick="showSection('gst')" class="nav-btn p-3 hover:bg-blue-800 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-file-invoice w-5"></i> GST Management</button>
             <button onclick="showSection('mca')" class="nav-btn p-3 hover:bg-blue-800 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-building w-5"></i> MCA Compliance</button>
+            <!-- Income Tax Section Button -->
             <button onclick="showSection('it')" class="nav-btn p-3 hover:bg-blue-800 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-percentage w-5"></i> Income Tax</button>
         </nav>
         
@@ -39,6 +41,7 @@
         </div>
     </div>
 
+    <!-- Main Content -->
     <div class="flex-1 p-8 overflow-y-auto">
         <div id="dashboard" class="section active">
             <h2 class="text-3xl font-bold mb-8 text-gray-800 uppercase tracking-wide">Compliance Control Center</h2>
@@ -62,6 +65,7 @@
                 </div>
             </div>
 
+            <!-- Form -->
             <div class="bg-white p-8 rounded-2xl shadow-lg mb-8 border border-gray-100">
                 <h3 id="formHeader" class="font-bold mb-6 text-xl text-blue-900 border-l-4 border-blue-900 pl-3 uppercase">Enter Work Details</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -99,14 +103,14 @@
             </div>
         </div>
 
+        <!-- Sections for Individual Services -->
         <div id="gst" class="section"><h2 class="text-3xl font-bold mb-6 border-l-8 border-yellow-500 pl-4 uppercase">GST Management</h2><div id="gstTable"></div></div>
         <div id="mca" class="section"><h2 class="text-3xl font-bold mb-6 border-l-8 border-blue-900 pl-4 uppercase">MCA Compliance</h2><div id="mcaTable"></div></div>
         <div id="it" class="section"><h2 class="text-3xl font-bold mb-6 border-l-8 border-green-600 pl-4 uppercase">Income Tax</h2><div id="itTable"></div></div>
     </div>
 
     <script>
-        // YOUR WEB APP URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwQN_C4b4wMZ-uhT8YlGglluZof_M_RN3nu39LtV1hPCe8vd1VPh4XW2rM84PRzC7CYow/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbym6Mz4zTC0MdpPtIfXaIBtWq0PECMH6r-qoZ8eerIFhh98T29Ix0k77ULGc3j9efFSgA/exec';
         let dataList = [];
         
         window.onload = loadData;
@@ -134,9 +138,8 @@
             [...dataList].reverse().forEach((item) => {
                 if(item.status === 'Completed') comp++; else pend++;
 
-                // Date Formatting
                 let cleanDate = item.date;
-                if(cleanDate.includes('T')) cleanDate = new Date(cleanDate).toLocaleDateString('en-GB');
+                if(cleanDate && cleanDate.includes('T')) cleanDate = new Date(cleanDate).toLocaleDateString('en-GB');
 
                 const rowHtml = `
                     <td class="p-4 font-semibold">${item.name}</td>
@@ -154,10 +157,13 @@
 
                 mainTable.innerHTML += `<tr class="border-b hover:bg-blue-50">${rowHtml}</tr>`;
 
+                // Filtering logic for sections
                 let s = item.service.toLowerCase();
-                if(s.includes('gst')) document.getElementById('gstBody').innerHTML += `<tr class="border-b">${rowHtml}</tr>`;
-                if(s.includes('mca')) document.getElementById('mcaBody').innerHTML += `<tr class="border-b">${rowHtml}</tr>`;
-                if(s.includes('it') || s.includes('tax')) document.getElementById('itBody').innerHTML += `<tr class="border-b">${rowHtml}</tr>`;
+                const sectionRow = `<tr class="border-b">${rowHtml}</tr>`;
+                
+                if(s.includes('gst')) document.getElementById('gstBody').innerHTML += sectionRow;
+                if(s.includes('mca') || s.includes('roc')) document.getElementById('mcaBody').innerHTML += sectionRow;
+                if(s.includes('it') || s.includes('tax') || s.includes('income')) document.getElementById('itBody').innerHTML += sectionRow;
             });
 
             document.getElementById('totalCount').innerText = dataList.length;
@@ -200,14 +206,11 @@
             const item = dataList.find(x => x.rowId == id);
             document.getElementById('clientName').value = item.name;
             document.getElementById('serviceType').value = item.service;
-            
-            // Format date for the input
-            if(item.date.includes('T')) {
+            if(item.date && item.date.includes('T')) {
                 document.getElementById('dueDate').value = item.date.split('T')[0];
             } else {
                 document.getElementById('dueDate').value = item.date;
             }
-
             document.getElementById('status').value = item.status;
             document.getElementById('remarks').value = item.remark;
             document.getElementById('editRowId').value = id;
