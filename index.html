@@ -12,7 +12,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        body { 
+        body
+        <!-- Login Overlay -->
+<div id="loginOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display:flex; align-items:center; justify-content:center; font-family: sans-serif;">
+    <div style="width:350px; padding:30px; border-radius:15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align:center; border: 1px solid #eee;">
+        <img src="logo.png" style="width:80px; margin-bottom:20px;">
+        <h2 style="color:#1a237e; margin-bottom:10px;">WITCORP INDIA</h2>
+        <p style="color:#666; margin-bottom:20px;">Please login to continue</p>
+        
+        <input type="text" id="userInput" placeholder="Username" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px; box-sizing: border-box;">
+        <input type="password" id="passInput" placeholder="Password" style="width:100%; padding:12px; margin-bottom:20px; border:1px solid #ddd; border-radius:8px; box-sizing: border-box;">
+        
+        <button onclick="handleLogin()" id="loginBtn" style="width:100%; padding:12px; background:#1a237e; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Login</button>
+        <p id="loginError" style="color:red; margin-top:15px; font-size:14px; display:none;">Invalid Credentials!</p>
+    </div>
+</div>{ 
             font-family: 'Inter', sans-serif; 
             background-color: #f8fafc;
         }
@@ -466,6 +480,62 @@
 
     <!-- SYSTEM SCRIPTS -->
     <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwyzUY8lLxhxPLzn6RBU2qJ4RiaiewQxuzMHoEduSnjVqZkcrjl17lT6U_VKEywG-WMvQ/exec";
+
+window.onload = function() {
+    if (localStorage.getItem("witcorp_isLoggedIn") === "true") {
+        document.getElementById("loginOverlay").style.display = "none";
+    }
+};
+
+async function handleLogin() {
+    const user = document.getElementById("userInput").value;
+    const pass = document.getElementById("passInput").value;
+    const btn = document.getElementById("loginBtn");
+    const error = document.getElementById("loginError");
+
+    if (!user || !pass) return alert("Bhai details toh bharo!");
+
+    btn.innerText = "Checking...";
+    btn.disabled = true;
+    error.style.display = "none";
+
+    try {
+        const response = await fetch(WEB_APP_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "login",
+                username: user,
+                password: pass
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.status === "Success") {
+            // Login Success! Data store karo aur overlay hatao
+            localStorage.setItem("witcorp_isLoggedIn", "true");
+            localStorage.setItem("witcorp_user", result.username);
+            localStorage.setItem("witcorp_role", result.role);
+            document.getElementById("loginOverlay").style.display = "none";
+        } else {
+            error.innerText = "Galti hai! Sahi details daalo.";
+            error.style.display = "block";
+        }
+    } catch (err) {
+        error.innerText = "Server error! Net check karo.";
+        error.style.display = "block";
+    } finally {
+        btn.innerText = "Login";
+        btn.disabled = false;
+    }
+}
+
+// Logout function (Agar dashboard mein button banana ho toh)
+function handleLogout() {
+    localStorage.removeItem("witcorp_isLoggedIn");
+    location.reload();
+}
         // REPLACE WITH YOUR APPS SCRIPT URL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwdAJtgrvAPuo4SAhLJUdrLKhiSSBYXTv_-gEBCVo1QifPaD6klQkxuz8LBngFnHuWw1w/exec';
         
