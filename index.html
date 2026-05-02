@@ -714,19 +714,18 @@ function handleSearch() {
         async function handleDataSubmit() {
             const rowId = document.getElementById('editRowId').value;
             const btn = document.getElementById('submitBtn');
-            const istNow = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+            timestamp: new Date().toISOString()
             
             const payload = {
     rowId: rowId || Date.now().toString(),
-                rowId: rowId || null,
-                name: document.getElementById('clientName').value,
-                service: document.getElementById('serviceType').value,
-                date: document.getElementById('dueDate').value,
-                status: document.getElementById('status').value,
-                assign: document.getElementById('assignTo').value || "N/A",
-                remark: document.getElementById('remarks').value || "-",
-                timestamp: istNow
-            };
+    name: document.getElementById('clientName').value,
+    service: document.getElementById('serviceType').value,
+    date: document.getElementById('dueDate').value,
+    status: document.getElementById('status').value,
+    assign: document.getElementById('assignTo').value || "N/A",
+    remark: document.getElementById('remarks').value || "-",
+    timestamp: new Date().toISOString()
+};
 
             if (!payload.name || !payload.service) return alert("Error: Client Name & Service Type are required.");
 
