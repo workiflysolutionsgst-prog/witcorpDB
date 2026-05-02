@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witcorp India Advisors LLP | Compliance Portal</title>
+    <title>Witcorp India Advisor LLP | Compliance Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -180,7 +180,7 @@
 
                     <div class="space-y-2">
                         <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Assign To</label>
-                        <input id="assignTo" type="text" placeholder="Employee Name" class="w-full bg-slate-50 border-2 border-blue-200 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-black text-blue-800 uppercase">
+                        <input id="assignTo" type="text" placeholder="Employee Name" class="edit-lock w-full bg-slate-50 border-2 border-blue-200 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-black text-blue-800 uppercase">
                     </div>
 
                     <div class="space-y-2 md:col-span-3">
@@ -242,7 +242,7 @@
 
     <script>
         // UPDATE WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx9c6BCUy0gz1zoMdFqB3GY-fwrS9xHGzp_9UMcoWqhinsuEe9J5h8730NS46pbd3f6uQ/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzxqc0q6VlgHxfkLFB2ISLFH_mEX9_14oWsdyQcHx4wyK7fXNL13hh2ZPBDkH9LpRFjhw/exec';
         let dataList = [];
         
         window.onload = loadData;
@@ -379,10 +379,10 @@
             document.getElementById('assignTo').value = item.assign || "";
             document.getElementById('remarks').value = item.remark;
             
-            // LOCKING FIELDS: Only Remarks and Assign stay open
+            // LOCKING FIELDS: Client Info aur Assign lock ho jayenge
             document.querySelectorAll('.edit-lock').forEach(input => input.disabled = true);
             
-            document.getElementById('formHeader').innerHTML = '✏️ Edit Mode (Client Info Locked)';
+            document.getElementById('formHeader').innerHTML = '✏️ Edit Mode (Client & Assign Locked)';
             document.getElementById('submitBtn').innerText = "Update Cloud";
             document.getElementById('cancelBtn').classList.remove('hidden');
             window.scrollTo({top: 0, behavior: 'smooth'});
