@@ -3,156 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witcorp India | Fast Dashboard</title>
+    <title>Witcorp India Advisor LLP | Compliance Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Supabase Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; }
-        .sidebar { background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 100%); }
-        .nav-btn.active { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border-left: 4px solid #fbbf24; }
-        .glass-card { background: white; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .nav-btn.active { background-color: #fbbf24; color: #1e3a8a; font-weight: bold; }
         .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .section.active { display: block; }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden">
+<body class="bg-gray-100 font-sans flex h-screen overflow-hidden">
 
-    <!-- SIDEBAR -->
-    <div class="w-72 sidebar text-white flex flex-col p-6">
-        <div class="text-center mb-10">
-            <div class="w-16 h-16 bg-white rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
-                <i class="fas fa-shield-halved text-[#1e3a8a] text-3xl"></i>
+    <div class="w-72 bg-[#1e3a8a] text-white flex flex-col shadow-2xl">
+        <div class="p-8 pb-3 border-b border-blue-800 flex flex-col items-center text-center">
+            <div class="w-24 h-24 mb-3 border-2 border-yellow-400 p-2 rounded-2xl shadow-lg bg-white flex items-center justify-center">
+                <i class="fas fa-shield-alt text-blue-900 text-4xl"></i>
             </div>
-            <h1 class="font-bold text-lg uppercase tracking-tighter">Witcorp India</h1>
-            <p class="text-yellow-400 text-xs font-medium">ADVISOR LLP</p>
+            <h1 class="text-xl font-bold text-yellow-400 leading-tight uppercase">Witcorp India <br> Advisor LLP</h1>
         </div>
         
-        <nav class="flex-1 space-y-2">
-            <button onclick="showSection('dashboard', this)" class="nav-btn active w-full p-4 text-left rounded-xl flex items-center gap-3 transition-all">
-                <i class="fas fa-chart-pie"></i> Control Center
-            </button>
-            <button onclick="showSection('gst', this)" class="nav-btn w-full p-4 text-left rounded-xl flex items-center gap-3 text-slate-400">
-                <i class="fas fa-receipt"></i> GST Filings
-            </button>
-            <button onclick="showSection('mca', this)" class="nav-btn w-full p-4 text-left rounded-xl flex items-center gap-3 text-slate-400">
-                <i class="fas fa-landmark"></i> MCA / ROC
-            </button>
+        <nav id="sidebarNav" class="flex-1 p-6 space-y-2 mt-4">
+            <button onclick="showSection('dashboard')" class="nav-btn active p-3 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-home w-5"></i> Dashboard</button>
+            <button onclick="showSection('gst')" class="nav-btn p-3 hover:bg-blue-800 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-file-invoice w-5"></i> GST Management</button>
+            <button onclick="showSection('mca')" class="nav-btn p-3 hover:bg-blue-800 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-building w-5"></i> MCA Compliance</button>
+            <button onclick="showSection('it')" class="nav-btn p-3 hover:bg-blue-800 rounded-lg text-left w-full transition flex items-center gap-3"><i class="fas fa-percentage w-5"></i> Income Tax</button>
         </nav>
-
-        <div class="mt-auto p-4 bg-white/5 rounded-2xl text-center">
-            <p class="text-[10px] text-slate-400 uppercase">Developed By</p>
-            <p class="text-sm font-bold text-yellow-400">Kamlesh Yadav</p>
+        
+        <div class="p-6 border-t border-blue-800 space-y-3 bg-[#1c357e]">
+            <p class="text-xs text-[#a0ffb6] font-semibold italic text-center leading-tight">"Strategic Wisdom. <br> Global Growth."</p>
+            <hr class="border-blue-700">
+            <div class="text-center">
+                <p class="text-[10px] text-yellow-400 font-bold uppercase tracking-wider mb-1">Developed By</p>
+                <p class="text-sm font-bold text-white tracking-wide">Kamlesh Yadav</p>
+            </div>
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="flex-1 overflow-y-auto p-10">
+    <div class="flex-1 p-8 overflow-y-auto">
         <div id="dashboard" class="section active">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-3xl font-extrabold text-slate-800">Compliance Dashboard</h2>
-                <div id="timer" class="bg-white px-4 py-2 rounded-xl shadow-sm font-mono font-bold text-slate-600 italic">00:00:00</div>
+            <h2 class="text-3xl font-bold mb-8 text-gray-800 uppercase tracking-wide">Compliance Control Center</h2>
+            
+            <div class="grid grid-cols-4 gap-6 mb-8 text-center">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-blue-600">
+                    <p class="text-gray-400 font-bold uppercase text-xs">All Assignments</p>
+                    <p id="totalCount" class="text-4xl font-bold text-blue-900 mt-2">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-green-500">
+                    <p class="text-gray-400 font-bold uppercase text-xs">Completed</p>
+                    <p id="completedCount" class="text-4xl font-bold text-green-600 mt-2">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-red-500">
+                    <p class="text-gray-400 font-bold uppercase text-xs">Pending</p>
+                    <p id="pendingCount" class="text-4xl font-bold text-red-600 mt-2">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-yellow-500">
+                    <p class="text-gray-400 font-bold uppercase text-xs">Firm Status</p>
+                    <p class="text-2xl font-bold text-yellow-500 mt-2">ACTIVE</p>
+                </div>
             </div>
 
-            <!-- STATS -->
-            <div class="grid grid-cols-3 gap-6 mb-10">
-                <div class="glass-card p-6 border-t-4 border-blue-500">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Total Workload</p>
-                    <h3 id="totalCount" class="text-5xl font-black text-slate-800">0</h3>
-                </div>
-                <div class="glass-card p-6 border-t-4 border-emerald-500">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Finalized</p>
-                    <h3 id="completedCount" class="text-5xl font-black text-emerald-600">0</h3>
-                </div>
-                <div class="glass-card p-6 border-t-4 border-rose-500">
-                    <p class="text-xs font-bold text-slate-400 uppercase">In Progress</p>
-                    <h3 id="pendingCount" class="text-5xl font-black text-rose-600">0</h3>
-                </div>
-            </div>
-
-            <!-- FORM -->
-            <div class="glass-card p-8 mb-10">
-                <h4 class="font-bold mb-6 text-slate-700 uppercase tracking-tight flex items-center gap-2">
-                    <i class="fas fa-plus-circle text-blue-500"></i> Add New Task
-                </h4>
-                <div class="grid grid-cols-3 gap-4">
-                    <input type="hidden" id="editRowId">
-                    <input id="clientName" placeholder="Client Name" class="bg-slate-50 p-4 rounded-xl border border-slate-200 outline-none focus:border-blue-500">
-                    <input id="serviceType" placeholder="Service (GST, MCA)" class="bg-slate-50 p-4 rounded-xl border border-slate-200 outline-none focus:border-blue-500">
-                    <input id="dueDate" type="date" class="bg-slate-50 p-4 rounded-xl border border-slate-200 outline-none focus:border-blue-500">
-                    <select id="status" class="bg-slate-50 p-4 rounded-xl border border-slate-200 outline-none">
+            <div class="bg-white p-8 rounded-2xl shadow-lg mb-8 border border-gray-100">
+                <h3 id="formHeader" class="font-bold mb-6 text-xl text-blue-900 border-l-4 border-blue-900 pl-3 uppercase">Enter Work Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <input type="hidden" id="editRowId" value="">
+                    <input id="clientName" type="text" placeholder="Client Name" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="serviceType" type="text" placeholder="Service (GST, MCA, IT)" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <input id="dueDate" type="date" class="border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
+                    <select id="status" class="border-2 border-gray-100 p-3 rounded-xl outline-none bg-white">
                         <option value="Pending">Pending</option>
                         <option value="Completed">Completed</option>
                     </select>
-                    <input id="assignTo" placeholder="Assign To" class="bg-slate-50 p-4 rounded-xl border border-slate-200 outline-none focus:border-blue-500">
-                    <input id="remarks" placeholder="Remarks" class="bg-slate-50 p-4 rounded-xl border border-slate-200 outline-none focus:border-blue-500">
+                    <input id="remarks" type="text" placeholder="Remarks/Notes" class="md:col-span-2 border-2 border-gray-100 p-3 rounded-xl outline-none focus:border-blue-500">
                 </div>
-                <button onclick="handleDataSubmit()" id="submitBtn" class="mt-6 bg-blue-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all">SYNC TO CLOUD</button>
+                <div class="mt-6 flex gap-3">
+                    <button onclick="handleDataSubmit()" id="submitBtn" class="bg-[#1e3a8a] text-white px-8 py-3 rounded-lg font-bold shadow-md hover:bg-blue-700 transition">Update Dashboard</button>
+                    <button id="cancelBtn" onclick="resetForm()" class="hidden bg-gray-400 text-white px-6 py-3 rounded-lg font-bold">Cancel</button>
+                </div>
             </div>
 
-            <!-- TABLE -->
-            <div class="glass-card overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
                 <table class="w-full text-left">
-                    <thead class="bg-slate-50 text-[10px] font-bold text-slate-400 uppercase">
+                    <thead class="bg-gray-50 border-b text-gray-600 uppercase text-[10px]">
                         <tr>
-                            <th class="p-6">Client Identity</th>
-                            <th class="p-6">Service</th>
-                            <th class="p-6">Deadline</th>
-                            <th class="p-6 text-center">Status</th>
-                            <th class="p-6 text-center">Actions</th>
+                            <th class="p-4">Client Name</th>
+                            <th class="p-4">Service</th>
+                            <th class="p-4">Target Date</th>
+                            <th class="p-4">Remarks</th>
+                            <th class="p-4">Updated (IST)</th>
+                            <th class="p-4 text-center">Status</th>
+                            <th class="p-4 text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-100"></tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- OTHER SECTIONS -->
-        <div id="gst" class="section p-4"><h2 class="text-2xl font-bold">GST Filings</h2><div id="gstContent"></div></div>
-        <div id="mca" class="section p-4"><h2 class="text-2xl font-bold">MCA Management</h2><div id="mcaContent"></div></div>
+        <div id="gst" class="section"><h2 class="text-3xl font-bold mb-6 border-l-8 border-yellow-500 pl-4 uppercase">GST Management</h2><div id="gstTable"></div></div>
+        <div id="mca" class="section"><h2 class="text-3xl font-bold mb-6 border-l-8 border-blue-900 pl-4 uppercase">MCA Compliance</h2><div id="mcaTable"></div></div>
+        <div id="it" class="section"><h2 class="text-3xl font-bold mb-6 border-l-8 border-green-600 pl-4 uppercase">Income Tax</h2><div id="itTable"></div></div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://rymnmigplbeotbfnhkxi.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_AJlEpmRCyKtAx65lYAY-Tw__jvtRoEF';
-        
-        // FIX 1: createClient initialization fixed
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+        // YOUR WEB APP URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwQN_C4b4wMZ-uhT8YlGglluZof_M_RN3nu39LtV1hPCe8vd1VPh4XW2rM84PRzC7CYow/exec';
         let dataList = [];
+        
+        window.onload = loadData;
 
         async function loadData() {
-            const { data, error } = await supabaseClient.from('tasks').select('*').order('id', { ascending: false });
-            if (!error) {
-                dataList = data;
+            try {
+                const res = await fetch(scriptURL);
+                dataList = await res.json();
                 refreshUI();
-            }
+            } catch (e) { console.error("Load failed"); }
         }
 
         function refreshUI() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = "";
+            const mainTable = document.getElementById('tableBody');
+            mainTable.innerHTML = "";
+            
+            const sections = ['gst', 'mca', 'it'];
+            sections.forEach(s => {
+                const cont = document.getElementById(s + 'Table');
+                if(cont) cont.innerHTML = `<div class="bg-white rounded-2xl shadow-md overflow-hidden"><table class="w-full text-left"><thead class="bg-gray-50 border-b text-[10px] uppercase text-gray-600"><tr><th class="p-4">Client Name</th><th class="p-4">Target Date</th><th class="p-4">Remarks</th><th class="p-4">Update Time</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Actions</th></tr></thead><tbody id="${s}Body"></tbody></table></div>`;
+            });
+
             let comp = 0, pend = 0;
 
-            dataList.forEach(item => {
+            [...dataList].reverse().forEach((item) => {
                 if(item.status === 'Completed') comp++; else pend++;
-                // FIX 2: Correcting property names from DB (due_date)
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-all">
-                        <td class="p-6 font-bold">${item.name || 'N/A'}</td>
-                        <td class="p-6"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-xs font-bold">${item.service || 'N/A'}</span></td>
-                        <td class="p-6 text-sm text-slate-500">${item.due_date || 'N/A'}</td>
-                        <td class="p-6 text-center">
-                            <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase ${item.status==='Completed'?'bg-emerald-100 text-emerald-700':'bg-rose-100 text-rose-700'}">${item.status}</span>
-                        </td>
-                        <td class="p-6 text-center">
-                            <button onclick="startEdit('${item.id}')" class="text-blue-500 mr-3"><i class="fas fa-edit"></i></button>
-                            <button onclick="deleteRow('${item.id}')" class="text-rose-500"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>`;
+
+                // Date Formatting
+                let cleanDate = item.date;
+                if(cleanDate.includes('T')) cleanDate = new Date(cleanDate).toLocaleDateString('en-GB');
+
+                const rowHtml = `
+                    <td class="p-4 font-semibold">${item.name}</td>
+                    <td class="p-4 text-blue-700 font-bold">${item.service.toUpperCase()}</td>
+                    <td class="p-4">${cleanDate}</td>
+                    <td class="p-4 italic text-xs text-gray-500">${item.remark}</td>
+                    <td class="p-4 text-[10px] text-blue-800">${item.timestamp}</td>
+                    <td class="p-4 text-center">
+                        <span class="px-2 py-1 rounded-full text-[9px] font-bold uppercase ${item.status==='Completed'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${item.status}</span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <button onclick="startEdit('${item.rowId}')" class="text-blue-500 mx-1"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteRow('${item.rowId}')" class="text-red-400 mx-1"><i class="fas fa-trash-alt"></i></button>
+                    </td>`;
+
+                mainTable.innerHTML += `<tr class="border-b hover:bg-blue-50">${rowHtml}</tr>`;
+
+                let s = item.service.toLowerCase();
+                if(s.includes('gst')) document.getElementById('gstBody').innerHTML += `<tr class="border-b">${rowHtml}</tr>`;
+                if(s.includes('mca')) document.getElementById('mcaBody').innerHTML += `<tr class="border-b">${rowHtml}</tr>`;
+                if(s.includes('it') || s.includes('tax')) document.getElementById('itBody').innerHTML += `<tr class="border-b">${rowHtml}</tr>`;
             });
+
             document.getElementById('totalCount').innerText = dataList.length;
             document.getElementById('completedCount').innerText = comp;
             document.getElementById('pendingCount').innerText = pend;
@@ -160,65 +167,71 @@
 
         async function handleDataSubmit() {
             const rowId = document.getElementById('editRowId').value;
-            // FIX 3: Mapping keys to match image_c90890.png (due_date)
+            const btn = document.getElementById('submitBtn');
+            
             const payload = {
+                action: rowId ? "edit" : "add",
+                rowId: rowId || null,
                 name: document.getElementById('clientName').value,
                 service: document.getElementById('serviceType').value,
-                due_date: document.getElementById('dueDate').value, 
+                date: document.getElementById('dueDate').value,
                 status: document.getElementById('status').value,
-                // Make sure these columns exist in your Supabase table as well
-                assign: document.getElementById('assignTo').value,
-                remark: document.getElementById('remarks').value
+                remark: document.getElementById('remarks').value || "-",
+                timestamp: new Intl.DateTimeFormat('en-IN', {timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'}).format(new Date())
             };
 
-            if (rowId) {
-                await supabaseClient.from('tasks').update(payload).eq('id', rowId);
-            } else {
-                await supabaseClient.from('tasks').insert([payload]);
-            }
-            
-            clearForm();
-            loadData();
+            if(!payload.name || !payload.service) return alert("Missing Info!");
+
+            btn.disabled = true; btn.innerText = "Syncing...";
+            await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+            resetForm();
+            await loadData();
+            btn.disabled = false; btn.innerText = "Update Dashboard";
         }
 
         async function deleteRow(id) {
             if(confirm("Confirm Delete?")) {
-                await supabaseClient.from('tasks').delete().eq('id', id);
-                loadData();
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: id }) });
+                await loadData();
             }
         }
 
         function startEdit(id) {
-            const item = dataList.find(x => x.id == id);
+            const item = dataList.find(x => x.rowId == id);
             document.getElementById('clientName').value = item.name;
             document.getElementById('serviceType').value = item.service;
-            document.getElementById('dueDate').value = item.due_date;
+            
+            // Format date for the input
+            if(item.date.includes('T')) {
+                document.getElementById('dueDate').value = item.date.split('T')[0];
+            } else {
+                document.getElementById('dueDate').value = item.date;
+            }
+
             document.getElementById('status').value = item.status;
-            document.getElementById('assignTo').value = item.assign || "";
-            document.getElementById('remarks').value = item.remark || "";
-            document.getElementById('editRowId').value = item.id;
-            document.getElementById('submitBtn').innerText = "UPDATE RECORD";
+            document.getElementById('remarks').value = item.remark;
+            document.getElementById('editRowId').value = id;
+            document.getElementById('submitBtn').innerText = "Save Changes";
+            document.getElementById('cancelBtn').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        function clearForm() {
-            document.querySelectorAll('input').forEach(i => i.value = "");
-            document.getElementById('status').value = "Pending";
-            document.getElementById('submitBtn').innerText = "SYNC TO CLOUD";
+        function resetForm() {
             document.getElementById('editRowId').value = "";
+            document.getElementById('clientName').value = "";
+            document.getElementById('serviceType').value = "";
+            document.getElementById('dueDate').value = "";
+            document.getElementById('remarks').value = "";
+            document.getElementById('submitBtn').innerText = "Update Dashboard";
+            document.getElementById('cancelBtn').classList.add('hidden');
         }
 
-        function showSection(id, btn) {
+        function showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            event.currentTarget.classList.add('active');
         }
-
-        setInterval(() => {
-            document.getElementById('timer').innerText = new Date().toLocaleTimeString();
-        }, 1000);
-
-        window.onload = loadData;
     </script>
 </body>
 </html>
