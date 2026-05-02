@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Witcorp India Advisors LLP | Ultimate Executive Portal</title>
@@ -466,9 +467,10 @@
 
     <!-- SYSTEM SCRIPTS -->
     <script>
-        // REPLACE WITH YOUR APPS SCRIPT URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwdAJtgrvAPuo4SAhLJUdrLKhiSSBYXTv_-gEBCVo1QifPaD6klQkxuz8LBngFnHuWw1w/exec';
-        
+        const supabaseUrl = 'https://yyyudqemoogpybtoxkzj.supabase.co';
+const supabaseKey = 'sb_publishable_gSHK0Aw3v8vsRcr2K90-6w_NsvuqMyu';
+
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
         let dataList = [];
         let searchResults = [];
         let isSearching = false;
@@ -478,15 +480,19 @@
 
         // Fetch Data from Google Sheets
         async function loadData() {
-            try {
-                const response = await fetch(scriptURL);
-                dataList = await response.json();
-                renderUI();
-            } catch (err) {
-                console.error("Critical: Data retrieval failed.", err);
-                alert("Database link down. Check script URL.");
-            }
-        }
+    const { data, error } = await supabase
+        .from('clients')
+        .select('*');
+
+    if (error) {
+        alert("Error loading data");
+        console.log(error);
+        return;
+    }
+
+    dataList = data;
+    renderUI();
+}
 
         // POPUP ANALYTICS LOGIC
         function openAnalytics(type) {
@@ -728,7 +734,9 @@ function handleSearch() {
             btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Processing...`;
 
             try {
-                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+                await supabase
+    .from('clients')
+    .insert([payload]);
                 resetForm();
                 await loadData();
             } catch (e) {
