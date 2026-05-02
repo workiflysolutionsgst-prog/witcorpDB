@@ -3,31 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witcorp India Advisor LLP | Compliance Portal</title>
+    <title>Witcorp India Advisors LLP | Compliance Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .nav-btn.active { background-color: #fbbf24; color: #1e3a8a; font-weight: bold; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .section { display: none; transition: opacity 0.3s ease-in-out; }
-        .section.active { display: block; opacity: 1; }
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .nav-btn:hover:not(.active) { background-color: rgba(255,255,255,0.1); transform: translateX(5px); }
-        .nav-btn { transition: all 0.2s ease; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+        }
+
+        .nav-btn.active { 
+            background-color: #fbbf24; 
+            color: #1e3a8a; 
+            font-weight: bold; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+        }
+
+        .section { 
+            display: none; 
+            transition: opacity 0.3s ease-in-out; 
+        }
+
+        .section.active { 
+            display: block; 
+            opacity: 1; 
+        }
+
+        .custom-scroll::-webkit-scrollbar { 
+            width: 6px; 
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb { 
+            background: #cbd5e1; 
+            border-radius: 10px; 
+        }
+
+        .nav-btn:hover:not(.active) { 
+            background-color: rgba(255,255,255,0.1); 
+            transform: translateX(5px); 
+        }
+
+        .nav-btn { 
+            transition: all 0.2s ease; 
+        }
+
+        input:disabled, select:disabled {
+            background-color: #f1f5f9 !important;
+            color: #94a3b8 !important;
+            cursor: not-allowed;
+            border-color: #e2e8f0 !important;
+        }
     </style>
 </head>
 <body class="bg-[#f8fafc] flex h-screen overflow-hidden">
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR NAVIGATION -->
     <aside class="w-80 bg-[#1e3a8a] text-white flex flex-col shadow-2xl z-50">
         <div class="p-8 pb-6 border-b border-blue-800/50 flex flex-col items-center">
             <div class="w-24 h-24 mb-4 border-4 border-yellow-400 p-1 rounded-3xl shadow-2xl bg-white flex items-center justify-center rotate-3 hover:rotate-0 transition-transform duration-500">
                 <i class="fas fa-shield-alt text-blue-900 text-4xl"></i>
             </div>
             <h1 class="text-xl font-black text-yellow-400 text-center leading-tight uppercase tracking-tighter">
-                Witcorp India <br> <span class="text-white text-sm font-light tracking-[0.2em]">Advisor LLP</span>
+                Witcorp India <br> 
+                <span class="text-white text-sm font-light tracking-[0.2em]">Advisor LLP</span>
             </h1>
         </div>
         
@@ -35,14 +74,21 @@
             <button onclick="showSection('dashboard')" class="nav-btn active p-4 rounded-xl text-left w-full flex items-center gap-4">
                 <i class="fas fa-th-large w-5"></i> Dashboard
             </button>
+            
             <button onclick="showSection('gst')" class="nav-btn p-4 rounded-xl text-left w-full flex items-center gap-4">
                 <i class="fas fa-file-invoice-dollar w-5 text-yellow-400"></i> GST Management
             </button>
+            
             <button onclick="showSection('mca')" class="nav-btn p-4 rounded-xl text-left w-full flex items-center gap-4">
                 <i class="fas fa-building w-5 text-blue-300"></i> MCA Compliance
             </button>
+            
             <button onclick="showSection('it')" class="nav-btn p-4 rounded-xl text-left w-full flex items-center gap-4">
                 <i class="fas fa-chart-line w-5 text-green-400"></i> Income Tax
+            </button>
+
+            <button onclick="showSection('pt')" class="nav-btn p-4 rounded-xl text-left w-full flex items-center gap-4">
+                <i class="fas fa-briefcase w-5 text-orange-400"></i> PT (Professional Tax)
             </button>
         </nav>
         
@@ -59,8 +105,10 @@
         </div>
     </aside>
 
-    <!-- MAIN INTERFACE -->
+    <!-- MAIN CONTENT AREA -->
     <main class="flex-1 overflow-y-auto custom-scroll relative">
+        
+        <!-- DASHBOARD SECTION -->
         <div id="dashboard" class="section active p-10">
             <header class="flex justify-between items-center mb-10">
                 <div>
@@ -76,15 +124,14 @@
                 </div>
             </header>
             
-            <!-- STATS CARDS -->
+            <!-- COUNTERS -->
             <div class="grid grid-cols-4 gap-8 mb-12">
-                <div class="bg-white p-7 rounded-[2rem] shadow-sm border-b-8 border-blue-600 hover:shadow-xl transition-shadow">
-                    <i class="fas fa-tasks text-blue-100 text-4xl absolute right-10 opacity-50"></i>
-                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Total</p>
+                <div class="bg-white p-7 rounded-[2rem] shadow-sm border-b-8 border-blue-600">
+                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Total Cases</p>
                     <p id="totalCount" class="text-5xl font-black text-slate-800 mt-2">0</p>
                 </div>
                 <div class="bg-white p-7 rounded-[2rem] shadow-sm border-b-8 border-emerald-500">
-                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Done</p>
+                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Completed</p>
                     <p id="completedCount" class="text-5xl font-black text-emerald-600 mt-2">0</p>
                 </div>
                 <div class="bg-white p-7 rounded-[2rem] shadow-sm border-b-8 border-rose-500">
@@ -92,51 +139,63 @@
                     <p id="pendingCount" class="text-5xl font-black text-rose-600 mt-2">0</p>
                 </div>
                 <div class="bg-white p-7 rounded-[2rem] shadow-sm border-b-8 border-amber-400">
-                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Status</p>
-                    <p class="text-2xl font-black text-amber-500 mt-4">LIVE</p>
+                    <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Portal Status</p>
+                    <p class="text-2xl font-black text-amber-500 mt-4 uppercase">Live Sync</p>
                 </div>
             </div>
 
-            <!-- FORM BOX -->
+            <!-- INPUT FORM -->
             <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl mb-12 border border-slate-50 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-3 h-full bg-blue-900"></div>
                 <h3 id="formHeader" class="text-xl font-black mb-8 text-slate-800 uppercase flex items-center gap-3">
                     <span class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-sm"><i class="fas fa-plus"></i></span>
                     Register New Record
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <input type="hidden" id="editRowId">
+                    
                     <div class="space-y-2">
                         <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Client Name</label>
-                        <input id="clientName" type="text" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all">
+                        <input id="clientName" type="text" class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
+
                     <div class="space-y-2">
                         <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Service Type</label>
-                        <input id="serviceType" type="text" placeholder="GST / MCA / IT" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all">
+                        <input id="serviceType" type="text" placeholder="GST / MCA / IT / PT" class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
+
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Deadline</label>
-                        <input id="dueDate" type="date" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all text-slate-600">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Deadline Date</label>
+                        <input id="dueDate" type="date" class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all text-slate-600">
                     </div>
+
                     <div class="space-y-2">
                         <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Job Status</label>
-                        <select id="status" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white appearance-none">
+                        <select id="status" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white appearance-none font-bold">
                             <option value="Pending">🔴 Pending</option>
                             <option value="Completed">🟢 Completed</option>
                         </select>
                     </div>
-                    <div class="space-y-2 md:col-span-2">
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Assign To</label>
+                        <input id="assignTo" type="text" placeholder="Employee Name" class="w-full bg-slate-50 border-2 border-blue-200 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-black text-blue-800 uppercase">
+                    </div>
+
+                    <div class="space-y-2 md:col-span-3">
                         <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Professional Remarks</label>
                         <input id="remarks" type="text" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
                 </div>
+
                 <div class="mt-10 flex gap-5">
                     <button onclick="handleDataSubmit()" id="submitBtn" class="bg-[#1e3a8a] text-white px-12 py-4 rounded-2xl font-black shadow-xl hover:bg-blue-700 hover:-translate-y-1 active:scale-95 transition-all uppercase tracking-widest text-sm">Sync To Cloud</button>
                     <button id="cancelBtn" onclick="resetForm()" class="hidden bg-slate-200 text-slate-600 px-10 py-4 rounded-2xl font-bold hover:bg-slate-300 transition-all uppercase text-sm">Cancel Edit</button>
                 </div>
             </div>
 
-            <!-- MAIN DATA TABLE -->
+            <!-- DATA TABLE -->
             <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -144,7 +203,8 @@
                             <tr class="bg-slate-50/50 border-b border-slate-100">
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client Name</th>
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Service</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Target Date</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Assign</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Deadline</th>
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Remarks</th>
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Updated (IST)</th>
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
@@ -158,14 +218,31 @@
         </div>
 
         <!-- CATEGORY SECTIONS -->
-        <div id="gst" class="section p-10"><h2 class="text-3xl font-black mb-10 border-l-8 border-yellow-400 pl-6 uppercase tracking-tight">GST Filings</h2><div id="gstTable"></div></div>
-        <div id="mca" class="section p-10"><h2 class="text-3xl font-black mb-10 border-l-8 border-blue-900 pl-6 uppercase tracking-tight">MCA & ROC</h2><div id="mcaTable"></div></div>
-        <div id="it" class="section p-10"><h2 class="text-3xl font-black mb-10 border-l-8 border-emerald-500 pl-6 uppercase tracking-tight">Income Tax</h2><div id="itTable"></div></div>
+        <div id="gst" class="section p-10">
+            <h2 class="text-3xl font-black mb-10 border-l-8 border-yellow-400 pl-6 uppercase tracking-tight">GST Filings</h2>
+            <div id="gstTable"></div>
+        </div>
+
+        <div id="mca" class="section p-10">
+            <h2 class="text-3xl font-black mb-10 border-l-8 border-blue-900 pl-6 uppercase tracking-tight">MCA & ROC</h2>
+            <div id="mcaTable"></div>
+        </div>
+
+        <div id="it" class="section p-10">
+            <h2 class="text-3xl font-black mb-10 border-l-8 border-emerald-500 pl-6 uppercase tracking-tight">Income Tax</h2>
+            <div id="itTable"></div>
+        </div>
+
+        <div id="pt" class="section p-10">
+            <h2 class="text-3xl font-black mb-10 border-l-8 border-orange-500 pl-6 uppercase tracking-tight">Professional Tax (PT)</h2>
+            <div id="ptTable"></div>
+        </div>
+
     </main>
 
     <script>
-        // UPDATE WITH YOUR DEPLOYED URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyTMHVOza6E45Z_ENOXXymjhlXdGQGSGivILpAqlYoYbjnorX5JEY8CBB19tIexoW2DzA/exec';
+        // UPDATE WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzt42u5kDtYJfHkAZZfp3LgAb6ewdEfFf4r1NhK0Zb3S0akQ5qrwhpPVsDdpV9B728bAw/exec';
         let dataList = [];
         
         window.onload = loadData;
@@ -175,32 +252,51 @@
                 const res = await fetch(scriptURL);
                 dataList = await res.json();
                 refreshUI();
-            } catch (e) { console.error("Database connection failed"); }
+            } catch (e) { 
+                console.error("Database connection failed"); 
+            }
         }
 
         function refreshUI() {
             const mainTable = document.getElementById('tableBody');
             mainTable.innerHTML = "";
             
-            const sections = ['gst', 'mca', 'it'];
+            const sections = ['gst', 'mca', 'it', 'pt'];
             sections.forEach(s => {
                 const cont = document.getElementById(s + 'Table');
-                if(cont) cont.innerHTML = `<div class="bg-white rounded-[2rem] shadow-lg overflow-hidden border border-slate-100"><table class="w-full text-left"><thead class="bg-slate-50 border-b text-[10px] font-black text-slate-400 uppercase tracking-widest"><tr><th class="p-6">Client Name</th><th class="p-6 text-center">Deadline</th><th class="p-6">Remarks</th><th class="p-6">Update Time</th><th class="p-6 text-center">Status</th><th class="p-6 text-center">Actions</th></tr></thead><tbody id="${s}Body" class="divide-y divide-slate-50"></tbody></table></div>`;
+                if(cont) {
+                    cont.innerHTML = `
+                        <div class="bg-white rounded-[2rem] shadow-lg overflow-hidden border border-slate-100">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 border-b text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    <tr>
+                                        <th class="p-6">Client Name</th>
+                                        <th class="p-6 text-center">Assign</th>
+                                        <th class="p-6">Remarks</th>
+                                        <th class="p-6 text-center">Deadline</th>
+                                        <th class="p-6 text-center">Status</th>
+                                        <th class="p-6 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="${s}Body" class="divide-y divide-slate-50"></tbody>
+                            </table>
+                        </div>`;
+                }
             });
 
             dataList.slice().reverse().forEach((item) => {
                 let cleanDate = item.date;
-                if(cleanDate && cleanDate.includes('T')) cleanDate = new Date(cleanDate).toLocaleDateString('en-GB');
-
-                // IST TIME FORMATTING LOGIC
-                let displayTime = item.timestamp;
+                if(cleanDate && cleanDate.includes('T')) {
+                    cleanDate = new Date(cleanDate).toLocaleDateString('en-GB');
+                }
 
                 const rowHtml = `
                     <td class="p-6"><div class="font-bold text-slate-700">${item.name}</div></td>
                     <td class="p-6 text-center"><span class="bg-blue-50 text-blue-700 px-4 py-1.5 rounded-lg font-black text-[10px] uppercase border border-blue-100">${item.service}</span></td>
+                    <td class="p-6 text-center font-black text-blue-600 text-[11px] uppercase">${item.assign || '---'}</td>
                     <td class="p-6 text-center font-bold text-slate-500">${cleanDate || '---'}</td>
                     <td class="p-6"><div class="text-xs italic text-slate-400 max-w-[150px] truncate" title="${item.remark}">${item.remark}</div></td>
-                    <td class="p-6 font-black text-[10px] text-blue-900/60">${displayTime}</td>
+                    <td class="p-6 font-black text-[10px] text-blue-900/60">${item.timestamp}</td>
                     <td class="p-6 text-center">
                         <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${item.status==='Completed'?'bg-emerald-50 text-emerald-600 border-emerald-100':'bg-rose-50 text-rose-600 border-rose-100'}">${item.status}</span>
                     </td>
@@ -213,28 +309,25 @@
 
                 mainTable.innerHTML += `<tr class="hover:bg-blue-50/50 transition-colors">${rowHtml}</tr>`;
 
-                // Section Distribution (Removing service column for category views)
                 const sectionRow = `
                     <td class="p-6 font-bold text-slate-700">${item.name}</td>
-                    <td class="p-6 text-center font-bold text-slate-500">${cleanDate || '---'}</td>
+                    <td class="p-6 text-center font-black text-blue-600 text-[11px] uppercase">${item.assign || '---'}</td>
                     <td class="p-6 italic text-xs text-slate-400">${item.remark}</td>
-                    <td class="p-6 font-black text-[10px] text-blue-900/60">${displayTime}</td>
+                    <td class="p-6 text-center font-bold text-slate-500">${cleanDate || '---'}</td>
                     <td class="p-6 text-center">
                         <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase border ${item.status==='Completed'?'bg-emerald-50 text-emerald-600 border-emerald-100':'bg-rose-50 text-rose-600 border-rose-100'}">${item.status}</span>
                     </td>
                     <td class="p-6 text-center">
-                        <div class="flex justify-center gap-2">
-                            <button onclick="startEdit('${item.rowId}')" class="text-blue-500 p-2"><i class="fas fa-edit"></i></button>
-                        </div>
+                        <button onclick="startEdit('${item.rowId}')" class="text-blue-500 hover:scale-110 transition-transform"><i class="fas fa-edit"></i></button>
                     </td>`;
 
                 let s = item.service.toLowerCase();
                 if(s.includes('gst')) document.getElementById('gstBody').innerHTML += `<tr>${sectionRow}</tr>`;
                 else if(s.includes('mca') || s.includes('roc')) document.getElementById('mcaBody').innerHTML += `<tr>${sectionRow}</tr>`;
-                else if(s.includes('it') || s.includes('tax')) document.getElementById('itBody').innerHTML += `<tr>${sectionRow}</tr>`;
+                else if(s.includes('it') || s.includes('tax') || s.includes('income')) document.getElementById('itBody').innerHTML += `<tr>${sectionRow}</tr>`;
+                else if(s.includes('pt')) document.getElementById('ptBody').innerHTML += `<tr>${sectionRow}</tr>`;
             });
 
-            // Counters Update
             const completed = dataList.filter(x => x.status === 'Completed').length;
             document.getElementById('totalCount').innerText = dataList.length;
             document.getElementById('completedCount').innerText = completed;
@@ -245,7 +338,6 @@
             const rowId = document.getElementById('editRowId').value;
             const btn = document.getElementById('submitBtn');
             
-            // IST TIME GENERATOR
             const istTime = new Date().toLocaleString('en-IN', {
                 day: '2-digit', month: 'short', year: 'numeric',
                 hour: '2-digit', minute: '2-digit', hour12: true,
@@ -259,35 +351,38 @@
                 service: document.getElementById('serviceType').value,
                 date: document.getElementById('dueDate').value,
                 status: document.getElementById('status').value,
+                assign: document.getElementById('assignTo').value || "-",
                 remark: document.getElementById('remarks').value || "-",
                 timestamp: istTime
             };
 
-            if(!payload.name || !payload.service) return alert("Bhai, Details dalo!");
+            if(!payload.name || !payload.service) return alert("Details bhariye vai!");
 
-            btn.disabled = true; btn.innerText = "Syncing...";
+            btn.disabled = true; 
+            btn.innerText = "Syncing...";
+            
             await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
             resetForm();
             await loadData();
-            btn.disabled = false; btn.innerText = "Sync To Cloud";
-        }
-
-        async function deleteRow(id) {
-            if(confirm("Confirm deletion?")) {
-                await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: id }) });
-                await loadData();
-            }
+            btn.disabled = false; 
+            btn.innerText = "Sync To Cloud";
         }
 
         function startEdit(id) {
             const item = dataList.find(x => x.rowId == id);
+            
+            document.getElementById('editRowId').value = id;
             document.getElementById('clientName').value = item.name;
             document.getElementById('serviceType').value = item.service;
             document.getElementById('dueDate').value = item.date ? item.date.split('T')[0] : "";
             document.getElementById('status').value = item.status;
+            document.getElementById('assignTo').value = item.assign || "";
             document.getElementById('remarks').value = item.remark;
-            document.getElementById('editRowId').value = id;
-            document.getElementById('formHeader').innerHTML = '✏️ Edit Record Mode';
+            
+            // LOCKING FIELDS: Only Remarks and Assign stay open
+            document.querySelectorAll('.edit-lock').forEach(input => input.disabled = true);
+            
+            document.getElementById('formHeader').innerHTML = '✏️ Edit Mode (Client Info Locked)';
             document.getElementById('submitBtn').innerText = "Update Cloud";
             document.getElementById('cancelBtn').classList.remove('hidden');
             window.scrollTo({top: 0, behavior: 'smooth'});
@@ -299,9 +394,21 @@
             document.getElementById('serviceType').value = "";
             document.getElementById('dueDate').value = "";
             document.getElementById('remarks').value = "";
+            document.getElementById('assignTo').value = "";
+            
+            // UNLOCK FIELDS
+            document.querySelectorAll('.edit-lock').forEach(input => input.disabled = false);
+            
             document.getElementById('formHeader').innerHTML = 'Register New Record';
             document.getElementById('submitBtn').innerText = "Sync To Cloud";
             document.getElementById('cancelBtn').classList.add('hidden');
+        }
+
+        async function deleteRow(id) {
+            if(confirm("Delete this record permanently?")) {
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: id }) });
+                await loadData();
+            }
         }
 
         function showSection(id) {
