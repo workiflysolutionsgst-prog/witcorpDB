@@ -132,7 +132,20 @@
         }
         .modal-overlay.active .modal-content {
             transform: scale(1);
-        }
+        }.search-slide {
+    animation: slideDown 0.35s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -528,22 +541,36 @@
         }
 
         // Global Search Logic
-        function handleSearch() {
-            const query = document.getElementById('globalSearch').value.toLowerCase().trim();
-            if (query.length > 0) {
-                isSearching = true;
-                searchResults = dataList.filter(item => {
-                    return (
-                        item.name.toLowerCase().includes(query) || 
-                        item.assign.toLowerCase().includes(query) ||
-                        item.service.toLowerCase().includes(query)
-                    );
-                });
-            } else {
-                isSearching = false;
-            }
-            renderUI();
+        let searchTimer;
+
+function handleSearch() {
+    clearTimeout(searchTimer);
+
+    searchTimer = setTimeout(() => {
+        const query = document.getElementById('globalSearch').value.toLowerCase().trim();
+
+        if (query.length > 0) {
+            isSearching = true;
+            searchResults = dataList.filter(item =>
+                (item.name || '').toLowerCase().includes(query) ||
+                (item.assign || '').toLowerCase().includes(query) ||
+                (item.service || '').toLowerCase().includes(query)
+            );
+        } else {
+            isSearching = false;
         }
+
+        renderUI();
+
+        setTimeout(() => {
+            document.getElementById('tableBody').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 200);
+
+    }, 200);
+}
 
         // IST Time Formatter
         function formatTimeIST(val) {
@@ -564,6 +591,11 @@
         // Dynamic UI Rendering
         function renderUI() {
             const mainTbody = document.getElementById('tableBody');
+            if (isSearching) {
+    mainTbody.classList.add('search-slide');
+} else {
+    mainTbody.classList.remove('search-slide');
+}
             mainTbody.innerHTML = "";
             
             // Clear categorical tables
@@ -707,6 +739,15 @@
             }
         }
 
+        function scrollToEditForm() {
+    const form = document.querySelector('#formHeader');
+    if (form) {
+        form.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+    }
+}
         function startEdit(id) {
             const entry = dataList.find(x => x.rowId == id);
             if (!entry) return;
@@ -724,7 +765,11 @@
             document.getElementById('submitBtn').innerHTML = `<i class="fas fa-check-circle"></i> Commit Changes`;
             document.getElementById('cancelBtn').classList.remove('hidden');
             
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showSectionDirect('dashboard');
+
+setTimeout(() => {
+    scrollToEditForm();
+}, 300);
         }
 
         function resetForm() {
@@ -743,6 +788,12 @@
             }
         }
 
+       function showSectionDirect(sectionId) {
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+}
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
