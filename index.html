@@ -717,7 +717,7 @@ function handleSearch() {
             const istNow = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
             
             const payload = {
-                action: rowId ? "edit" : "add",
+    rowId: rowId || Date.now().toString(),
                 rowId: rowId || null,
                 name: document.getElementById('clientName').value,
                 service: document.getElementById('serviceType').value,
@@ -734,9 +734,16 @@ function handleSearch() {
             btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Processing...`;
 
             try {
-                await supabase
-    .from('clients')
-    .insert([payload]);
+                if (rowId) {
+    await supabase
+        .from('clients')
+        .update(payload)
+        .eq('rowId', rowId);
+} else {
+    await supabase
+        .from('clients')
+        .insert([payload]);
+}
                 resetForm();
                 await loadData();
             } catch (e) {
@@ -791,8 +798,12 @@ setTimeout(() => {
 
         async function deleteEntry(id) {
             if (confirm("Critical: Permanently delete this record from Witcorp database?")) {
-                await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: id }) });
-                await loadData();
+                await supabase
+    .from('clients')
+    .delete()
+    .eq('rowId', id);
+
+await loadData();
             }
         }
 
