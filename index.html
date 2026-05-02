@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witcorp India Advisors LLP | Full Compliance Portal</title>
+    <title>Witcorp India Advisors LLP | Ultimate Executive Portal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for Icons -->
@@ -83,17 +83,100 @@
             border-color: #1e3a8a;
         }
 
-        /* Card Hover */
+        /* Analytics Card Interactivity */
         .stat-card {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
         }
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
+        }
+        .stat-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Modal Backdrop */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: modalFadeIn 0.3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 1100px;
+            max-height: 85vh;
+            border-radius: 3rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
         }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
+
+    <!-- MODAL POPUP FOR ANALYTICS -->
+    <div id="analyticsModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content shadow-2xl" onclick="event.stopPropagation()">
+            <!-- Modal Header -->
+            <div id="modalHeaderBg" class="p-8 flex justify-between items-center text-white">
+                <div>
+                    <h3 id="modalTitle" class="text-3xl font-black uppercase tracking-tighter">Report View</h3>
+                    <p id="modalSubtitle" class="text-white/70 font-bold text-xs mt-1 uppercase tracking-widest"></p>
+                </div>
+                <button onclick="closeModal()" class="w-12 h-12 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <!-- Modal Table -->
+            <div class="flex-1 overflow-y-auto p-8 custom-scroll">
+                <table class="w-full text-left border-separate border-spacing-y-3">
+                    <thead>
+                        <tr class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                            <th class="px-6 py-4">Entity / Client</th>
+                            <th class="px-6 py-4 text-center">Service</th>
+                            <th class="px-6 py-4 text-center">In-Charge</th>
+                            <th class="px-6 py-4 text-center">Status</th>
+                            <th class="px-6 py-4">Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                        <!-- Filtered data will appear here -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Modal Footer -->
+            <div class="p-6 bg-slate-50 border-t flex justify-between items-center">
+                <p class="text-[10px] font-black text-slate-400 uppercase">Witcorp Secure Reporting Engine</p>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span class="text-xs font-bold text-slate-600">Live Data Sync</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- SIDEBAR COMPONENT -->
     <aside class="w-80 bg-[#1e3a8a] text-white flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.1)] z-50">
@@ -166,7 +249,7 @@
                     </p>
                 </div>
 
-                <!-- NEW SEARCH FEATURE -->
+                <!-- SEARCH FEATURE -->
                 <div class="relative w-full md:w-[450px]">
                     <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
                         <i class="fas fa-magnifying-glass text-slate-400 text-lg"></i>
@@ -188,33 +271,40 @@
                 </div>
             </header>
             
-            <!-- ANALYTICS COUNTERS -->
+            <!-- ANALYTICS COUNTERS WITH POPUP TRIGGERS -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-                <div class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-blue-600">
+                <!-- Clickable Card: Total -->
+                <div onclick="openAnalytics('total')" class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-blue-600">
                     <div class="flex justify-between items-start">
                         <p class="text-slate-400 font-black uppercase text-[11px] tracking-[0.2em]">Total Portfolios</p>
                         <i class="fas fa-folder-open text-blue-100 text-2xl"></i>
                     </div>
                     <p id="totalCount" class="text-6xl font-black text-slate-800 mt-4 tracking-tighter">0</p>
+                    <p class="text-[10px] text-blue-500 font-bold mt-4 uppercase"><i class="fas fa-eye mr-1"></i> Click to view all</p>
                 </div>
                 
-                <div class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-emerald-500">
+                <!-- Clickable Card: Completed -->
+                <div onclick="openAnalytics('completed')" class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-emerald-500">
                     <div class="flex justify-between items-start">
                         <p class="text-slate-400 font-black uppercase text-[11px] tracking-[0.2em]">Task Success</p>
                         <i class="fas fa-check-double text-emerald-100 text-2xl"></i>
                     </div>
                     <p id="completedCount" class="text-6xl font-black text-emerald-600 mt-4 tracking-tighter">0</p>
+                    <p class="text-[10px] text-emerald-500 font-bold mt-4 uppercase"><i class="fas fa-eye mr-1"></i> Click to view done</p>
                 </div>
 
-                <div class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-rose-500">
+                <!-- Clickable Card: Pending -->
+                <div onclick="openAnalytics('pending')" class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-rose-500">
                     <div class="flex justify-between items-start">
                         <p class="text-slate-400 font-black uppercase text-[11px] tracking-[0.2em]">Awaiting Action</p>
                         <i class="fas fa-clock text-rose-100 text-2xl"></i>
                     </div>
                     <p id="pendingCount" class="text-6xl font-black text-rose-600 mt-4 tracking-tighter">0</p>
+                    <p class="text-[10px] text-rose-500 font-bold mt-4 uppercase"><i class="fas fa-eye mr-1"></i> Click to view pending</p>
                 </div>
 
-                <div class="stat-card bg-[#1e3a8a] p-8 rounded-[2.5rem] shadow-2xl">
+                <!-- Card: Static Info -->
+                <div class="bg-[#1e3a8a] p-8 rounded-[2.5rem] shadow-2xl">
                     <p class="text-blue-300 font-black uppercase text-[11px] tracking-[0.2em]">Operational Mode</p>
                     <div class="flex items-center gap-3 mt-6 text-white">
                         <i class="fas fa-bolt text-yellow-400 text-3xl"></i>
@@ -364,7 +454,7 @@
     <!-- SYSTEM SCRIPTS -->
     <script>
         // REPLACE WITH YOUR APPS SCRIPT URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwvThPfhaVXrjLjX6XRaiMtbUDKy4ILlUX5jfvRmarYtKImMxSW0beZIcgjgDhOauJLxA/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwdAJtgrvAPuo4SAhLJUdrLKhiSSBYXTv_-gEBCVo1QifPaD6klQkxuz8LBngFnHuWw1w/exec';
         
         let dataList = [];
         let searchResults = [];
@@ -383,6 +473,58 @@
                 console.error("Critical: Data retrieval failed.", err);
                 alert("Database link down. Check script URL.");
             }
+        }
+
+        // POPUP ANALYTICS LOGIC
+        function openAnalytics(type) {
+            const modal = document.getElementById('analyticsModal');
+            const tableBody = document.getElementById('modalTableBody');
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            const headerBg = document.getElementById('modalHeaderBg');
+            
+            tableBody.innerHTML = "";
+            let filtered = [];
+            
+            // Customize Modal based on Type
+            if (type === 'total') {
+                filtered = dataList;
+                title.innerText = "Complete Portfolio Master List";
+                subtitle.innerText = `Unified database of all ${dataList.length} entities`;
+                headerBg.className = "p-8 flex justify-between items-center text-white bg-blue-600";
+            } else if (type === 'completed') {
+                filtered = dataList.filter(x => x.status === 'Completed');
+                title.innerText = "Successfully Closed Tasks";
+                subtitle.innerText = `Archive of ${filtered.length} completed compliance files`;
+                headerBg.className = "p-8 flex justify-between items-center text-white bg-emerald-500";
+            } else if (type === 'pending') {
+                filtered = dataList.filter(x => x.status !== 'Completed');
+                title.innerText = "Urgent Pending Actions";
+                subtitle.innerText = `${filtered.length} tasks requiring immediate attention`;
+                headerBg.className = "p-8 flex justify-between items-center text-white bg-rose-500";
+            }
+
+            // Fill Modal Table
+            filtered.forEach(item => {
+                const statusColor = item.status === 'Completed' ? 'text-emerald-500' : 'text-rose-500';
+                tableBody.innerHTML += `
+                    <tr class="bg-slate-50/50 hover:bg-slate-100 transition-all rounded-2xl">
+                        <td class="px-6 py-5 font-black text-slate-800 text-sm">${item.name}</td>
+                        <td class="px-6 py-5 text-center">
+                            <span class="bg-white px-3 py-1 rounded-lg border text-[10px] font-bold text-blue-600 uppercase">${item.service}</span>
+                        </td>
+                        <td class="px-6 py-5 text-center font-bold text-slate-500 text-xs">${item.assign || '---'}</td>
+                        <td class="px-6 py-5 text-center font-black text-[10px] uppercase ${statusColor}">${item.status}</td>
+                        <td class="px-6 py-5 text-xs text-slate-400 italic">${item.remark || '-'}</td>
+                    </tr>
+                `;
+            });
+
+            modal.classList.add('active');
+        }
+
+        function closeModal(e) {
+            document.getElementById('analyticsModal').classList.remove('active');
         }
 
         // Global Search Logic
@@ -477,9 +619,13 @@
             });
 
             // Update Counters
-            document.getElementById('totalCount').innerText = dataList.length;
-            document.getElementById('completedCount').innerText = dataList.filter(x => x.status === 'Completed').length;
-            document.getElementById('pendingCount').innerText = dataList.length - dataList.filter(x => x.status === 'Completed').length;
+            const total = dataList.length;
+            const completed = dataList.filter(x => x.status === 'Completed').length;
+            const pending = total - completed;
+
+            document.getElementById('totalCount').innerText = total;
+            document.getElementById('completedCount').innerText = completed;
+            document.getElementById('pendingCount').innerText = pending;
         }
 
         function createTableTemplate(id) {
@@ -544,17 +690,17 @@
                 timestamp: istNow
             };
 
-            if (!payload.name || !payload.service) return alert("Bhai, Client aur Service field bharna zaroori hai!");
+            if (!payload.name || !payload.service) return alert("Error: Client Name & Service Type are required.");
 
             btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Syncing Data...`;
+            btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Processing...`;
 
             try {
                 await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
                 resetForm();
                 await loadData();
             } catch (e) {
-                alert("Sync Error. Check Internet.");
+                alert("Connection Error. Please retry.");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Sync To Cloud`;
@@ -591,7 +737,7 @@
         }
 
         async function deleteEntry(id) {
-            if (confirm("Are you sure? This will remove the record from Witcorp Database.")) {
+            if (confirm("Critical: Permanently delete this record from Witcorp database?")) {
                 await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: id }) });
                 await loadData();
             }
