@@ -241,8 +241,7 @@
     </main>
 
     <script>
-        // UPDATE WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyA0KoVvOs4it1A53oQbzGyMB3AHqSBR3uIOjlHrKjh1ksC5zfqcQKJ9IV-DpgBqfJ7YA/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyAQR5JZ21E4cmlXcrX6D7fsWSa-_zryDCordAhXJSk8xocsLuOL_6EhvDmIgZW1JgTuA/exec';
         let dataList = [];
         
         window.onload = loadData;
@@ -274,6 +273,7 @@
                                         <th class="p-6 text-center">Assign</th>
                                         <th class="p-6">Remarks</th>
                                         <th class="p-6 text-center">Deadline</th>
+                                        <th class="p-6 text-center">Updated (IST)</th>
                                         <th class="p-6 text-center">Status</th>
                                         <th class="p-6 text-center">Actions</th>
                                     </tr>
@@ -314,6 +314,7 @@
                     <td class="p-6 text-center font-black text-blue-600 text-[11px] uppercase">${item.assign || '---'}</td>
                     <td class="p-6 italic text-xs text-slate-400">${item.remark}</td>
                     <td class="p-6 text-center font-bold text-slate-500">${cleanDate || '---'}</td>
+                    <td class="p-6 text-center font-black text-[10px] text-blue-900/60">${item.timestamp}</td>
                     <td class="p-6 text-center">
                         <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase border ${item.status==='Completed'?'bg-emerald-50 text-emerald-600 border-emerald-100':'bg-rose-50 text-rose-600 border-rose-100'}">${item.status}</span>
                     </td>
@@ -379,7 +380,6 @@
             document.getElementById('assignTo').value = item.assign || "";
             document.getElementById('remarks').value = item.remark;
             
-            // LOCKING FIELDS: Client Info aur Assign lock ho jayenge
             document.querySelectorAll('.edit-lock').forEach(input => input.disabled = true);
             
             document.getElementById('formHeader').innerHTML = '✏️ Edit Mode (Client & Assign Locked)';
@@ -396,7 +396,6 @@
             document.getElementById('remarks').value = "";
             document.getElementById('assignTo').value = "";
             
-            // UNLOCK FIELDS
             document.querySelectorAll('.edit-lock').forEach(input => input.disabled = false);
             
             document.getElementById('formHeader').innerHTML = 'Register New Record';
