@@ -1,7 +1,6 @@
-<!DOCTYPE html>
+final code best one <!DOCTYPE html>
 <html lang="en">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Witcorp India Advisors LLP | Ultimate Executive Portal</title>
@@ -467,10 +466,9 @@
 
     <!-- SYSTEM SCRIPTS -->
     <script>
-        const supabaseUrl = 'https://yyyudqemoogpybtoxkzj.supabase.co';
-const supabaseKey = 'sb_publishable_gSHK0Aw3v8vsRcr2K90-6w_NsvuqMyu';
-
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        // REPLACE WITH YOUR APPS SCRIPT URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwdAJtgrvAPuo4SAhLJUdrLKhiSSBYXTv_-gEBCVo1QifPaD6klQkxuz8LBngFnHuWw1w/exec';
+        
         let dataList = [];
         let searchResults = [];
         let isSearching = false;
@@ -480,19 +478,15 @@ const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         // Fetch Data from Google Sheets
         async function loadData() {
-    const { data, error } = await supabase
-        .from('clients')
-        .select('*');
-
-    if (error) {
-        alert("Error loading data");
-        console.log(error);
-        return;
-    }
-
-    dataList = data;
-    renderUI();
-}
+            try {
+                const response = await fetch(scriptURL);
+                dataList = await response.json();
+                renderUI();
+            } catch (err) {
+                console.error("Critical: Data retrieval failed.", err);
+                alert("Database link down. Check script URL.");
+            }
+        }
 
         // POPUP ANALYTICS LOGIC
         function openAnalytics(type) {
@@ -714,18 +708,19 @@ function handleSearch() {
         async function handleDataSubmit() {
             const rowId = document.getElementById('editRowId').value;
             const btn = document.getElementById('submitBtn');
-            timestamp: new Date().toISOString()
+            const istNow = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
             
             const payload = {
-    rowId: rowId || Date.now().toString(),
-    name: document.getElementById('clientName').value,
-    service: document.getElementById('serviceType').value,
-    date: document.getElementById('dueDate').value,
-    status: document.getElementById('status').value,
-    assign: document.getElementById('assignTo').value || "N/A",
-    remark: document.getElementById('remarks').value || "-",
-    timestamp: new Date().toISOString()
-};
+                action: rowId ? "edit" : "add",
+                rowId: rowId || null,
+                name: document.getElementById('clientName').value,
+                service: document.getElementById('serviceType').value,
+                date: document.getElementById('dueDate').value,
+                status: document.getElementById('status').value,
+                assign: document.getElementById('assignTo').value || "N/A",
+                remark: document.getElementById('remarks').value || "-",
+                timestamp: istNow
+            };
 
             if (!payload.name || !payload.service) return alert("Error: Client Name & Service Type are required.");
 
@@ -733,16 +728,7 @@ function handleSearch() {
             btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Processing...`;
 
             try {
-                if (rowId) {
-    await supabase
-        .from('clients')
-        .update(payload)
-        .eq('rowId', rowId);
-} else {
-    await supabase
-        .from('clients')
-        .insert([payload]);
-}
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
                 resetForm();
                 await loadData();
             } catch (e) {
@@ -797,12 +783,8 @@ setTimeout(() => {
 
         async function deleteEntry(id) {
             if (confirm("Critical: Permanently delete this record from Witcorp database?")) {
-                await supabase
-    .from('clients')
-    .delete()
-    .eq('rowId', id);
-
-await loadData();
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: id }) });
+                await loadData();
             }
         }
 
