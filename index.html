@@ -24,6 +24,9 @@
             font-weight: 800; 
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             transform: scale(1.02);
+            <button onclick="logout()" class="nav-btn p-5 rounded-2xl w-full">
+    Logout
+</button>
         }
 
         /* Section Visibility Toggle */
@@ -149,6 +152,25 @@
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
+    <!-- LOGIN PAGE -->
+<div id="loginPage" class="fixed inset-0 bg-blue-900 flex items-center justify-center z-50">
+    <div class="bg-white p-10 rounded-3xl w-[350px] text-center shadow-2xl">
+        <h2 class="text-2xl font-black mb-6">Login</h2>
+        
+        <input id="loginEmail" type="text" placeholder="Email"
+            class="w-full p-4 mb-4 border rounded-xl">
+
+        <input id="loginPassword" type="password" placeholder="Password"
+            class="w-full p-4 mb-6 border rounded-xl">
+
+        <button onclick="loginUser()" 
+            class="w-full bg-blue-900 text-white py-3 rounded-xl font-bold">
+            Login
+        </button>
+
+        <p id="loginError" class="text-red-500 mt-3 hidden">Invalid Login</p>
+    </div>
+</div>
 
     <!-- MODAL POPUP FOR ANALYTICS -->
     <div id="analyticsModal" class="modal-overlay" onclick="closeModal(event)">
@@ -236,7 +258,7 @@
         <div class="p-8 border-t border-blue-800/50 bg-[#162a63]">
             <div class="bg-blue-900/60 p-5 rounded-2xl mb-6 border border-blue-700/50">
                 <p class="text-[11px] text-blue-100 font-medium italic text-center leading-relaxed">
-                    "Providing Strategic Wisdom for Your Global Growth"
+                    "Providing Strategic Wisdom for Your Global Growth- Damini Agarwal"
                 </p>
             </div>
             <div class="text-center">
@@ -467,14 +489,45 @@
     <!-- SYSTEM SCRIPTS -->
     <script>
         // REPLACE WITH YOUR APPS SCRIPT URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyPzcy_Kv0QWN8Lc081VpnBsiYsvjTqJScShSo7h_Kt5tCMpLNP68S9mOGcRf8JB2lnkw/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz9qaBHU7Yf7WUqecSXU-RB0pvZLU9ZZrTaNFB_c95QT1YdumRJxHLM_70Y6Po8Jvh8Ng/exec';
         
         let dataList = [];
         let searchResults = [];
         let isSearching = false;
 
         // Auto Load on Init
-        window.addEventListener('DOMContentLoaded', loadData);
+        window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem("isLoggedIn") === "true") {
+        document.getElementById("loginPage").style.display = "none";
+    }
+    loadData();
+});
+        async function loginUser() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const res = await fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify({
+            action: "login",
+            email: email,
+            password: password
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.status === "success") {
+        document.getElementById("loginPage").style.display = "none";
+        localStorage.setItem("isLoggedIn", "true");
+    } else {
+        document.getElementById("loginError").classList.remove("hidden");
+        function logout() {
+    localStorage.removeItem("isLoggedIn");
+    location.reload();
+}
+    }
+}
 
         // Fetch Data from Google Sheets
         async function loadData() {
