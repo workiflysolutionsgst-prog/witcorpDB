@@ -226,11 +226,6 @@
         <!-- Navigation Menu -->
         <nav id="sidebarNav" class="flex-1 p-6 space-y-4 mt-6 custom-scroll overflow-y-auto">
             <button onclick="showSection('dashboard')" class="nav-btn active p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
-                <button onclick="logout()" 
-    class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
-    <i class="fas fa-sign-out-alt w-6 text-xl text-red-400"></i>
-    <span class="tracking-wide">Logout</span>
-</button>
                 <i class="fas fa-grid-2 w-6 text-xl group-hover:rotate-12 transition-transform"></i> 
                 <span class="tracking-wide">Main Dashboard</span>
             </button>
@@ -265,6 +260,12 @@
             <div class="text-center">
                 <p class="text-[10px] text-yellow-500 font-black uppercase tracking-[0.4em] mb-2">Architected By</p>
                 <p class="text-base font-black text-white tracking-tight">Kamlesh Yadav</p>
+                <div class="mt-4">
+    <button onclick="logout()" 
+        class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl font-bold shadow">
+        Logout
+    </button>
+</div>
             </div>
         </div>
     </aside>
@@ -491,6 +492,10 @@
     <script>
         // REPLACE WITH YOUR APPS SCRIPT URL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbz9qaBHU7Yf7WUqecSXU-RB0pvZLU9ZZrTaNFB_c95QT1YdumRJxHLM_70Y6Po8Jvh8Ng/exec';
+        function logout() {
+    localStorage.removeItem("isLoggedIn");
+    location.reload();
+}
         
         let dataList = [];
         let searchResults = [];
@@ -508,12 +513,7 @@
         async function loginUser() {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
-            function logout() {
-    localStorage.removeItem("isLoggedIn");
-    location.reload();
-}
-
-    if (!email || !password) {
+            if (!email || !password) {
         document.getElementById("loginError").innerText = "Enter email & password";
         document.getElementById("loginError").classList.remove("hidden");
         return;
