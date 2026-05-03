@@ -12,7 +12,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        body { 
+        body <div id="loginPage" class="flex items-center justify-center h-screen bg-slate-100">
+  <div class="bg-white p-10 rounded-3xl shadow-xl w-[350px]">
+    <h2 class="text-2xl font-black mb-6 text-center">Login</h2>
+
+    <input id="loginEmail" type="email" placeholder="Email"
+      class="w-full mb-4 p-4 border rounded-xl">
+
+    <input id="loginPassword" type="password" placeholder="Password"
+      class="w-full mb-6 p-4 border rounded-xl">
+
+    <button onclick="login()" 
+      class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold">
+      Login
+    </button>
+
+    <p id="loginError" class="text-red-500 text-sm mt-3 hidden">
+      Invalid login
+    </p>
+  </div>
+</div>
+        { 
             font-family: 'Inter', sans-serif; 
             background-color: #f8fafc;
         }
@@ -243,11 +263,16 @@
                 <p class="text-[10px] text-yellow-500 font-black uppercase tracking-[0.4em] mb-2">Architected By</p>
                 <p class="text-base font-black text-white tracking-tight">Kamlesh Yadav</p>
             </div>
+            <button onclick="logout()" class="bg-red-500 p-3 rounded-xl w-full mt-6">
+        Logout
+    </button>
+
+</div>
         </div>
     </aside>
 
     <!-- MAIN VIEWPORT -->
-    <main class="flex-1 overflow-y-auto custom-scroll bg-slate-50 relative">
+    <main id="appContent" class="hidden flex-1 overflow-y-auto custom-scroll bg-slate-50 relative">
         
         <!-- DASHBOARD SECTION -->
         <div id="dashboard" class="section active p-12">
@@ -467,7 +492,7 @@
     <!-- SYSTEM SCRIPTS -->
     <script>
         // REPLACE WITH YOUR APPS SCRIPT URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwIrGR-mLUjM0tZeSvk1DWOxs-_jGThTdIH-JNpaP_zOp8o04oOB-o5RQ0s_heMb-ZPOA/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyXr14RnDprd-LmwoVroUO__CwHMdjArgHvcH7RphLwXEf8o1MOQ3LdoD8i0HldaWzERA/exec';
         
         let dataList = [];
         let searchResults = [];
@@ -801,6 +826,48 @@ setTimeout(() => {
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
+        // ===== LOGIN =====
+async function login() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+
+  const res = await fetch(scriptURL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "login",
+      email,
+      password
+    })
+  });
+
+  const data = await res.json();
+
+  if (data.status === "success") {
+    localStorage.setItem("user", JSON.stringify(data));
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("appContent").classList.remove("hidden");
+    loadData();
+  } else {
+    document.getElementById("loginError").classList.remove("hidden");
+  }
+}
+
+// ===== AUTO LOGIN =====
+window.addEventListener('DOMContentLoaded', () => {
+  const user = localStorage.getItem("user");
+
+  if (user) {
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("appContent").classList.remove("hidden");
+    loadData();
+  }
+});
+
+// ===== LOGOUT =====
+function logout() {
+  localStorage.removeItem("user");
+  location.reload();
+}
     </script>
 </body>
 </html>
