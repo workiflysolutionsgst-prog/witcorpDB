@@ -226,15 +226,15 @@
         <!-- Navigation Menu -->
         <nav id="sidebarNav" class="flex-1 p-6 space-y-4 mt-6 custom-scroll overflow-y-auto">
             <button onclick="showSection('dashboard')" class="nav-btn active p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
-                <i class="fas fa-grid-2 w-6 text-xl group-hover:rotate-12 transition-transform"></i> 
-                <span class="tracking-wide">Main Dashboard</span>
-            </button>
-            <button onclick="logout()" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
+                <button onclick="logout()" 
+    class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
     <i class="fas fa-sign-out-alt w-6 text-xl text-red-400"></i>
     <span class="tracking-wide">Logout</span>
 </button>
-            
-            <button onclick="showSection('gst')" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
+                <i class="fas fa-grid-2 w-6 text-xl group-hover:rotate-12 transition-transform"></i> 
+                <span class="tracking-wide">Main Dashboard</span>
+            </button>
+             <button onclick="showSection('gst')" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
                 <i class="fas fa-receipt w-6 text-xl text-yellow-400 group-hover:scale-110 transition-transform"></i> 
                 <span class="tracking-wide">GST Management</span>
             </button>
@@ -500,36 +500,48 @@
         window.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem("isLoggedIn") === "true") {
         document.getElementById("loginPage").style.display = "none";
+    } else {
+        document.getElementById("loginPage").style.display = "flex";
     }
     loadData();
 });
         async function loginUser() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
             function logout() {
     localStorage.removeItem("isLoggedIn");
     location.reload();
 }
 
-    const res = await fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify({
-            action: "login",
-            email: email,
-            password: password
-        })
-    });
+    if (!email || !password) {
+        document.getElementById("loginError").innerText = "Enter email & password";
+        document.getElementById("loginError").classList.remove("hidden");
+        return;
+    }
 
-    const data = await res.json();
+    try {
+        const res = await fetch(scriptURL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "login",
+                email: email,
+                password: password
+            })
+        });
 
-    if (data.status === "success") {
-        document.getElementById("loginPage").style.display = "none";
-        localStorage.setItem("isLoggedIn", "true");
-    } 
-     {
-    localStorage.removeItem("isLoggedIn");
-    location.reload();
-}
+        const data = await res.json();
+
+        if (data.status === "success") {
+            localStorage.setItem("isLoggedIn", "true");
+            document.getElementById("loginPage").style.display = "none";
+        } else {
+            document.getElementById("loginError").innerText = "Invalid Login";
+            document.getElementById("loginError").classList.remove("hidden");
+        }
+
+    } catch (err) {
+        document.getElementById("loginError").innerText = "Server error";
+        document.getElementById("loginError").classList.remove("hidden");
     }
 }
 
