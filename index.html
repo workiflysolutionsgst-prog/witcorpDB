@@ -1,997 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witcorp India Advisors LLP | Ultimate Executive Portal</title>
-    <!-- Tailwind CSS -->
+    <title>Witcorp Hub | Supabase Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1e3a8a">
-    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #f8fafc;
-        }
-
-        /* Sidebar Navigation Active State */
-        .nav-btn.active { 
-            background-color: #fbbf24; 
-            color: #1e3a8a; 
-            font-weight: 800; 
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            transform: scale(1.02);
-        }
-
-        /* Section Visibility Toggle */
-        .section { 
-            display: none; 
-            animation: fadeIn 0.4s ease-in-out;
-        }
-
-        .section.active { 
-            display: block; 
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Custom Scrollbar Styling */
-        .custom-scroll::-webkit-scrollbar { 
-            width: 8px; 
-        }
-
-        .custom-scroll::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-
-        .custom-scroll::-webkit-scrollbar-thumb { 
-            background: #cbd5e1; 
-            border-radius: 100px; 
-        }
-
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* Button Hover Effects */
-        .nav-btn { 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-
-        .nav-btn:hover:not(.active) { 
-            background-color: rgba(255, 255, 255, 0.1); 
-            padding-left: 1.75rem;
-        }
-
-        /* Form Input States */
-        input:disabled, select:disabled {
-            background-color: #f1f5f9 !important;
-            color: #94a3b8 !important;
-            cursor: not-allowed;
-            border-color: #e2e8f0 !important;
-        }
-
-        /* Search Input Focus Glow */
-        #globalSearch:focus {
-            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
-            border-color: #1e3a8a;
-        }
-
-        /* Analytics Card Interactivity */
-        .stat-card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-        }
-        .stat-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
-        }
-        .stat-card:active {
-            transform: scale(0.98);
-        }
-
-        /* Modal Backdrop */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            animation: modalFadeIn 0.3s ease;
-        }
-        .modal-overlay.active {
-            display: flex;
-        }
-        @keyframes modalFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Modal Content */
-        .modal-content {
-            background: white;
-            width: 100%;
-            max-width: 1100px;
-            max-height: 85vh;
-            border-radius: 3rem;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }.search-slide {
-    animation: slideDown 0.35s ease;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-25px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .nav-btn.active { background-color: #fbbf24; color: #1e3a8a; font-weight: 800; transform: scale(1.02); }
+        .section { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .stat-card { transition: all 0.3s ease; cursor: pointer; }
+        .stat-card:hover { transform: translateY(-5px); }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
-    <!-- LOGIN PAGE -->
-<div id="loginPage" class="fixed inset-0 bg-blue-900 flex items-center justify-center z-50">
-    <div class="bg-white p-10 rounded-3xl w-[350px] text-center shadow-2xl">
-        <h2 class="text-2xl font-black mb-6">Login</h2>
-        
-        <input id="loginEmail" type="text" placeholder="Email"
-            class="w-full p-4 mb-4 border rounded-xl">
 
-        <input id="loginPassword" type="password" placeholder="Password"
-            class="w-full p-4 mb-6 border rounded-xl">
-
-        <button onclick="loginUser()" 
-            class="w-full bg-blue-900 text-white py-3 rounded-xl font-bold">
-            Login
-        </button>
-
-        <p id="loginError" class="text-red-500 mt-3 hidden">Invalid Login</p>
-    </div>
-</div>
-
-    <!-- MODAL POPUP FOR ANALYTICS -->
-    <div id="analyticsModal" class="modal-overlay" onclick="closeModal(event)">
-        <div class="modal-content shadow-2xl" onclick="event.stopPropagation()">
-            <!-- Modal Header -->
-            <div id="modalHeaderBg" class="p-8 flex justify-between items-center text-white">
-                <div>
-                    <h3 id="modalTitle" class="text-3xl font-black uppercase tracking-tighter">Report View</h3>
-                    <p id="modalSubtitle" class="text-white/70 font-bold text-xs mt-1 uppercase tracking-widest"></p>
-                </div>
-                <button onclick="closeModal()" class="w-12 h-12 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center transition-all">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
+    <!-- SIDEBAR -->
+    <aside class="w-80 bg-[#1e3a8a] text-white flex flex-col shadow-2xl z-50">
+        <div class="p-8 border-b border-blue-800/50 flex flex-col items-center">
+            <div class="w-20 h-20 mb-4 border-4 border-yellow-400 rounded-[1.5rem] bg-white flex items-center justify-center">
+                <i class="fas fa-landmark text-blue-900 text-3xl"></i>
             </div>
-            <!-- Modal Table -->
-            <div class="flex-1 overflow-y-auto p-8 custom-scroll">
-                <table class="w-full text-left border-separate border-spacing-y-3">
-                    <thead>
-                        <tr class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                            <th class="px-6 py-4">Entity / Client</th>
-                            <th class="px-6 py-4 text-center">Service</th>
-                            <th class="px-6 py-4 text-center">In-Charge</th>
-                            <th class="px-6 py-4 text-center">Status</th>
-                            <th class="px-6 py-4">Remark</th>
-                        </tr>
-                    </thead>
-                    <tbody id="modalTableBody">
-                        <!-- Filtered data will appear here -->
-                    </tbody>
-                </table>
-            </div>
-            <!-- Modal Footer -->
-            <div class="p-6 bg-slate-50 border-t flex justify-between items-center">
-                <p class="text-[10px] font-black text-slate-400 uppercase">Witcorp Secure Reporting Engine</p>
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <span class="text-xs font-bold text-slate-600">Live Data Sync</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SIDEBAR COMPONENT -->
-    <aside class="w-80 bg-[#1e3a8a] text-white flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.1)] z-50">
-        <!-- Logo Section -->
-        <div class="p-8 pb-10 border-b border-blue-800/50 flex flex-col items-center">
-            <div class="w-24 h-24 mb-6 border-4 border-yellow-400 p-2 rounded-[2rem] shadow-2xl bg-white flex items-center justify-center rotate-3 hover:rotate-0 transition-all duration-500 cursor-pointer">
-                <img src="logo.png" class="w-full h-full object-contain rounded-xl" />
-            </div>
-            <h1 class="text-2xl font-black text-yellow-400 text-center leading-tight uppercase tracking-tighter">
-                Witcorp India <br> 
-                <span class="text-white text-sm font-medium tracking-[0.25em] opacity-80">Advisors LLP</span>
-            </h1>
+            <h1 class="text-xl font-black text-yellow-400 text-center uppercase">Witcorp India</h1>
         </div>
         
-        <!-- Navigation Menu -->
-        <nav id="sidebarNav" class="flex-1 p-6 space-y-4 mt-6 custom-scroll overflow-y-auto">
-            <button onclick="showSection('dashboard')" class="nav-btn active p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
-                <i class="fas fa-grid-2 w-6 text-xl group-hover:rotate-12 transition-transform"></i> 
-                <span class="tracking-wide">Main Dashboard</span>
+        <nav class="flex-1 p-6 space-y-3">
+            <button onclick="showSection('dashboard')" class="nav-btn active p-4 rounded-xl w-full text-left flex items-center gap-3">
+                <i class="fas fa-th-large"></i> Dashboard
             </button>
-             <button onclick="showSection('gst')" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
-                <i class="fas fa-receipt w-6 text-xl text-yellow-400 group-hover:scale-110 transition-transform"></i> 
-                <span class="tracking-wide">GST Management</span>
-            </button>
-            
-            <button onclick="showSection('mca')" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
-                <i class="fas fa-university w-6 text-xl text-blue-300 group-hover:scale-110 transition-transform"></i> 
-                <span class="tracking-wide">MCA & ROC Filings</span>
-            </button>
-            
-            <button onclick="showSection('it')" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
-                <i class="fas fa-coins w-6 text-xl text-emerald-400 group-hover:scale-110 transition-transform"></i> 
-                <span class="tracking-wide">Income Tax (IT)</span>
-            </button>
-
-            <button onclick="showSection('pt')" class="nav-btn p-5 rounded-2xl text-left w-full flex items-center gap-4 group">
-                <i class="fas fa-stamp w-6 text-xl text-orange-400 group-hover:scale-110 transition-transform"></i> 
-                <span class="tracking-wide">Professional Tax</span>
+            <button onclick="showSection('management')" class="nav-btn p-4 rounded-xl w-full text-left flex items-center gap-3">
+                <i class="fas fa-database"></i> Records
             </button>
         </nav>
-        
-        <!-- Footer Info -->
-        <div class="p-8 border-t border-blue-800/50 bg-[#162a63]">
-            <div class="bg-blue-900/60 p-5 rounded-2xl mb-6 border border-blue-700/50">
-                <p class="text-[11px] text-blue-100 font-medium italic text-center leading-relaxed">
-                    "Providing Strategic Wisdom for Your Global Growth- Damini Agarwal"
-                </p>
-            </div>
-            <div class="text-center">
-                <p class="text-[10px] text-yellow-500 font-black uppercase tracking-[0.4em] mb-2">Architected By</p>
-                <p class="text-base font-black text-white tracking-tight">Kamlesh Yadav</p>
-                <div class="mt-4">
-    <button onclick="logout()" 
-        class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl font-bold shadow">
-        Logout
-    </button>
-</div>
-            </div>
+
+        <div class="p-6 bg-blue-900/50 text-center">
+            <p class="text-[10px] uppercase tracking-widest text-blue-300">Developer</p>
+            <p class="font-bold">Kamlesh Yadav</p>
         </div>
     </aside>
 
-    <!-- MAIN VIEWPORT -->
-    <main class="flex-1 overflow-y-auto custom-scroll bg-slate-50 relative">
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 overflow-y-auto bg-slate-50 p-8">
         
-        <!-- DASHBOARD SECTION -->
-        <div id="dashboard" class="section active p-12">
-            
-            <!-- HEADER WITH SEARCH -->
-            <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-                <div class="space-y-1">
-                    <h2 class="text-4xl font-black text-slate-800 tracking-tight uppercase">Control Center</h2>
-                    <p class="text-slate-500 font-semibold flex items-center gap-2">
-                        <span class="w-2 h-2 bg-blue-600 rounded-full"></span> 
-                        Witcorp Hub - Data Management Portal
-                    </p>
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="section active">
+            <header class="mb-10 flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-black text-slate-800 uppercase">Control Center</h2>
+                    <p class="text-slate-500 font-medium">WitcorpHub v2 (Powered by Supabase)</p>
                 </div>
-
-                <!-- SEARCH FEATURE -->
-                <div class="relative w-full md:w-[450px]">
-                    <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                        <i class="fas fa-magnifying-glass text-slate-400 text-lg"></i>
-                    </div>
-                    <input type="text" id="globalSearch" onkeyup="handleSearch()" 
-                           placeholder="Search Company, Staff or Service..." 
-                           class="w-full bg-white border-2 border-slate-200 pl-16 pr-8 py-5 rounded-[2rem] outline-none transition-all shadow-sm font-semibold text-slate-700 placeholder:text-slate-300">
-                </div>
-
-                <div class="hidden lg:flex bg-white px-8 py-4 rounded-[2rem] shadow-sm border border-slate-200 items-center gap-6">
-                    <div class="text-right">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Network Status</p>
-                        <p class="text-sm font-extrabold text-emerald-600 uppercase">Secure Sync Active</p>
-                    </div>
-                    <div class="relative">
-                        <div class="w-4 h-4 bg-emerald-500 rounded-full animate-ping absolute"></div>
-                        <div class="w-4 h-4 bg-emerald-500 rounded-full relative"></div>
-                    </div>
+                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border">
+                    <span id="syncStatus" class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span class="text-xs font-black text-slate-600 uppercase">Cloud Live</span>
                 </div>
             </header>
-            
-            <!-- ANALYTICS COUNTERS WITH POPUP TRIGGERS -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-                <!-- Clickable Card: Total -->
-                <div onclick="openAnalytics('total')" class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-blue-600">
-                    <div class="flex justify-between items-start">
-                        <p class="text-slate-400 font-black uppercase text-[11px] tracking-[0.2em]">Total Portfolios</p>
-                        <i class="fas fa-folder-open text-blue-100 text-2xl"></i>
-                    </div>
-                    <p id="totalCount" class="text-6xl font-black text-slate-800 mt-4 tracking-tighter">0</p>
-                    <p class="text-[10px] text-blue-500 font-bold mt-4 uppercase"><i class="fas fa-eye mr-1"></i> Click to view all</p>
-                </div>
-                
-                <!-- Clickable Card: Completed -->
-                <div onclick="openAnalytics('completed')" class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-emerald-500">
-                    <div class="flex justify-between items-start">
-                        <p class="text-slate-400 font-black uppercase text-[11px] tracking-[0.2em]">Task Success</p>
-                        <i class="fas fa-check-double text-emerald-100 text-2xl"></i>
-                    </div>
-                    <p id="completedCount" class="text-6xl font-black text-emerald-600 mt-4 tracking-tighter">0</p>
-                    <p class="text-[10px] text-emerald-500 font-bold mt-4 uppercase"><i class="fas fa-eye mr-1"></i> Click to view done</p>
-                </div>
 
-                <!-- Clickable Card: Pending -->
-                <div onclick="openAnalytics('pending')" class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-b-[10px] border-rose-500">
-                    <div class="flex justify-between items-start">
-                        <p class="text-slate-400 font-black uppercase text-[11px] tracking-[0.2em]">Awaiting Action</p>
-                        <i class="fas fa-clock text-rose-100 text-2xl"></i>
-                    </div>
-                    <p id="pendingCount" class="text-6xl font-black text-rose-600 mt-4 tracking-tighter">0</p>
-                    <p class="text-[10px] text-rose-500 font-bold mt-4 uppercase"><i class="fas fa-eye mr-1"></i> Click to view pending</p>
+            <!-- STATS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="stat-card bg-white p-6 rounded-3xl border-b-8 border-blue-600 shadow-sm">
+                    <p class="text-xs font-black text-slate-400 uppercase">Total Portfolios</p>
+                    <h3 id="totalCount" class="text-5xl font-black text-slate-800 mt-2">0</h3>
                 </div>
-
-                <!-- Card: Static Info -->
-                <div class="bg-[#1e3a8a] p-8 rounded-[2.5rem] shadow-2xl">
-                    <p class="text-blue-300 font-black uppercase text-[11px] tracking-[0.2em]">Operational Mode</p>
-                    <div class="flex items-center gap-3 mt-6 text-white">
-                        <i class="fas fa-bolt text-yellow-400 text-3xl"></i>
-                        <span class="text-2xl font-black uppercase tracking-tight">Real-Time</span>
-                    </div>
+                <div class="stat-card bg-white p-6 rounded-3xl border-b-8 border-emerald-500 shadow-sm">
+                    <p class="text-xs font-black text-slate-400 uppercase">Completed</p>
+                    <h3 id="completedCount" class="text-5xl font-black text-emerald-600 mt-2">0</h3>
+                </div>
+                <div class="stat-card bg-white p-6 rounded-3xl border-b-8 border-rose-500 shadow-sm">
+                    <p class="text-xs font-black text-slate-400 uppercase">Awaiting Action</p>
+                    <h3 id="pendingCount" class="text-5xl font-black text-rose-600 mt-2">0</h3>
                 </div>
             </div>
 
-            <!-- INPUT FORM COMPONENT -->
-            <div class="bg-white p-12 rounded-[3rem] shadow-xl mb-16 border border-slate-100 relative overflow-hidden group">
-                <div class="absolute top-0 left-0 w-4 h-full bg-[#1e3a8a] group-hover:bg-yellow-400 transition-colors duration-500"></div>
-                
-                <div class="flex items-center gap-4 mb-10">
-                    <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
-                        <i class="fas fa-database text-xl"></i>
-                    </div>
-                    <h3 id="formHeader" class="text-2xl font-black text-slate-800 uppercase tracking-tight">Entry Management System</h3>
+            <!-- FORM -->
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl mb-10 border border-slate-100">
+                <h3 class="text-lg font-black text-slate-800 mb-6 uppercase tracking-tight">Entry Management</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <input type="text" id="clientName" placeholder="Client Name" class="p-4 bg-slate-50 border rounded-xl outline-none focus:border-blue-500 font-bold">
+                    <input type="text" id="serviceType" placeholder="Service (GST, MCA...)" class="p-4 bg-slate-50 border rounded-xl outline-none focus:border-blue-500 font-bold">
+                    <input type="date" id="dueDate" class="p-4 bg-slate-50 border rounded-xl outline-none focus:border-blue-500 font-bold">
+                    <input type="text" id="assignTo" placeholder="Assign Staff" class="p-4 bg-slate-50 border rounded-xl outline-none focus:border-blue-500 font-bold">
+                    <select id="status" class="p-4 bg-slate-50 border rounded-xl outline-none focus:border-blue-500 font-bold">
+                        <option value="Pending">Pending</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <input type="text" id="remarks" placeholder="Remarks" class="p-4 bg-slate-50 border rounded-xl outline-none focus:border-blue-500 font-bold">
                 </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-                    <input type="hidden" id="editRowId">
-                    
-                    <div class="space-y-3">
-                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Client Name / Entity</label>
-                        <input id="clientName" type="text" placeholder="e.g. Witcorp Pvt Ltd" 
-                               class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold">
-                    </div>
-
-                    <div class="space-y-3">
-                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Type of Service</label>
-                        <input id="serviceType" type="text" placeholder="GST, MCA, IT, etc." 
-                               class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold uppercase">
-                    </div>
-
-                    <div class="space-y-3">
-                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Compliance Deadline</label>
-                        <input id="dueDate" type="date" 
-                               class="edit-lock w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-slate-600">
-                    </div>
-
-                    <div class="space-y-3">
-                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Current Status</label>
-                        <select id="status" class="w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-2xl outline-none focus:border-blue-500 focus:bg-white appearance-none font-black text-slate-700">
-                            <option value="Pending">🔴 PENDING ACTION</option>
-                            <option value="Completed">🟢 TASK COMPLETED</option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-3">
-                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Assigned Specialist</label>
-                        <input id="assignTo" type="text" placeholder="Staff Name" 
-                               class="edit-lock w-full bg-blue-50/50 border-2 border-blue-100 p-5 rounded-2xl outline-none focus:border-blue-600 focus:bg-white transition-all font-black text-blue-900 uppercase">
-                    </div>
-
-                    <div class="space-y-3 lg:col-span-3">
-                        <label class="text-xs font-black text-slate-500 uppercase ml-1 tracking-widest">Executive Remarks & Notes</label>
-                        <input id="remarks" type="text" placeholder="Add specific filing details or instructions..." 
-                               class="w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-medium">
-                    </div>
-                </div>
-
-                <div class="mt-12 flex flex-wrap gap-6">
-                    <button onclick="handleDataSubmit()" id="submitBtn" 
-                            class="bg-[#1e3a8a] text-white px-14 py-5 rounded-2xl font-black shadow-[0_15px_30px_rgba(30,58,138,0.3)] hover:bg-blue-700 hover:-translate-y-1 active:scale-95 transition-all uppercase tracking-[0.2em] text-sm flex items-center gap-3">
-                        <i class="fas fa-cloud-upload-alt"></i> Sync To Cloud
-                    </button>
-                    <button id="cancelBtn" onclick="resetForm()" 
-                            class="hidden bg-slate-200 text-slate-600 px-10 py-5 rounded-2xl font-black hover:bg-slate-300 transition-all uppercase tracking-widest text-xs">
-                        Discard Changes
-                    </button>
-                </div>
+                <button onclick="saveToSupabase()" class="mt-6 bg-[#1e3a8a] text-white px-10 py-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all">
+                    <i class="fas fa-cloud-upload-alt mr-2"></i> Sync To Supabase
+                </button>
             </div>
 
-            <!-- PRIMARY DATA TABLE -->
-            <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-slate-100">
-                <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
-                    <h4 class="font-black text-slate-700 uppercase tracking-widest text-sm flex items-center gap-3">
-                        <i class="fas fa-list-ul text-blue-600"></i> Active Master Records
-                    </h4>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Showing last updated entries first</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="bg-white border-b border-slate-100">
-                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Client Name</th>
-                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Service</th>
-                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Assign</th>
-                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Deadline</th>
-                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Remarks</th>
-                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Log (IST)</th>
-                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Status</th>
-                                <th class="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Manage</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="divide-y divide-slate-50">
-                            <!-- Rows loaded by JS -->
-                        </tbody>
-                    </table>
-                </div>
+            <!-- DATA TABLE -->
+            <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 border-b">
+                        <tr>
+                            <th class="p-6 text-[10px] font-black uppercase text-slate-400">Client</th>
+                            <th class="p-6 text-[10px] font-black uppercase text-slate-400">Service</th>
+                            <th class="p-6 text-[10px] font-black uppercase text-slate-400 text-center">Status</th>
+                            <th class="p-6 text-[10px] font-black uppercase text-slate-400 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y">
+                        <!-- Rows via JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- CATEGORICAL SUB-SECTIONS -->
-        <div id="gst" class="section p-12">
-            <div class="flex items-center gap-6 mb-12">
-                <div class="w-16 h-16 bg-yellow-400 rounded-3xl flex items-center justify-center shadow-lg shadow-yellow-200">
-                    <i class="fas fa-file-invoice text-blue-900 text-2xl"></i>
-                </div>
-                <h2 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Goods & Services Tax (GST)</h2>
-            </div>
-            <div id="gstTable"></div>
+        <!-- OTHER SECTIONS (PLaceholders) -->
+        <div id="management" class="section">
+            <h2 class="text-3xl font-black">All Master Records</h2>
+            <div id="fullList" class="mt-8"></div>
         </div>
-
-        <div id="mca" class="section p-12">
-            <div class="flex items-center gap-6 mb-12">
-                <div class="w-16 h-16 bg-blue-900 rounded-3xl flex items-center justify-center shadow-lg shadow-blue-200 text-white">
-                    <i class="fas fa-building text-2xl"></i>
-                </div>
-                <h2 class="text-4xl font-black text-slate-800 uppercase tracking-tight">MCA & ROC Compliance</h2>
-            </div>
-            <div id="mcaTable"></div>
-        </div>
-
-        <div id="it" class="section p-12">
-            <div class="flex items-center gap-6 mb-12">
-                <div class="w-16 h-16 bg-emerald-500 rounded-3xl flex items-center justify-center shadow-lg shadow-emerald-200 text-white">
-                    <i class="fas fa-chart-pie text-2xl"></i>
-                </div>
-                <h2 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Income Tax Filings</h2>
-            </div>
-            <div id="itTable"></div>
-        </div>
-
-        <div id="pt" class="section p-12">
-            <div class="flex items-center gap-6 mb-12">
-                <div class="w-16 h-16 bg-orange-500 rounded-3xl flex items-center justify-center shadow-lg shadow-orange-200 text-white">
-                    <i class="fas fa-briefcase text-2xl"></i>
-                </div>
-                <h2 class="text-4xl font-black text-slate-800 uppercase tracking-tight">Professional Tax (PT)</h2>
-            </div>
-            <div id="ptTable"></div>
-        </div>
-
     </main>
 
-    <!-- SYSTEM SCRIPTS -->
     <script>
-        // 1. Supabase Setup
-const supabaseUrl = 'https://qdkglnkqsoylnquacjyo.supabase.co';
-const supabaseKey = 'sb_publishable_j8DLUkc6Zmjqd5tMvmGJnw_89ppavCX';
-const supa = supabase.createClient(supabaseUrl, supabaseKey);
+        // --- CONFIGURATION ---
+        const SB_URL = 'https://qdkglnkqsoylnquacjyo.supabase.co';
+        const SB_KEY = 'sb_publishable_j8DLUkc6Zmjqd5tMvmGJnw_89ppavCX';
+        const supabase = supabase.createClient(SB_URL, SB_KEY);
 
-let dataList = [];
+        // --- CORE FUNCTIONS ---
+        async function loadData() {
+            const { data, error } = await supabase
+                .from('witcorp_records')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-// 2. Login Function
-async function loginUser() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-    const errorMsg = document.getElementById("loginError");
+            if (error) console.error(error);
+            else renderUI(data);
+        }
 
-    if (email === "staff@gmail.com" && password === "12345") {
-        localStorage.setItem("isLoggedIn", "true");
-        document.getElementById("loginPage").style.display = "none";
-        loadData();
-    } else {
-        errorMsg.innerText = "Invalid Credentials!";
-        errorMsg.classList.remove("hidden");
-    }
-}
+        async function saveToSupabase() {
+            const payload = {
+                client_name: document.getElementById('clientName').value,
+                service_type: document.getElementById('serviceType').value,
+                deadline: document.getElementById('dueDate').value,
+                assigned_specialist: document.getElementById('assignTo').value,
+                status: document.getElementById('status').value,
+                remarks: document.getElementById('remarks').value
+            };
 
-// 3. Load Data
-async function loadData() {
-    try {
-        let { data: clients, error } = await supa
-            .from('clients')
-            .select('*')
-            .order('created_at', { ascending: false }); // Latest data upar dikhega
-        
-        if (error) throw error;
-        
-        dataList = clients || [];
-        updateCounters();
-        renderUI(dataList); // Data pass kar rahe hain
-    } catch (err) {
-        console.error("Data load error:", err.message);
-    }
-}
-
-// 4. Render UI (Sabse Important Missing Part)
-function renderUI(list) {
-    const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = "";
-
-    list.forEach(item => {
-        const statusClass = item.status === 'Completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700';
-        
-        tableBody.innerHTML += `
-            <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
-                <td class="p-8 font-bold text-slate-800">${item.name}</td>
-                <td class="p-8 text-center"><span class="px-3 py-1 rounded-lg border text-[10px] font-black uppercase bg-white text-blue-600 border-blue-100">${item.service}</span></td>
-                <td class="p-8 text-center font-bold text-slate-500">${item.assign || '-'}</td>
-                <td class="p-8 text-center font-bold text-slate-600">${item.deadline || '-'}</td>
-                <td class="p-8 text-xs text-slate-400 italic">${item.remark || '-'}</td>
-                <td class="p-8 text-[10px] font-bold text-slate-400 uppercase">${new Date(item.created_at).toLocaleString('en-IN')}</td>
-                <td class="p-8 text-center">
-                    <span class="px-4 py-2 rounded-full text-[10px] font-black uppercase ${statusClass}">${item.status}</span>
-                </td>
-                <td class="p-8 text-center">
-                    <div class="flex gap-2 justify-center">
-                        <button onclick="deleteEntry('${item.id}')" class="text-rose-400 hover:text-rose-600 p-2"><i class="fas fa-trash"></i></button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    });
-}
-
-// 5. Submit Data
-async function handleDataSubmit() {
-    const clientData = {
-        name: document.getElementById('clientName').value,
-        service: document.getElementById('serviceType').value,
-        deadline: document.getElementById('dueDate').value,
-        status: document.getElementById('status').value,
-        assign: document.getElementById('assignTo').value,
-        remark: document.getElementById('remarks').value
-    };
-
-    if(!clientData.name || !clientData.service) return alert("Client name aur Service zaroori hai!");
-
-    const { error } = await supa.from('clients').insert([clientData]);
-
-    if (error) {
-        alert("Error: " + error.message);
-    } else {
-        resetForm();
-        loadData();
-    }
-}
-
-// 6. Delete Entry
-async function deleteEntry(id) {
-    if(confirm("Pakka delete karna hai?")) {
-        const { error } = await supa.from('clients').delete().eq('id', id);
-        if(!error) loadData();
-    }
-}
-
-// 7. Search Logic (Fixed)
-function handleSearch() {
-    const query = document.getElementById('globalSearch').value.toLowerCase();
-    const filtered = dataList.filter(item => 
-        item.name.toLowerCase().includes(query) || 
-        item.service.toLowerCase().includes(query) ||
-        (item.assign && item.assign.toLowerCase().includes(query))
-    );
-    renderUI(filtered);
-}
-
-// Reset Form
-function resetForm() {
-    document.getElementById('clientName').value = "";
-    document.getElementById('serviceType').value = "";
-    document.getElementById('dueDate').value = "";
-    document.getElementById('assignTo').value = "";
-    document.getElementById('remarks').value = "";
-}
-
-// Utility functions
-function updateCounters() {
-    document.getElementById('totalCount').innerText = dataList.length;
-    document.getElementById('completedCount').innerText = dataList.filter(x => x.status === 'Completed').length;
-    document.getElementById('pendingCount').innerText = dataList.filter(x => x.status !== 'Completed').length;
-}
-
-function logout() {
-    localStorage.removeItem("isLoggedIn");
-    location.reload();
-}
-
-// Init
-window.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem("isLoggedIn") === "true") {
-        document.getElementById("loginPage").style.display = "none";
-        loadData();
-    }
-});
-       
-        // POPUP ANALYTICS LOGIC
-        function openAnalytics(type) {
-            const modal = document.getElementById('analyticsModal');
-            const tableBody = document.getElementById('modalTableBody');
-            const title = document.getElementById('modalTitle');
-            const subtitle = document.getElementById('modalSubtitle');
-            const headerBg = document.getElementById('modalHeaderBg');
-            
-            tableBody.innerHTML = "";
-            let filtered = [];
-            
-            // Customize Modal based on Type
-            if (type === 'total') {
-                filtered = dataList;
-                title.innerText = "Complete Portfolio Master List";
-                subtitle.innerText = `Unified database of all ${dataList.length} entities`;
-                headerBg.className = "p-8 flex justify-between items-center text-white bg-blue-600";
-            } else if (type === 'completed') {
-                filtered = dataList.filter(x => x.status === 'Completed');
-                title.innerText = "Successfully Closed Tasks";
-                subtitle.innerText = `Archive of ${filtered.length} completed compliance files`;
-                headerBg.className = "p-8 flex justify-between items-center text-white bg-emerald-500";
-            } else if (type === 'pending') {
-                filtered = dataList.filter(x => x.status !== 'Completed');
-                title.innerText = "Urgent Pending Actions";
-                subtitle.innerText = `${filtered.length} tasks requiring immediate attention`;
-                headerBg.className = "p-8 flex justify-between items-center text-white bg-rose-500";
+            const { error } = await supabase.from('witcorp_records').insert([payload]);
+            if (error) alert("Error saving data");
+            else {
+                clearForm();
+                loadData();
             }
+        }
 
-            // Fill Modal Table
-            filtered.forEach(item => {
-                const statusColor = item.status === 'Completed' ? 'text-emerald-500' : 'text-rose-500';
-                tableBody.innerHTML += `
-                    <tr class="bg-slate-50/50 hover:bg-slate-100 transition-all rounded-2xl">
-                        <td class="px-6 py-5 font-black text-slate-800 text-sm">${item.name}</td>
-                        <td class="px-6 py-5 text-center">
-                            <span class="bg-white px-3 py-1 rounded-lg border text-[10px] font-bold text-blue-600 uppercase">${item.service}</span>
+        async function deleteRecord(id) {
+            if(confirm("Delete this record?")) {
+                await supabase.from('witcorp_records').delete().eq('id', id);
+                loadData();
+            }
+        }
+
+        function renderUI(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = "";
+
+            // Update Counts
+            document.getElementById('totalCount').innerText = data.length;
+            document.getElementById('completedCount').innerText = data.filter(x => x.status === 'Completed').length;
+            document.getElementById('pendingCount').innerText = data.filter(x => x.status !== 'Completed').length;
+
+            data.forEach(item => {
+                const statusColor = item.status === 'Completed' ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50';
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-6 font-bold text-slate-800">${item.client_name}</td>
+                        <td class="p-6"><span class="text-[10px] font-black bg-blue-50 text-blue-600 p-2 rounded-lg border uppercase">${item.service_type}</span></td>
+                        <td class="p-6 text-center"><span class="px-4 py-1 rounded-full font-black text-[10px] uppercase ${statusColor}">${item.status}</span></td>
+                        <td class="p-6 text-right">
+                            <button onclick="deleteRecord(${item.id})" class="text-slate-300 hover:text-rose-600 transition-colors">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </td>
-                        <td class="px-6 py-5 text-center font-bold text-slate-500 text-xs">${item.assign || '---'}</td>
-                        <td class="px-6 py-5 text-center font-black text-[10px] uppercase ${statusColor}">${item.status}</td>
-                        <td class="px-6 py-5 text-xs text-slate-400 italic">${item.remark || '-'}</td>
                     </tr>
                 `;
             });
-
-            modal.classList.add('active');
         }
 
-        function closeModal(e) {
-            document.getElementById('analyticsModal').classList.remove('active');
-        }
-
-        // Global Search Logic
-        let searchTimer;
-
-function handleSearch() {
-    clearTimeout(searchTimer);
-
-    searchTimer = setTimeout(() => {
-        const query = document.getElementById('globalSearch').value.toLowerCase().trim();
-
-        if (query.length > 0) {
-            isSearching = true;
-            searchResults = dataList.filter(item =>
-                (item.name || '').toLowerCase().includes(query) ||
-                (item.assign || '').toLowerCase().includes(query) ||
-                (item.service || '').toLowerCase().includes(query)
-            );
-        } else {
-            isSearching = false;
-        }
-
-        renderUI();
-
-        setTimeout(() => {
-            document.getElementById('tableBody').scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 200);
-
-    }, 200);
-}
-
-        // IST Time Formatter
-        function formatTimeIST(val) {
-            if (!val) return '---';
-            const date = new Date(val);
-            if (isNaN(date.getTime())) return val;
-            return date.toLocaleString('en-IN', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true,
-                timeZone: 'Asia/Kolkata'
-            });
-        }
-
-        // Dynamic UI Rendering
-        // 1. Render Function: Jo data ko table mein dikhayega
-function renderUI(data = items) {
-    const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = data.map(item => `
-        <tr class="border-b hover:bg-gray-50">
-            <td class="p-3">${item.id}</td>
-            <td class="p-3 font-medium">${item.client_name || 'N/A'}</td>
-            <td class="p-3 text-blue-600">${item.service_type || 'General'}</td>
-            <td class="p-3">
-                <span class="px-2 py-1 rounded-full text-xs ${item.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}">
-                    ${item.status}
-                </span>
-            </td>
-            <td class="p-3 text-right">
-                <button class="text-gray-400 hover:text-blue-600"><i class="fas fa-edit"></i></button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-// 2. Search Logic: Jo search bar ko active karega
-function handleSearch(query) {
-    const filtered = items.filter(item => 
-        item.client_name?.toLowerCase().includes(query.toLowerCase()) ||
-        item.service_type?.toLowerCase().includes(query.toLowerCase())
-    );
-    renderUI(filtered);
-}
-
-// 3. Event Listener for Search
-document.querySelector('input[type="text"]').addEventListener('input', (e) => {
-    handleSearch(e.target.value);
-});
-
-            const sourceData = isSearching ? searchResults : dataList;
-
-            sourceData.slice().reverse().forEach((item) => {
-                const deadline = item.date ? new Date(item.date).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'}) : '---';
-                const logTime = formatTimeIST(item.timestamp);
-                const statusClass = item.status === 'Completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100';
-
-                const rowContent = `
-                    <td class="p-8 font-extrabold text-slate-800 text-base">${item.name}</td>
-                    <td class="p-8 text-center">
-                        <span class="bg-blue-50 text-blue-700 px-5 py-2 rounded-xl font-black text-[10px] uppercase border border-blue-100 tracking-tighter">
-                            ${item.service}
-                        </span>
-                    </td>
-                    <td class="p-8 text-center font-black text-blue-600 text-[11px] uppercase tracking-wide">
-                        <i class="fas fa-user-circle mr-2 opacity-30"></i>${item.assign || 'UNASSIGNED'}
-                    </td>
-                    <td class="p-8 text-center font-bold text-slate-500">${deadline}</td>
-                    <td class="p-8 text-xs font-medium text-slate-400 italic max-w-[200px] truncate">${item.remark}</td>
-                    <td class="p-8 font-black text-[10px] text-blue-900/60 leading-tight">${logTime}</td>
-                    <td class="p-8 text-center">
-                        <span class="px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.15em] border ${statusClass}">
-                            ${item.status}
-                        </span>
-                    </td>
-                    <td class="p-8 text-center">
-                        <div class="flex justify-center gap-3">
-                            <button onclick="startEdit('${item.rowId}')" class="w-10 h-10 flex items-center justify-center bg-blue-50 text-blue-600 rounded-2xl hover:bg-blue-600 hover:text-white transition-all shadow-sm">
-                                <i class="fas fa-pencil-alt text-sm"></i>
-                            </button>
-                            <button onclick="deleteEntry('${item.rowId}')" class="w-10 h-10 flex items-center justify-center bg-rose-50 text-rose-600 rounded-2xl hover:bg-rose-600 hover:text-white transition-all shadow-sm">
-                                <i class="fas fa-trash-alt text-sm"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-
-                mainTbody.innerHTML += `<tr class="hover:bg-slate-50/80 transition-colors group">${rowContent}</tr>`;
-
-                // Push to sub-tables
-                distributeToCategories(item, deadline, logTime, statusClass);
-            });
-
-            // Update Counters
-            const total = dataList.length;
-            const completed = dataList.filter(x => x.status === 'Completed').length;
-            const pending = total - completed;
-
-            document.getElementById('totalCount').innerText = total;
-            document.getElementById('completedCount').innerText = completed;
-            document.getElementById('pendingCount').innerText = pending;
-        }
-
-        function createTableTemplate(id) {
-            return `
-                <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100">
-                    <table class="w-full text-left">
-                        <thead class="bg-slate-50/50 border-b text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                            <tr>
-                                <th class="p-8">Entity</th>
-                                <th class="p-8 text-center">Specialist</th>
-                                <th class="p-8">Notes</th>
-                                <th class="p-8 text-center">Deadline</th>
-                                <th class="p-8 text-center">Sync Log</th>
-                                <th class="p-8 text-center">Status</th>
-                                <th class="p-8 text-center">Edit</th>
-                            </tr>
-                        </thead>
-                        <tbody id="${id}Body" class="divide-y divide-slate-50"></tbody>
-                    </table>
-                </div>`;
-        }
-
-        function distributeToCategories(item, deadline, logTime, statusClass) {
-            const subRow = `
-                <td class="p-8 font-bold text-slate-800">${item.name}</td>
-                <td class="p-8 text-center font-black text-blue-600 text-[11px] uppercase">${item.assign || '-'}</td>
-                <td class="p-8 italic text-xs text-slate-400">${item.remark}</td>
-                <td class="p-8 text-center font-bold text-slate-500">${deadline}</td>
-                <td class="p-8 text-center font-black text-[10px] text-blue-900/40">${logTime}</td>
-                <td class="p-8 text-center">
-                    <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase border ${statusClass}">${item.status}</span>
-                </td>
-                <td class="p-8 text-center">
-                    <button onclick="startEdit('${item.rowId}')" class="text-blue-500 hover:scale-125 transition-transform"><i class="fas fa-external-link-alt"></i></button>
-                </td>`;
-            
-            const service = item.service.toLowerCase();
-            const targetBody = service.includes('gst') ? 'gstBody' : 
-                               (service.includes('mca') || service.includes('roc')) ? 'mcaBody' :
-                               (service.includes('it') || service.includes('tax')) ? 'itBody' :
-                               service.includes('pt') ? 'ptBody' : null;
-
-            if (targetBody && document.getElementById(targetBody)) {
-                document.getElementById(targetBody).innerHTML += `<tr>${subRow}</tr>`;
-            }
-        }
-
-       async function handleDataSubmit() {
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Syncing...";
-
-    const payload = {
-        name: document.getElementById('clientName').value,
-        service: document.getElementById('serviceType').value,
-        due_date: document.getElementById('dueDate').value,
-        status: document.getElementById('status').value,
-        assign: document.getElementById('assignTo').value,
-        remark: document.getElementById('remarks').value,
-        timestamp: new Date().toLocaleString("en-GB", { timeZone: "Asia/Kolkata" })
-    };
-
-    const editId = document.getElementById('editRowId').value;
-
-    let error;
-    if (editId) {
-        // Agar edit kar rahe hain (Update)
-        const { error: updateError } = await supabase
-            .from('clients')
-            .update(payload)
-            .eq('id', editId);
-        error = updateError;
-    } else {
-        // Agar naya data hai (Insert)
-        const { error: insertError } = await supabase
-            .from('clients')
-            .insert([payload]);
-        error = insertError;
-    }
-
-    if (error) {
-        alert("Error: " + error.message);
-    } else {
-        alert("Data Swiped to Cloud! 🚀");
-        resetForm();
-        loadData(); // Table refresh karo
-    }
-    
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Sync To Cloud';
-}
-                
-
-        function scrollToEditForm() {
-    const form = document.querySelector('#formHeader');
-    if (form) {
-        form.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-        });
-    }
-}
-        function startEdit(id) {
-            const entry = dataList.find(x => x.rowId == id);
-            if (!entry) return;
-
-            document.getElementById('editRowId').value = id;
-            document.getElementById('clientName').value = entry.name;
-            document.getElementById('serviceType').value = entry.service;
-            document.getElementById('dueDate').value = entry.date ? entry.date.split('T')[0] : "";
-            document.getElementById('status').value = entry.status;
-            document.getElementById('assignTo').value = entry.assign || "";
-            document.getElementById('remarks').value = entry.remark;
-
-            document.querySelectorAll('.edit-lock').forEach(el => el.disabled = true);
-            document.getElementById('formHeader').innerHTML = '<i class="fas fa-edit text-yellow-500"></i> Modifying Existing Entry';
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-check-circle"></i> Commit Changes`;
-            document.getElementById('cancelBtn').classList.remove('hidden');
-            
-            showSectionDirect('dashboard');
-
-setTimeout(() => {
-    scrollToEditForm();
-}, 300);
-        }
-        // Data Delete Karne ke liye
-async function deleteRow(id) {
-    if (confirm("Bhai, pakka delete karun?")) {
-        const { error } = await supabase
-            .from('clients')
-            .delete()
-            .eq('id', id);
-
-        if (!error) {
-            loadData();
-        } else {
-            alert("Delete nahi hua: " + error.message);
-        }
-    }
-}
-
-// Form ko Reset karne ke liye
-function resetForm() {
-    document.getElementById('editRowId').value = '';
-    document.getElementById('clientName').value = '';
-    document.getElementById('serviceType').value = '';
-    document.getElementById('dueDate').value = '';
-    document.getElementById('status').value = 'Pending';
-    document.getElementById('assignTo').value = '';
-    document.getElementById('remarks').value = '';
-    document.getElementById('submitBtn').innerText = "Sync To Cloud";
-    document.getElementById('cancelBtn').classList.add('hidden');
-}
-
-       function showSectionDirect(sectionId) {
-    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-    document.getElementById(sectionId).classList.add('active');
-
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-}
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
             event.currentTarget.classList.add('active');
         }
+
+        function clearForm() {
+            ['clientName', 'serviceType', 'dueDate', 'assignTo', 'remarks'].forEach(id => document.getElementById(id).value = "");
+        }
+
+        // Initialize
+        loadData();
+
+        // Subscribe to Realtime Changes
+        supabase.channel('custom-all-channel')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'witcorp_records' }, () => {
+            loadData();
+          })
+          .subscribe();
     </script>
-    <script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
-}
-</script>
 </body>
 </html>
