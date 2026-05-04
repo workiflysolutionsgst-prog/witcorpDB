@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Witcorp India Advisors LLP | Ultimate Executive Portal</title>
@@ -493,7 +494,10 @@
     <!-- SYSTEM SCRIPTS -->
     <script>
         // REPLACE WITH YOUR APPS SCRIPT URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbz9qaBHU7Yf7WUqecSXU-RB0pvZLU9ZZrTaNFB_c95QT1YdumRJxHLM_70Y6Po8Jvh8Ng/exec';
+        const supabaseUrl = 'https://qdkglnkqsoylnquacjyo.supabase.co';
+const supabaseKey = 'sb_publishable_j8DLUkc6Zmjqd5tMvmGJnw_89ppavCX';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
         function logout() {
     localStorage.removeItem("isLoggedIn");
     location.reload();
@@ -515,11 +519,18 @@
         async function loginUser() {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
-            if (!email || !password) {
-        document.getElementById("loginError").innerText = "Enter email & password";
+    
+    // Yahan hum Supabase Auth use kar sakte hain ya simple validation
+    // Abhi ke liye tere manual logic ko fix kar raha hoon
+    if (email === "admin@witcorp.com" && password === "admin123") { // Apne hisab se badal le
+        localStorage.setItem("isLoggedIn", "true");
+        document.getElementById("loginPage").style.display = "none";
+        loadData();
+    } else {
+        document.getElementById("loginError").innerText = "Invalid Login";
         document.getElementById("loginError").classList.remove("hidden");
-        return;
     }
+}
 
     try {
         const res = await fetch(scriptURL, {
@@ -549,15 +560,16 @@
 
         // Fetch Data from Google Sheets
         async function loadData() {
-            try {
-                const response = await fetch(scriptURL);
-                dataList = await response.json();
-                renderUI();
-            } catch (err) {
-                console.error("Critical: Data retrieval failed.", err);
-                alert("Database link down. Check script URL.");
-            }
-        }
+    // Ye line Supabase se data kheechti hai
+    let { data: clients, error } = await supabase
+        .from('clients')
+        .select('*');
+    
+    if (clients) {
+        dataList = clients; // Data ko local list mein rakha
+        renderUI(); // Ye tera purana function hai jo table banata hai
+    }
+}
 
         // POPUP ANALYTICS LOGIC
         function openAnalytics(type) {
@@ -776,39 +788,51 @@ function handleSearch() {
             }
         }
 
-        async function handleDataSubmit() {
-            const rowId = document.getElementById('editRowId').value;
-            const btn = document.getElementById('submitBtn');
-            const istNow = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-            
-            const payload = {
-                action: rowId ? "edit" : "add",
-                rowId: rowId || null,
-                name: document.getElementById('clientName').value,
-                service: document.getElementById('serviceType').value,
-                date: document.getElementById('dueDate').value,
-                status: document.getElementById('status').value,
-                assign: document.getElementById('assignTo').value || "N/A",
-                remark: document.getElementById('remarks').value || "-",
-                timestamp: istNow
-            };
+       async function handleDataSubmit() {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Syncing...";
 
-            if (!payload.name || !payload.service) return alert("Error: Client Name & Service Type are required.");
+    const payload = {
+        name: document.getElementById('clientName').value,
+        service: document.getElementById('serviceType').value,
+        due_date: document.getElementById('dueDate').value,
+        status: document.getElementById('status').value,
+        assign: document.getElementById('assignTo').value,
+        remark: document.getElementById('remarks').value,
+        timestamp: new Date().toLocaleString("en-GB", { timeZone: "Asia/Kolkata" })
+    };
 
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Processing...`;
+    const editId = document.getElementById('editRowId').value;
 
-            try {
-                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
-                resetForm();
-                await loadData();
-            } catch (e) {
-                alert("Connection Error. Please retry.");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Sync To Cloud`;
-            }
-        }
+    let error;
+    if (editId) {
+        // Agar edit kar rahe hain (Update)
+        const { error: updateError } = await supabase
+            .from('clients')
+            .update(payload)
+            .eq('id', editId);
+        error = updateError;
+    } else {
+        // Agar naya data hai (Insert)
+        const { error: insertError } = await supabase
+            .from('clients')
+            .insert([payload]);
+        error = insertError;
+    }
+
+    if (error) {
+        alert("Error: " + error.message);
+    } else {
+        alert("Data Swiped to Cloud! 🚀");
+        resetForm();
+        loadData(); // Table refresh karo
+    }
+    
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Sync To Cloud';
+}
+                
 
         function scrollToEditForm() {
     const form = document.querySelector('#formHeader');
@@ -842,22 +866,34 @@ setTimeout(() => {
     scrollToEditForm();
 }, 300);
         }
+        // Data Delete Karne ke liye
+async function deleteRow(id) {
+    if (confirm("Bhai, pakka delete karun?")) {
+        const { error } = await supabase
+            .from('clients')
+            .delete()
+            .eq('id', id);
 
-        function resetForm() {
-            document.getElementById('editRowId').value = "";
-            document.querySelectorAll('input').forEach(inp => inp.value = "");
-            document.querySelectorAll('.edit-lock').forEach(el => el.disabled = false);
-            document.getElementById('formHeader').innerHTML = '<i class="fas fa-database text-blue-600"></i> Entry Management System';
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Sync To Cloud`;
-            document.getElementById('cancelBtn').classList.add('hidden');
+        if (!error) {
+            loadData();
+        } else {
+            alert("Delete nahi hua: " + error.message);
         }
+    }
+}
 
-        async function deleteEntry(id) {
-            if (confirm("Critical: Permanently delete this record from Witcorp database?")) {
-                await fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "delete", rowId: id }) });
-                await loadData();
-            }
-        }
+// Form ko Reset karne ke liye
+function resetForm() {
+    document.getElementById('editRowId').value = '';
+    document.getElementById('clientName').value = '';
+    document.getElementById('serviceType').value = '';
+    document.getElementById('dueDate').value = '';
+    document.getElementById('status').value = 'Pending';
+    document.getElementById('assignTo').value = '';
+    document.getElementById('remarks').value = '';
+    document.getElementById('submitBtn').innerText = "Sync To Cloud";
+    document.getElementById('cancelBtn').classList.add('hidden');
+}
 
        function showSectionDirect(sectionId) {
     document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
