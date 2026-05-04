@@ -519,19 +519,18 @@ const supabase = supabase.createClient(supabaseUrl, supabaseKey);
         async function loginUser() {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
-    
-    // Yahan hum Supabase Auth use kar sakte hain ya simple validation
-    // Abhi ke liye tere manual logic ko fix kar raha hoon
-    if (email === "admin@witcorp.com" && password === "admin123") { // Apne hisab se badal le
+
+    // Abhi ke liye hum yahan direct check karenge
+    // Jab tak tu Supabase Auth set nahi karta
+    if (email === "staff@gmail.com" && password === "12345") {
         localStorage.setItem("isLoggedIn", "true");
         document.getElementById("loginPage").style.display = "none";
-        loadData();
+        loadData(); // Dashboard open hote hi data load ho jayega
     } else {
-        document.getElementById("loginError").innerText = "Invalid Login";
+        document.getElementById("loginError").innerText = "Invalid Credentials!";
         document.getElementById("loginError").classList.remove("hidden");
     }
 }
-
     try {
         const res = await fetch(scriptURL, {
             method: "POST",
