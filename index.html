@@ -511,10 +511,10 @@ const supabase = supabase.createClient(supabaseUrl, supabaseKey);
         window.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem("isLoggedIn") === "true") {
         document.getElementById("loginPage").style.display = "none";
+        loadData(); // Supabase se data fetch karega
     } else {
         document.getElementById("loginPage").style.display = "flex";
     }
-    loadData();
 });
         async function loginUser() {
     const email = document.getElementById('loginEmail').value.trim();
