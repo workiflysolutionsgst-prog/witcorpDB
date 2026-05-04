@@ -493,83 +493,147 @@
 
     <!-- SYSTEM SCRIPTS -->
     <script>
-        // REPLACE WITH YOUR APPS SCRIPT URL
-        const supabaseUrl = 'https://qdkglnkqsoylnquacjyo.supabase.co';
+        // 1. Supabase Setup
+const supabaseUrl = 'https://qdkglnkqsoylnquacjyo.supabase.co';
 const supabaseKey = 'sb_publishable_j8DLUkc6Zmjqd5tMvmGJnw_89ppavCX';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-        
-        function logout() {
-    localStorage.removeItem("isLoggedIn");
-    location.reload();
-}
-        
-        let dataList = [];
-        let searchResults = [];
-        let isSearching = false;
+const supa = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Auto Load on Init
-        window.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem("isLoggedIn") === "true") {
-        document.getElementById("loginPage").style.display = "none";
-        loadData(); // Supabase se data fetch karega
-    } else {
-        document.getElementById("loginPage").style.display = "flex";
-    }
-});
-        async function loginUser() {
+let dataList = [];
+
+// 2. Login Function
+async function loginUser() {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
+    const errorMsg = document.getElementById("loginError");
 
-    // Simple Hardcoded Login (Kyuki abhi tune Supabase Auth set nahi kiya hai)
     if (email === "staff@gmail.com" && password === "12345") {
         localStorage.setItem("isLoggedIn", "true");
         document.getElementById("loginPage").style.display = "none";
-        loadData(); // Dashboard khulte hi data fetch hoga
+        loadData();
     } else {
-        const errorMsg = document.getElementById("loginError");
-        errorMsg.innerText = "Invalid Email or Password!";
+        errorMsg.innerText = "Invalid Credentials!";
         errorMsg.classList.remove("hidden");
     }
 }
+
+// 3. Load Data
+async function loadData() {
     try {
-        const res = await fetch(scriptURL, {
-            method: "POST",
-            body: JSON.stringify({
-                action: "login",
-                email: email,
-                password: password
-            })
-        });
-
-        const data = await res.json();
-
-        if (data.status === "success") {
-            localStorage.setItem("isLoggedIn", "true");
-            document.getElementById("loginPage").style.display = "none";
-        } else {
-            document.getElementById("loginError").innerText = "Invalid Login";
-            document.getElementById("loginError").classList.remove("hidden");
-        }
-
+        let { data: clients, error } = await supa
+            .from('clients')
+            .select('*')
+            .order('created_at', { ascending: false }); // Latest data upar dikhega
+        
+        if (error) throw error;
+        
+        dataList = clients || [];
+        updateCounters();
+        renderUI(dataList); // Data pass kar rahe hain
     } catch (err) {
-        document.getElementById("loginError").innerText = "Server error";
-        document.getElementById("loginError").classList.remove("hidden");
+        console.error("Data load error:", err.message);
     }
 }
 
-        // Fetch Data from Google Sheets
-        async function loadData() {
-    // Ye line Supabase se data kheechti hai
-    let { data: clients, error } = await supabase
-        .from('clients')
-        .select('*');
-    
-    if (clients) {
-        dataList = clients; // Data ko local list mein rakha
-        renderUI(); // Ye tera purana function hai jo table banata hai
+// 4. Render UI (Sabse Important Missing Part)
+function renderUI(list) {
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = "";
+
+    list.forEach(item => {
+        const statusClass = item.status === 'Completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700';
+        
+        tableBody.innerHTML += `
+            <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
+                <td class="p-8 font-bold text-slate-800">${item.name}</td>
+                <td class="p-8 text-center"><span class="px-3 py-1 rounded-lg border text-[10px] font-black uppercase bg-white text-blue-600 border-blue-100">${item.service}</span></td>
+                <td class="p-8 text-center font-bold text-slate-500">${item.assign || '-'}</td>
+                <td class="p-8 text-center font-bold text-slate-600">${item.deadline || '-'}</td>
+                <td class="p-8 text-xs text-slate-400 italic">${item.remark || '-'}</td>
+                <td class="p-8 text-[10px] font-bold text-slate-400 uppercase">${new Date(item.created_at).toLocaleString('en-IN')}</td>
+                <td class="p-8 text-center">
+                    <span class="px-4 py-2 rounded-full text-[10px] font-black uppercase ${statusClass}">${item.status}</span>
+                </td>
+                <td class="p-8 text-center">
+                    <div class="flex gap-2 justify-center">
+                        <button onclick="deleteEntry('${item.id}')" class="text-rose-400 hover:text-rose-600 p-2"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+// 5. Submit Data
+async function handleDataSubmit() {
+    const clientData = {
+        name: document.getElementById('clientName').value,
+        service: document.getElementById('serviceType').value,
+        deadline: document.getElementById('dueDate').value,
+        status: document.getElementById('status').value,
+        assign: document.getElementById('assignTo').value,
+        remark: document.getElementById('remarks').value
+    };
+
+    if(!clientData.name || !clientData.service) return alert("Client name aur Service zaroori hai!");
+
+    const { error } = await supa.from('clients').insert([clientData]);
+
+    if (error) {
+        alert("Error: " + error.message);
+    } else {
+        resetForm();
+        loadData();
     }
 }
 
+// 6. Delete Entry
+async function deleteEntry(id) {
+    if(confirm("Pakka delete karna hai?")) {
+        const { error } = await supa.from('clients').delete().eq('id', id);
+        if(!error) loadData();
+    }
+}
+
+// 7. Search Logic (Fixed)
+function handleSearch() {
+    const query = document.getElementById('globalSearch').value.toLowerCase();
+    const filtered = dataList.filter(item => 
+        item.name.toLowerCase().includes(query) || 
+        item.service.toLowerCase().includes(query) ||
+        (item.assign && item.assign.toLowerCase().includes(query))
+    );
+    renderUI(filtered);
+}
+
+// Reset Form
+function resetForm() {
+    document.getElementById('clientName').value = "";
+    document.getElementById('serviceType').value = "";
+    document.getElementById('dueDate').value = "";
+    document.getElementById('assignTo').value = "";
+    document.getElementById('remarks').value = "";
+}
+
+// Utility functions
+function updateCounters() {
+    document.getElementById('totalCount').innerText = dataList.length;
+    document.getElementById('completedCount').innerText = dataList.filter(x => x.status === 'Completed').length;
+    document.getElementById('pendingCount').innerText = dataList.filter(x => x.status !== 'Completed').length;
+}
+
+function logout() {
+    localStorage.removeItem("isLoggedIn");
+    location.reload();
+}
+
+// Init
+window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem("isLoggedIn") === "true") {
+        document.getElementById("loginPage").style.display = "none";
+        loadData();
+    }
+});
+       
         // POPUP ANALYTICS LOGIC
         function openAnalytics(type) {
             const modal = document.getElementById('analyticsModal');
@@ -671,23 +735,39 @@ function handleSearch() {
         }
 
         // Dynamic UI Rendering
-        function renderUI() {
-            const mainTbody = document.getElementById('tableBody');
-            if (isSearching) {
-    mainTbody.classList.add('search-slide');
-} else {
-    mainTbody.classList.remove('search-slide');
+        // 1. Render Function: Jo data ko table mein dikhayega
+function renderUI(data = items) {
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = data.map(item => `
+        <tr class="border-b hover:bg-gray-50">
+            <td class="p-3">${item.id}</td>
+            <td class="p-3 font-medium">${item.client_name || 'N/A'}</td>
+            <td class="p-3 text-blue-600">${item.service_type || 'General'}</td>
+            <td class="p-3">
+                <span class="px-2 py-1 rounded-full text-xs ${item.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}">
+                    ${item.status}
+                </span>
+            </td>
+            <td class="p-3 text-right">
+                <button class="text-gray-400 hover:text-blue-600"><i class="fas fa-edit"></i></button>
+            </td>
+        </tr>
+    `).join('');
 }
-            mainTbody.innerHTML = "";
-            
-            // Clear categorical tables
-            const categories = ['gst', 'mca', 'it', 'pt'];
-            categories.forEach(cat => {
-                const container = document.getElementById(cat + 'Table');
-                if (container) {
-                    container.innerHTML = createTableTemplate(cat);
-                }
-            });
+
+// 2. Search Logic: Jo search bar ko active karega
+function handleSearch(query) {
+    const filtered = items.filter(item => 
+        item.client_name?.toLowerCase().includes(query.toLowerCase()) ||
+        item.service_type?.toLowerCase().includes(query.toLowerCase())
+    );
+    renderUI(filtered);
+}
+
+// 3. Event Listener for Search
+document.querySelector('input[type="text"]').addEventListener('input', (e) => {
+    handleSearch(e.target.value);
+});
 
             const sourceData = isSearching ? searchResults : dataList;
 
