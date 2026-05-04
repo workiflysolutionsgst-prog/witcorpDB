@@ -520,15 +520,15 @@ const supabase = supabase.createClient(supabaseUrl, supabaseKey);
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
 
-    // Abhi ke liye hum yahan direct check karenge
-    // Jab tak tu Supabase Auth set nahi karta
+    // Simple Hardcoded Login (Kyuki abhi tune Supabase Auth set nahi kiya hai)
     if (email === "staff@gmail.com" && password === "12345") {
         localStorage.setItem("isLoggedIn", "true");
         document.getElementById("loginPage").style.display = "none";
-        loadData(); // Dashboard open hote hi data load ho jayega
+        loadData(); // Dashboard khulte hi data fetch hoga
     } else {
-        document.getElementById("loginError").innerText = "Invalid Credentials!";
-        document.getElementById("loginError").classList.remove("hidden");
+        const errorMsg = document.getElementById("loginError");
+        errorMsg.innerText = "Invalid Email or Password!";
+        errorMsg.classList.remove("hidden");
     }
 }
     try {
