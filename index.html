@@ -15,6 +15,8 @@
         .section.active { display: block; animation: slideUp 0.3s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         tr:hover { background-color: #f8fafc; }
+        .stat-card { cursor: pointer; transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-5px); filter: brightness(0.95); }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -33,16 +35,16 @@
                 <i class="fas fa-chart-pie w-5"></i> Dashboard
             </button>
             <div class="pt-4 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest">Managements</div>
-            <button onclick="filterRecords('GST')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+            <button onclick="filterByField('service_category', 'GST')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-receipt w-5"></i> GST Management
             </button>
-            <button onclick="filterRecords('ROC')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+            <button onclick="filterByField('service_category', 'ROC')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-building w-5"></i> ROC / MCA
             </button>
-            <button onclick="filterRecords('IT')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+            <button onclick="filterByField('service_category', 'IT')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-coins w-5"></i> Income Tax
             </button>
-            <button onclick="filterRecords('PT')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+            <button onclick="filterByField('service_category', 'PT')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-briefcase w-5"></i> Prof. Tax (PT)
             </button>
         </nav>
@@ -56,6 +58,12 @@
     <!-- MAIN -->
     <main class="flex-1 overflow-y-auto p-8 lg:p-12">
         
+        <!-- SEARCH BAR -->
+        <div class="mb-8 relative max-w-2xl">
+            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="globalSearch" oninput="handleSearch(this.value)" placeholder="Search Client, Service or Staff..." class="w-full pl-14 pr-6 py-4 bg-white rounded-2xl shadow-sm border border-slate-200 outline-none focus:border-blue-500 font-bold text-slate-700">
+        </div>
+
         <!-- DASHBOARD SECTION -->
         <div id="dashboard" class="section active">
             <div class="flex justify-between items-center mb-10">
@@ -67,15 +75,15 @@
 
             <!-- STATS -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div class="bg-white p-8 rounded-[2rem] shadow-sm border-l-[12px] border-blue-600">
+                <div onclick="filterByField('all')" class="stat-card bg-white p-8 rounded-[2rem] shadow-sm border-l-[12px] border-blue-600">
                     <p class="text-xs font-black text-slate-400 uppercase">Total Portfolios</p>
                     <h3 id="statTotal" class="text-5xl font-black text-slate-800 mt-2">0</h3>
                 </div>
-                <div class="bg-white p-8 rounded-[2rem] shadow-sm border-l-[12px] border-emerald-500">
+                <div onclick="filterByField('status', 'Completed')" class="stat-card bg-white p-8 rounded-[2rem] shadow-sm border-l-[12px] border-emerald-500">
                     <p class="text-xs font-black text-slate-400 uppercase">Completed</p>
                     <h3 id="statDone" class="text-5xl font-black text-emerald-600 mt-2">0</h3>
                 </div>
-                <div class="bg-white p-8 rounded-[2rem] shadow-sm border-l-[12px] border-rose-500">
+                <div onclick="filterByField('status', 'Pending')" class="stat-card bg-white p-8 rounded-[2rem] shadow-sm border-l-[12px] border-rose-500">
                     <p class="text-xs font-black text-slate-400 uppercase">Awaiting Action</p>
                     <h3 id="statPending" class="text-5xl font-black text-rose-600 mt-2">0</h3>
                 </div>
@@ -88,7 +96,7 @@
                     <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">New Entry Management</h3>
                 </div>
                 <input type="hidden" id="editId">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Client Name</label>
                         <input type="text" id="clientName" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
@@ -103,7 +111,7 @@
                         </select>
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Service Detail (e.g. GSTR-3B)</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Service Detail</label>
                         <input type="text" id="serviceDetail" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
                     </div>
                     <div class="space-y-2">
@@ -121,6 +129,10 @@
                             <option value="Processing">Processing</option>
                             <option value="Completed">Completed</option>
                         </select>
+                    </div>
+                    <div class="md:col-span-2 space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Remarks / Notes</label>
+                        <input type="text" id="remarks" placeholder="Add additional details..." class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
                     </div>
                 </div>
                 <div class="mt-6 flex gap-4">
@@ -140,31 +152,44 @@
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client & Service</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Staff Assigned</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Service</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Staff</th>
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Deadline</th>
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Status</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Remarks</th>
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="mainTableBody" class="divide-y divide-slate-100">
-                            <!-- JS Inject -->
-                        </tbody>
+                        <tbody id="mainTableBody" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- FILTERED VIEW (Used for GST, ROC, etc.) -->
+        <!-- FILTERED VIEW -->
         <div id="filterView" class="section">
             <div class="flex items-center gap-4 mb-10">
                 <button onclick="showSection('dashboard')" class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm text-slate-400 hover:text-blue-600">
                     <i class="fas fa-arrow-left"></i>
                 </button>
-                <h2 id="filterTitle" class="text-3xl font-black text-slate-800 uppercase">Category View</h2>
+                <h2 id="filterTitle" class="text-3xl font-black text-slate-800 uppercase">Filtered Records</h2>
             </div>
             <div class="bg-white rounded-[2.5rem] shadow-sm overflow-hidden border" id="filterTableContainer">
-                <!-- Same table structure as above will be rendered here dynamically -->
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client</th>
+                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Service</th>
+                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Staff</th>
+                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Deadline</th>
+                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Status</th>
+                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Remarks</th>
+                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filterTableBody" class="divide-y divide-slate-100"></tbody>
+                </table>
             </div>
         </div>
 
@@ -190,17 +215,36 @@
                 return;
             }
             allRecords = data;
-            renderMainTable(data);
+            renderTable(data, 'mainTableBody');
             updateStats(data);
         }
 
-        // --- RENDER TABLE ---
-        function renderMainTable(data, targetId = 'mainTableBody') {
+        // --- SEARCH LOGIC ---
+        function handleSearch(query) {
+            const q = query.toLowerCase();
+            const filtered = allRecords.filter(r => 
+                r.client_name?.toLowerCase().includes(q) || 
+                r.service_detail?.toLowerCase().includes(q) || 
+                r.assigned_staff?.toLowerCase().includes(q) ||
+                r.service_category?.toLowerCase().includes(q)
+            );
+            
+            if (query.trim() !== "") {
+                showSection('filterView');
+                document.getElementById('filterTitle').innerText = `Search results for: "${query}"`;
+                renderTable(filtered, 'filterTableBody');
+            } else {
+                showSection('dashboard');
+            }
+        }
+
+        // --- RENDER TABLE (Fixed Columns) ---
+        function renderTable(data, targetId) {
             const tbody = document.getElementById(targetId);
             if (!tbody) return;
             
             tbody.innerHTML = data.length === 0 ? 
-                `<tr><td colspan="5" class="p-20 text-center text-slate-400 font-bold">No records found.</td></tr>` : "";
+                `<tr><td colspan="7" class="p-20 text-center text-slate-400 font-bold">No records found matching criteria.</td></tr>` : "";
 
             data.forEach(row => {
                 const statusClass = {
@@ -211,9 +255,10 @@
 
                 tbody.innerHTML += `
                     <tr class="group">
+                        <td class="p-6 font-black text-slate-800">${row.client_name}</td>
                         <td class="p-6">
-                            <div class="font-black text-slate-800">${row.client_name}</div>
-                            <div class="text-[10px] font-bold text-blue-500 uppercase mt-1">${row.service_category} • ${row.service_detail || 'General'}</div>
+                            <span class="text-[10px] font-bold text-blue-500 uppercase">${row.service_category}</span>
+                            <div class="text-sm text-slate-500">${row.service_detail || 'General'}</div>
                         </td>
                         <td class="p-6 text-center">
                             <div class="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-lg text-[11px] font-black text-slate-600">
@@ -227,6 +272,9 @@
                             <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase ${statusClass}">
                                 ${row.status}
                             </span>
+                        </td>
+                        <td class="p-6 text-slate-500 text-xs italic max-w-[150px] truncate" title="${row.remarks || ''}">
+                            ${row.remarks || '---'}
                         </td>
                         <td class="p-6 text-right">
                             <div class="flex justify-end gap-2">
@@ -252,24 +300,42 @@
                 service_detail: document.getElementById('serviceDetail').value,
                 assigned_staff: document.getElementById('assignedStaff').value,
                 deadline: document.getElementById('deadline').value,
-                status: document.getElementById('status').value
+                status: document.getElementById('status').value,
+                remarks: document.getElementById('remarks').value
             };
 
             if (!payload.client_name) return alert("Client Name is required!");
 
-            if (id) {
-                // Update
-                const { error } = await supabaseClient.from('witcorp_records').update(payload).eq('id', id);
-                if (!error) clearForm();
+            const { error } = id ? 
+                await supabaseClient.from('witcorp_records').update(payload).eq('id', id) :
+                await supabaseClient.from('witcorp_records').insert([payload]);
+
+            if (!error) {
+                clearForm();
+                fetchRecords();
+                showSection('dashboard');
             } else {
-                // Insert
-                const { error } = await supabaseClient.from('witcorp_records').insert([payload]);
-                if (!error) clearForm();
+                alert("Error syncing data!");
             }
-            fetchRecords();
         }
 
-        // --- EDIT ---
+        // --- FILTERING (Category & Status) ---
+        function filterByField(field, value) {
+            showSection('filterView');
+            let filtered = [];
+            
+            if (field === 'all') {
+                filtered = [...allRecords];
+                document.getElementById('filterTitle').innerText = "All Portfolio Records";
+            } else {
+                filtered = allRecords.filter(r => r[field] === value);
+                document.getElementById('filterTitle').innerText = `${value} Records`;
+            }
+            
+            renderTable(filtered, 'filterTableBody');
+        }
+
+        // --- EDIT / DELETE ---
         function editRecord(id) {
             const record = allRecords.find(r => r.id === id);
             if (!record) return;
@@ -281,45 +347,21 @@
             document.getElementById('assignedStaff').value = record.assigned_staff;
             document.getElementById('deadline').value = record.deadline;
             document.getElementById('status').value = record.status;
+            document.getElementById('remarks').value = record.remarks || "";
 
             document.getElementById('submitBtn').innerHTML = `<i class="fas fa-check-circle mr-2"></i> Update Record`;
-            document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
+            showSection('dashboard');
+            document.getElementById('clientName').focus();
         }
 
-        // --- DELETE ---
         async function deleteRecord(id) {
-            if (confirm("Permanently delete this record?")) {
+            if (confirm("Delete this record permanently?")) {
                 const { error } = await supabaseClient.from('witcorp_records').delete().eq('id', id);
                 if (!error) fetchRecords();
             }
         }
 
-        // --- FILTERING ---
-        function filterRecords(category) {
-            showSection('filterView');
-            const titleMap = { 'GST': 'GST Management', 'ROC': 'ROC / MCA Services', 'IT': 'Income Tax (IT)', 'PT': 'Professional Tax (PT)' };
-            document.getElementById('filterTitle').innerText = titleMap[category];
-            
-            const filtered = allRecords.filter(r => r.service_category === category);
-            
-            // Re-render the table structure inside filter view
-            document.getElementById('filterTableContainer').innerHTML = `
-                <table class="w-full text-left">
-                    <thead class="bg-slate-50"><tr id="filterHeader"></tr></thead>
-                    <tbody id="filterTableBody" class="divide-y"></tbody>
-                </table>
-            `;
-            document.getElementById('filterHeader').innerHTML = `
-                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client</th>
-                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Staff</th>
-                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Deadline</th>
-                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Status</th>
-                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-right">Action</th>
-            `;
-            renderMainTable(filtered, 'filterTableBody');
-        }
-
-        // --- UTILS ---
+        // --- UI UTILS ---
         function updateStats(data) {
             document.getElementById('statTotal').innerText = data.length;
             document.getElementById('statDone').innerText = data.filter(r => r.status === 'Completed').length;
@@ -331,7 +373,6 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             
-            // Highlight nav button
             if (id === 'dashboard') {
                 document.querySelector('[onclick*="dashboard"]').classList.add('active');
             }
@@ -339,13 +380,13 @@
 
         function clearForm() {
             document.getElementById('editId').value = "";
-            ['clientName', 'serviceDetail', 'assignedStaff', 'deadline'].forEach(i => document.getElementById(i).value = "");
+            ['clientName', 'serviceDetail', 'assignedStaff', 'deadline', 'remarks'].forEach(i => document.getElementById(i).value = "");
             document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> Sync To Database`;
         }
 
         // --- INIT & REALTIME ---
         fetchRecords();
-        supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'witcorp_records' }, payload => {
+        supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'witcorp_records' }, () => {
             fetchRecords();
         }).subscribe();
 
