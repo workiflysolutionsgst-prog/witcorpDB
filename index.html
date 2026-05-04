@@ -17,6 +17,7 @@
         tr:hover { background-color: #f8fafc; }
         .stat-card { cursor: pointer; transition: all 0.3s ease; }
         .stat-card:hover { transform: translateY(-5px); filter: brightness(0.95); }
+        input:disabled, select:disabled { background-color: #e2e8f0; cursor: not-allowed; color: #64748b; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -93,7 +94,7 @@
             <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-12">
                 <div class="flex items-center gap-3 mb-8">
                     <i class="fas fa-plus-circle text-blue-600 text-xl"></i>
-                    <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">New Entry Management</h3>
+                    <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight" id="formTitle">New Entry Management</h3>
                 </div>
                 <input type="hidden" id="editId">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -139,7 +140,7 @@
                     <button onclick="handleSubmit()" id="submitBtn" class="flex-1 bg-[#1e3a8a] text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-800 transition-all shadow-lg shadow-blue-200">
                         <i class="fas fa-cloud-upload-alt mr-2"></i> Sync To Database
                     </button>
-                    <button onclick="clearForm()" class="px-8 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200">Cancel</button>
+                    <button onclick="clearForm()" class="px-8 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200">Cancel / Clear</button>
                 </div>
             </div>
 
@@ -152,7 +153,7 @@
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client & Last Update</th>
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Service</th>
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Staff</th>
                                 <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Deadline</th>
@@ -179,7 +180,7 @@
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client</th>
+                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client & Last Update</th>
                             <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Service</th>
                             <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Staff</th>
                             <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Deadline</th>
@@ -208,7 +209,7 @@
             const { data, error } = await supabaseClient
                 .from('witcorp_records')
                 .select('*')
-                .order('created_at', { ascending: false });
+                .order('updated_at', { ascending: false });
 
             if (error) {
                 console.error("Fetch Error:", error);
@@ -238,7 +239,7 @@
             }
         }
 
-        // --- RENDER TABLE (Fixed Columns) ---
+        // --- RENDER TABLE ---
         function renderTable(data, targetId) {
             const tbody = document.getElementById(targetId);
             if (!tbody) return;
@@ -253,12 +254,20 @@
                     'Processing': 'bg-amber-100 text-amber-700'
                 }[row.status] || 'bg-slate-100 text-slate-600';
 
+                // Format Update Time
+                const lastUpdate = row.updated_at ? new Date(row.updated_at).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }) : 'Just now';
+
                 tbody.innerHTML += `
                     <tr class="group">
-                        <td class="p-6 font-black text-slate-800">${row.client_name}</td>
+                        <td class="p-6">
+                            <div class="font-black text-slate-800">${row.client_name}</div>
+                            <div class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">
+                                <i class="far fa-clock mr-1"></i> Updated: ${lastUpdate}
+                            </div>
+                        </td>
                         <td class="p-6">
                             <span class="text-[10px] font-bold text-blue-500 uppercase">${row.service_category}</span>
-                            <div class="text-sm text-slate-500">${row.service_detail || 'General'}</div>
+                            <div class="text-sm text-slate-500 font-medium">${row.service_detail || 'General'}</div>
                         </td>
                         <td class="p-6 text-center">
                             <div class="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-lg text-[11px] font-black text-slate-600">
@@ -294,17 +303,23 @@
         // --- CREATE / UPDATE ---
         async function handleSubmit() {
             const id = document.getElementById('editId').value;
+            
+            // Build payload (if ID exists, we only send status and remarks to Supabase to be safe)
             const payload = {
-                client_name: document.getElementById('clientName').value,
-                service_category: document.getElementById('serviceCategory').value,
-                service_detail: document.getElementById('serviceDetail').value,
-                assigned_staff: document.getElementById('assignedStaff').value,
-                deadline: document.getElementById('deadline').value,
                 status: document.getElementById('status').value,
                 remarks: document.getElementById('remarks').value
             };
 
-            if (!payload.client_name) return alert("Client Name is required!");
+            // If it's a NEW entry, we need all fields
+            if(!id) {
+                payload.client_name = document.getElementById('clientName').value;
+                payload.service_category = document.getElementById('serviceCategory').value;
+                payload.service_detail = document.getElementById('serviceDetail').value;
+                payload.assigned_staff = document.getElementById('assignedStaff').value;
+                payload.deadline = document.getElementById('deadline').value;
+                
+                if (!payload.client_name) return alert("Client Name is required!");
+            }
 
             const { error } = id ? 
                 await supabaseClient.from('witcorp_records').update(payload).eq('id', id) :
@@ -315,11 +330,54 @@
                 fetchRecords();
                 showSection('dashboard');
             } else {
-                alert("Error syncing data!");
+                alert("Error syncing data: " + error.message);
             }
         }
 
-        // --- FILTERING (Category & Status) ---
+        // --- EDIT MODE (Strict Lock) ---
+        function editRecord(id) {
+            const record = allRecords.find(r => r.id === id);
+            if (!record) return;
+
+            document.getElementById('editId').value = record.id;
+            
+            // Fill Data
+            document.getElementById('clientName').value = record.client_name;
+            document.getElementById('serviceCategory').value = record.service_category;
+            document.getElementById('serviceDetail').value = record.service_detail;
+            document.getElementById('assignedStaff').value = record.assigned_staff;
+            document.getElementById('deadline').value = record.deadline;
+            document.getElementById('status').value = record.status;
+            document.getElementById('remarks').value = record.remarks || "";
+
+            // LOCK FIELDS (Only Status & Remarks Stay Open)
+            ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline'].forEach(fieldId => {
+                document.getElementById(fieldId).disabled = true;
+            });
+
+            document.getElementById('formTitle').innerText = "Edit mode: strictly comments & status only";
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-check-circle mr-2"></i> Update Remarks & Status`;
+            
+            showSection('dashboard');
+            document.getElementById('remarks').focus();
+        }
+
+        // --- CLEAR FORM (Unlock Fields) ---
+        function clearForm() {
+            document.getElementById('editId').value = "";
+            ['clientName', 'serviceDetail', 'assignedStaff', 'deadline', 'remarks'].forEach(i => {
+                const el = document.getElementById(i);
+                el.value = "";
+                el.disabled = false; // Unlock
+            });
+            document.getElementById('serviceCategory').disabled = false;
+            document.getElementById('status').disabled = false;
+            
+            document.getElementById('formTitle').innerText = "New Entry Management";
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> Sync To Database`;
+        }
+
+        // --- FILTERING ---
         function filterByField(field, value) {
             showSection('filterView');
             let filtered = [];
@@ -331,27 +389,7 @@
                 filtered = allRecords.filter(r => r[field] === value);
                 document.getElementById('filterTitle').innerText = `${value} Records`;
             }
-            
             renderTable(filtered, 'filterTableBody');
-        }
-
-        // --- EDIT / DELETE ---
-        function editRecord(id) {
-            const record = allRecords.find(r => r.id === id);
-            if (!record) return;
-
-            document.getElementById('editId').value = record.id;
-            document.getElementById('clientName').value = record.client_name;
-            document.getElementById('serviceCategory').value = record.service_category;
-            document.getElementById('serviceDetail').value = record.service_detail;
-            document.getElementById('assignedStaff').value = record.assigned_staff;
-            document.getElementById('deadline').value = record.deadline;
-            document.getElementById('status').value = record.status;
-            document.getElementById('remarks').value = record.remarks || "";
-
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-check-circle mr-2"></i> Update Record`;
-            showSection('dashboard');
-            document.getElementById('clientName').focus();
         }
 
         async function deleteRecord(id) {
@@ -361,7 +399,6 @@
             }
         }
 
-        // --- UI UTILS ---
         function updateStats(data) {
             document.getElementById('statTotal').innerText = data.length;
             document.getElementById('statDone').innerText = data.filter(r => r.status === 'Completed').length;
@@ -376,12 +413,6 @@
             if (id === 'dashboard') {
                 document.querySelector('[onclick*="dashboard"]').classList.add('active');
             }
-        }
-
-        function clearForm() {
-            document.getElementById('editId').value = "";
-            ['clientName', 'serviceDetail', 'assignedStaff', 'deadline', 'remarks'].forEach(i => document.getElementById(i).value = "");
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> Sync To Database`;
         }
 
         // --- INIT & REALTIME ---
