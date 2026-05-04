@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witcorp Hub | Ultra</title>
+    <title>Witcorp Hub | Final Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .nav-btn.active { background-color: #fbbf24; color: #1e3a8a; font-weight: 800; transform: scale(1.05); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .stat-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .stat-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; scroll-behavior: smooth; }
+        .nav-btn.active { background-color: #fbbf24; color: #1e3a8a; font-weight: 800; transform: translateX(5px); }
+        .stat-card { cursor: pointer; transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        tr:hover { background-color: #f8fafc; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -23,166 +21,142 @@
     <!-- SIDEBAR -->
     <aside class="w-72 bg-[#1e3a8a] text-white flex flex-col shadow-2xl z-50">
         <div class="p-8 border-b border-white/10 text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-                <i class="fas fa-university text-[#1e3a8a] text-2xl"></i>
+            <div class="w-14 h-14 mx-auto mb-3 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-university text-[#1e3a8a] text-xl"></i>
             </div>
-            <h1 class="text-lg font-black text-yellow-400 tracking-tighter uppercase">Witcorp India</h1>
+            <h1 class="text-md font-black text-yellow-400 uppercase tracking-widest">Witcorp India</h1>
         </div>
         
         <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <button onclick="showSection('dashboard'); fetchRecords();" id="nav-dash" class="nav-btn active w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-chart-pie w-5"></i> Dashboard
+            <button onclick="loadCategory('All')" id="btn-all" class="nav-btn active w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+                <i class="fas fa-th-large w-5"></i> Dashboard
             </button>
-            <div class="pt-4 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest">Departments</div>
-            <button onclick="filterByCategory('GST')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-receipt w-5"></i> GST Management
+            <div class="pt-4 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest">Services</div>
+            <button onclick="loadCategory('GST')" id="btn-gst" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+                <i class="fas fa-file-invoice-dollar w-5"></i> GST Management
             </button>
-            <button onclick="filterByCategory('ROC')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+            <button onclick="loadCategory('ROC')" id="btn-roc" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-building w-5"></i> ROC / MCA
             </button>
-            <button onclick="filterByCategory('IT')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-coins w-5"></i> Income Tax
+            <button onclick="loadCategory('IT')" id="btn-it" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+                <i class="fas fa-coins w-5"></i> Income Tax (ITR)
             </button>
-            <button onclick="filterByCategory('PT')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+            <button onclick="loadCategory('PT')" id="btn-pt" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-briefcase w-5"></i> Prof. Tax (PT)
             </button>
         </nav>
 
-        <div class="p-6 bg-black/20 text-center border-t border-white/10">
-            <p class="font-bold text-sm">Developer: Kamlesh Yadav</p>
+        <div class="p-4 bg-black/20 text-center text-[11px] font-bold text-blue-200">
+            Developer: Kamlesh Yadav
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
     <main class="flex-1 overflow-y-auto p-6 lg:p-10">
         
-        <!-- TOP HEADER & SEARCH -->
+        <!-- HEADER & SEARCH -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-            <div>
-                <h2 id="pageTitle" class="text-3xl font-black text-slate-800">Workspace</h2>
-                <p class="text-slate-400 font-bold text-sm">Witcorp Management System v3.0</p>
-            </div>
+            <h2 id="viewTitle" class="text-2xl font-black text-slate-800 uppercase tracking-tight">Main Dashboard</h2>
             <div class="relative w-full md:w-96">
-                <i class="fas fa-search absolute left-4 top-4 text-slate-400"></i>
-                <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search clients, services, or staff..." 
-                       class="w-full pl-12 pr-4 py-3.5 bg-white border-none rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 outline-none font-bold text-slate-600">
+                <input type="text" id="searchInput" onkeyup="searchData()" placeholder="Search client or service..." 
+                       class="w-full pl-12 pr-4 py-3 bg-white rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 outline-none font-bold">
+                <i class="fas fa-search absolute left-4 top-3.5 text-slate-400"></i>
             </div>
         </div>
 
-        <!-- STATS (CLICKABLE) -->
+        <!-- STATS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div onclick="filterByStatus('Total')" class="stat-card bg-white p-6 rounded-[2rem] shadow-sm border-b-[8px] border-blue-600">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase">Total Portfolios</p>
-                        <h3 id="statTotal" class="text-4xl font-black text-slate-800 mt-1">0</h3>
-                    </div>
-                    <div class="p-3 bg-blue-50 text-blue-600 rounded-xl"><i class="fas fa-folder-open"></i></div>
-                </div>
+            <div onclick="filterByStatus('Total')" class="stat-card bg-white p-6 rounded-[2rem] border-b-4 border-blue-600 shadow-sm">
+                <p class="text-[10px] font-black text-slate-400 uppercase">Total Portfolios</p>
+                <h3 id="statTotal" class="text-4xl font-black text-slate-800 mt-1">0</h3>
             </div>
-            <div onclick="filterByStatus('Completed')" class="stat-card bg-white p-6 rounded-[2rem] shadow-sm border-b-[8px] border-emerald-500">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase">Completed</p>
-                        <h3 id="statDone" class="text-4xl font-black text-emerald-600 mt-1">0</h3>
-                    </div>
-                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><i class="fas fa-check-double"></i></div>
-                </div>
+            <div onclick="filterByStatus('Completed')" class="stat-card bg-white p-6 rounded-[2rem] border-b-4 border-emerald-500 shadow-sm">
+                <p class="text-[10px] font-black text-slate-400 uppercase">Completed</p>
+                <h3 id="statDone" class="text-4xl font-black text-emerald-600 mt-1">0</h3>
             </div>
-            <div onclick="filterByStatus('Pending')" class="stat-card bg-white p-6 rounded-[2rem] shadow-sm border-b-[8px] border-rose-500">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase">Awaiting Action</p>
-                        <h3 id="statPending" class="text-4xl font-black text-rose-600 mt-1">0</h3>
-                    </div>
-                    <div class="p-3 bg-rose-50 text-rose-600 rounded-xl"><i class="fas fa-clock"></i></div>
-                </div>
+            <div onclick="filterByStatus('Pending')" class="stat-card bg-white p-6 rounded-[2rem] border-b-4 border-rose-500 shadow-sm">
+                <p class="text-[10px] font-black text-slate-400 uppercase">Awaiting Action</p>
+                <h3 id="statPending" class="text-4xl font-black text-rose-600 mt-1">0</h3>
             </div>
         </div>
 
-        <!-- DASHBOARD (FORM + TABLE) -->
-        <div id="dashboard" class="section active">
-            <!-- ENTRY FORM -->
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-10" id="formAnchor">
-                <div class="flex items-center gap-3 mb-8">
-                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                        <i class="fas fa-pen-nib"></i>
-                    </div>
-                    <h3 id="formTitle" class="text-xl font-black text-slate-800 uppercase tracking-tight">Management Portal</h3>
+        <!-- INPUT FORM -->
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-10" id="entryForm">
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fas fa-edit text-blue-600"></i>
+                <h3 id="formModeTitle" class="font-black text-slate-800 uppercase text-sm">Create New Entry</h3>
+            </div>
+            <input type="hidden" id="editId">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="md:col-span-1">
+                    <label class="text-[10px] font-black text-slate-400 ml-2">CLIENT NAME</label>
+                    <input type="text" id="clientName" class="w-full p-3.5 bg-slate-50 border rounded-xl outline-none focus:border-blue-500 font-bold">
                 </div>
-                
-                <input type="hidden" id="editId">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-                    <div class="md:col-span-1">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Client Name</label>
-                        <input type="text" id="clientName" class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:border-blue-500 transition-all outline-none font-bold">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Category</label>
-                        <select id="serviceCategory" class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:border-blue-500 outline-none font-bold">
-                            <option value="GST">GST Management</option>
-                            <option value="ROC">ROC / MCA</option>
-                            <option value="IT">Income Tax</option>
-                            <option value="PT">Professional Tax</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Service Detail</label>
-                        <input type="text" id="serviceDetail" class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:border-blue-500 outline-none font-bold" placeholder="e.g. Return Filing">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Assign Staff</label>
-                        <input type="text" id="assignedStaff" class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:border-blue-500 outline-none font-bold">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Deadline Date</label>
-                        <input type="date" id="deadline" class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:border-blue-500 outline-none font-bold">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Status</label>
-                        <select id="status" class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:border-blue-500 outline-none font-bold">
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Completed">Completed</option>
-                        </select>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Internal Remarks / Notes</label>
-                        <input type="text" id="remarks" class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:border-blue-500 outline-none font-bold" placeholder="Add details or notes here...">
-                    </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 ml-2">CATEGORY</label>
+                    <select id="serviceCategory" class="w-full p-3.5 bg-slate-50 border rounded-xl font-bold">
+                        <option value="GST">GST Management</option>
+                        <option value="ROC">ROC / MCA</option>
+                        <option value="IT">Income Tax</option>
+                        <option value="PT">Professional Tax</option>
+                    </select>
                 </div>
-                
-                <div class="mt-8 flex gap-4">
-                    <button onclick="handleSubmit()" id="submitBtn" class="flex-1 bg-[#1e3a8a] text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-800 transition-all shadow-xl shadow-blue-100">
-                        <i class="fas fa-sync-alt mr-2"></i> Sync To Database
-                    </button>
-                    <button onclick="clearForm()" class="px-8 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200 uppercase text-xs tracking-widest">Cancel</button>
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 ml-2">SERVICE DETAIL</label>
+                    <input type="text" id="serviceDetail" class="w-full p-3.5 bg-slate-50 border rounded-xl font-bold" placeholder="e.g. GSTR-1">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 ml-2">ASSIGN STAFF</label>
+                    <input type="text" id="assignedStaff" class="w-full p-3.5 bg-slate-50 border rounded-xl font-bold">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 ml-2">DEADLINE</label>
+                    <input type="date" id="deadline" class="w-full p-3.5 bg-slate-50 border rounded-xl font-bold">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 ml-2">STATUS</label>
+                    <select id="status" class="w-full p-3.5 bg-slate-50 border rounded-xl font-bold">
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="text-[10px] font-black text-slate-400 ml-2">REMARKS</label>
+                    <input type="text" id="remarks" class="w-full p-3.5 bg-slate-50 border rounded-xl font-bold" placeholder="Notes for this client...">
                 </div>
             </div>
+            <div class="mt-6 flex gap-3">
+                <button onclick="saveData()" id="saveBtn" class="flex-1 bg-[#1e3a8a] text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-blue-100 hover:bg-blue-800 transition-all">
+                    <i class="fas fa-save mr-2"></i> Sync To Supabase
+                </button>
+                <button onclick="resetForm()" class="px-6 bg-slate-100 text-slate-500 rounded-xl font-bold uppercase text-[10px]">Cancel</button>
+            </div>
+        </div>
 
-            <!-- TABLE CONTAINER -->
-            <div class="bg-white rounded-[2.5rem] shadow-sm overflow-hidden border border-slate-100">
-                <div class="p-6 border-b flex justify-between items-center bg-slate-50/50">
-                    <h4 id="tableHeaderTitle" class="font-black text-slate-800 uppercase text-xs tracking-widest">Live Record Stream</h4>
-                    <span id="recordCount" class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-[10px] font-black">0 RECORDS</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b">
-                                <th class="p-6">Client Info</th>
-                                <th class="p-6 text-center">Assigned To</th>
-                                <th class="p-6 text-center">Deadline</th>
-                                <th class="p-6 text-center">Status</th>
-                                <th class="p-6">Remarks</th>
-                                <th class="p-6 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="mainTableBody" class="divide-y divide-slate-50">
-                            <!-- Data injection -->
-                        </tbody>
-                    </table>
-                </div>
+        <!-- RECORDS TABLE -->
+        <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-slate-100">
+            <div class="p-6 border-b bg-slate-50/50 flex justify-between items-center">
+                <h4 class="font-black text-slate-700 uppercase text-xs">Recent Records</h4>
+                <div id="liveBadge" class="px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full text-[9px] font-black animate-pulse">LIVE CONNECTED</div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b">
+                            <th class="p-5">Client Info</th>
+                            <th class="p-5">Category</th>
+                            <th class="p-5">Assigned Staff</th>
+                            <th class="p-5">Deadline</th>
+                            <th class="p-5">Status</th>
+                            <th class="p-5">Remarks</th>
+                            <th class="p-5 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-50">
+                        <!-- JS loops through data here -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
@@ -192,69 +166,44 @@
         const SB_KEY = 'sb_publishable_j8DLUkc6Zmjqd5tMvmGJnw_89ppavCX';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-        let allRecords = [];
-        let filteredRecords = [];
+        let masterData = [];
+        let currentFilter = 'All';
 
-        async function fetchRecords() {
-            const { data, error } = await supabaseClient
-                .from('witcorp_records')
-                .select('*')
-                .order('created_at', { ascending: false });
-
+        async function fetchAll() {
+            const { data, error } = await supabaseClient.from('witcorp_records').select('*').order('created_at', { ascending: false });
             if (!error) {
-                allRecords = data;
-                filteredRecords = data;
-                updateUI(data);
+                masterData = data;
+                renderTable(data);
+                updateStats(data);
             }
         }
 
-        function updateUI(data) {
-            renderTable(data);
-            updateStats(allRecords);
-            document.getElementById('recordCount').innerText = `${data.length} RECORDS`;
-        }
-
         function renderTable(data) {
-            const tbody = document.getElementById('mainTableBody');
-            tbody.innerHTML = data.length === 0 ? `<tr><td colspan="6" class="p-20 text-center font-bold text-slate-300">No matching records found.</td></tr>` : "";
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = data.length === 0 ? '<tr><td colspan="7" class="p-10 text-center text-slate-400 font-bold">No Records Found</td></tr>' : '';
 
             data.forEach(row => {
-                const statusStyles = {
-                    'Completed': 'bg-emerald-100 text-emerald-700',
-                    'Pending': 'bg-rose-100 text-rose-700',
-                    'Processing': 'bg-amber-100 text-amber-700'
-                }[row.status] || 'bg-slate-100 text-slate-600';
+                const badge = {
+                    'Completed': 'bg-emerald-100 text-emerald-600',
+                    'Pending': 'bg-rose-100 text-rose-600',
+                    'Processing': 'bg-amber-100 text-amber-600'
+                }[row.status] || 'bg-slate-100';
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="p-6">
+                    <tr>
+                        <td class="p-5">
                             <div class="font-black text-slate-800 text-sm">${row.client_name}</div>
-                            <div class="text-[9px] font-black text-blue-500 uppercase mt-1 tracking-tighter">${row.service_category} | ${row.service_detail || 'Standard Service'}</div>
+                            <div class="text-[10px] text-slate-400 font-bold">${row.service_detail || '---'}</div>
                         </td>
-                        <td class="p-6 text-center">
-                            <span class="inline-block px-3 py-1 bg-slate-100 rounded-lg text-[10px] font-black text-slate-600">
-                                <i class="fas fa-user-circle mr-1"></i> ${row.assigned_staff || 'TBD'}
-                            </span>
-                        </td>
-                        <td class="p-6 text-center font-bold text-slate-500 text-xs">
-                            ${row.deadline ? new Date(row.deadline).toLocaleDateString('en-GB') : 'No Date'}
-                        </td>
-                        <td class="p-6 text-center">
-                            <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${statusStyles}">
-                                ${row.status}
-                            </span>
-                        </td>
-                        <td class="p-6">
-                            <p class="text-xs text-slate-400 font-bold truncate max-w-[150px] italic">${row.remarks || '---'}</p>
-                        </td>
-                        <td class="p-6 text-right">
+                        <td class="p-5"><span class="text-[10px] font-black text-blue-600 uppercase px-2 py-1 bg-blue-50 rounded">${row.service_category}</span></td>
+                        <td class="p-5 text-xs font-bold text-slate-600 italic">${row.assigned_staff || 'Unassigned'}</td>
+                        <td class="p-5 text-xs font-bold text-slate-500">${row.deadline ? new Date(row.deadline).toLocaleDateString('en-GB') : '---'}</td>
+                        <td class="p-5"><span class="px-3 py-1 rounded-full text-[9px] font-black uppercase ${badge}">${row.status}</span></td>
+                        <td class="p-5 text-[11px] text-slate-400 max-w-[150px] truncate">${row.remarks || '---'}</td>
+                        <td class="p-5 text-right">
                             <div class="flex justify-end gap-2">
-                                <button onclick="triggerEdit(${row.id})" class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm shadow-blue-100">
-                                    <i class="fas fa-edit text-xs"></i>
-                                </button>
-                                <button onclick="deleteEntry(${row.id})" class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all">
-                                    <i class="fas fa-trash-alt text-xs"></i>
-                                </button>
+                                <button onclick="editEntry(${row.id})" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all"><i class="fas fa-edit text-xs"></i></button>
+                                <button onclick="deleteEntry(${row.id})" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all"><i class="fas fa-trash text-xs"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -262,37 +211,8 @@
             });
         }
 
-        // --- FILTER & SEARCH LOGIC ---
-        function handleSearch() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allRecords.filter(r => 
-                r.client_name.toLowerCase().includes(query) || 
-                r.service_category.toLowerCase().includes(query) ||
-                (r.assigned_staff && r.assigned_staff.toLowerCase().includes(query))
-            );
-            updateUI(filtered);
-        }
-
-        function filterByStatus(status) {
-            showSection('dashboard');
-            document.getElementById('pageTitle').innerText = status === 'Total' ? 'Workspace' : `${status} Jobs`;
-            const filtered = status === 'Total' ? allRecords : allRecords.filter(r => r.status === status);
-            updateUI(filtered);
-        }
-
-        function filterByCategory(cat) {
-            showSection('dashboard');
-            document.getElementById('pageTitle').innerText = `${cat} Records`;
-            const filtered = allRecords.filter(r => r.service_category === cat);
-            updateUI(filtered);
-            
-            // Highlight sidebar
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-        }
-
-        // --- DATABASE OPERATIONS ---
-        async function handleSubmit() {
+        // --- CORE FUNCTIONS ---
+        async function saveData() {
             const id = document.getElementById('editId').value;
             const payload = {
                 client_name: document.getElementById('clientName').value,
@@ -304,69 +224,96 @@
                 remarks: document.getElementById('remarks').value
             };
 
-            if (!payload.client_name) return alert("Please enter Client Name");
+            if (!payload.client_name) return alert("Client Name missing!");
 
             const { error } = id ? 
-                await supabaseClient.from('witcorp_records').update(payload).eq('id', id) :
+                await supabaseClient.from('witcorp_records').update(payload).eq('id', id) : 
                 await supabaseClient.from('witcorp_records').insert([payload]);
 
             if (!error) {
-                clearForm();
-                fetchRecords();
+                resetForm();
+                fetchAll();
             }
         }
 
-        function triggerEdit(id) {
-            const record = allRecords.find(r => r.id === id);
-            if (!record) return;
+        function editEntry(id) {
+            const item = masterData.find(x => x.id === id);
+            if (!item) return;
 
-            // Scroll to top dashboard form
-            showSection('dashboard');
-            document.getElementById('formAnchor').scrollIntoView({ behavior: 'smooth' });
+            // Unlock and Fill ALL Fields
+            document.getElementById('editId').value = item.id;
+            document.getElementById('clientName').value = item.client_name;
+            document.getElementById('serviceCategory').value = item.service_category;
+            document.getElementById('serviceDetail').value = item.service_detail;
+            document.getElementById('assignedStaff').value = item.assigned_staff;
+            document.getElementById('deadline').value = item.deadline;
+            document.getElementById('status').value = item.status;
+            document.getElementById('remarks').value = item.remarks || '';
+
+            document.getElementById('formModeTitle').innerText = "Updating Entry: " + item.client_name;
+            document.getElementById('saveBtn').innerHTML = `<i class="fas fa-check-circle mr-2"></i> Update All Details`;
             
-            // Populate Form
-            document.getElementById('editId').value = record.id;
-            document.getElementById('clientName').value = record.client_name;
-            document.getElementById('serviceCategory').value = record.service_category;
-            document.getElementById('serviceDetail').value = record.service_detail;
-            document.getElementById('assignedStaff').value = record.assigned_staff;
-            document.getElementById('deadline').value = record.deadline;
-            document.getElementById('status').value = record.status;
-            document.getElementById('remarks').value = record.remarks || "";
-
-            document.getElementById('formTitle').innerText = "Update Record Mode";
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-check-circle mr-2"></i> Update Data Now`;
+            // Smooth scroll to form
+            document.getElementById('entryForm').scrollIntoView({ behavior: 'smooth' });
         }
 
         async function deleteEntry(id) {
-            if (confirm("Sure to delete?")) {
+            if (confirm("Delete permanently?")) {
                 await supabaseClient.from('witcorp_records').delete().eq('id', id);
-                fetchRecords();
+                fetchAll();
             }
         }
 
-        // --- HELPERS ---
+        // --- NAVIGATION & FILTERS ---
+        function loadCategory(cat) {
+            currentFilter = cat;
+            document.getElementById('viewTitle').innerText = cat === 'All' ? 'Main Dashboard' : cat + ' Management';
+            
+            // Sidebar UI update
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + cat.toLowerCase()).classList.add('active');
+
+            const filtered = cat === 'All' ? masterData : masterData.filter(r => r.service_category === cat);
+            renderTable(filtered);
+        }
+
+        function filterByStatus(status) {
+            const filtered = status === 'Total' ? masterData : masterData.filter(r => r.status === status);
+            renderTable(filtered);
+            document.getElementById('viewTitle').innerText = status + ' Tasks';
+        }
+
+        function searchData() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = masterData.filter(r => 
+                r.client_name.toLowerCase().includes(q) || 
+                r.service_category.toLowerCase().includes(q) ||
+                (r.assigned_staff && r.assigned_staff.toLowerCase().includes(q))
+            );
+            renderTable(filtered);
+        }
+
         function updateStats(data) {
             document.getElementById('statTotal').innerText = data.length;
             document.getElementById('statDone').innerText = data.filter(r => r.status === 'Completed').length;
             document.getElementById('statPending').innerText = data.filter(r => r.status === 'Pending').length;
         }
 
-        function showSection(id) {
-            document.getElementById('pageTitle').innerText = 'Workspace';
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            if(id === 'dashboard') document.getElementById('nav-dash').classList.add('active');
-        }
-
-        function clearForm() {
+        function resetForm() {
             document.getElementById('editId').value = "";
-            ['clientName', 'serviceDetail', 'assignedStaff', 'deadline', 'remarks'].forEach(i => document.getElementById(i).value = "");
-            document.getElementById('formTitle').innerText = "Management Portal";
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-sync-alt mr-2"></i> Sync To Database`;
+            ['clientName', 'serviceDetail', 'assignedStaff', 'deadline', 'remarks'].forEach(f => document.getElementById(f).value = "");
+            document.getElementById('formModeTitle').innerText = "Create New Entry";
+            document.getElementById('saveBtn').innerHTML = `<i class="fas fa-save mr-2"></i> Sync To Supabase`;
         }
 
-        // Initial Load
-        fetchRecords();
+        // Run on load
+        fetchAll();
+        
+        // Live update if data changes
+        supabaseClient.channel('realtime_records').on('postgres_changes', { event: '*', schema: 'public', table: 'witcorp_records' }, () => {
+            fetchAll();
+        }).subscribe();
+
     </script>
 </body>
 </html>
