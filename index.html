@@ -18,6 +18,12 @@
         .stat-card { cursor: pointer; transition: all 0.3s ease; }
         .stat-card:hover { transform: translateY(-5px); filter: brightness(0.95); }
         input:disabled, select:disabled { background-color: #e2e8f0; cursor: not-allowed; color: #64748b; }
+
+        /* Status Pill Designs */
+        .status-pill { padding: 6px 14px; border-radius: 9999px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; border: 1.5px solid currentColor; }
+        .st-pending { background-color: #fff1f2; color: #e11d48; }
+        .st-processing { background-color: #fffbeb; color: #d97706; }
+        .st-completed { background-color: #f0fdf4; color: #16a34a; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -33,14 +39,14 @@
         
         <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
             <button onclick="showSection('dashboard')" class="nav-btn active w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-chart-pie w-5"></i> Dashboard
+                <i class="fas fa-chart-pie w-5"></i> Dashboard Home
             </button>
             <div class="pt-4 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest">Managements</div>
             <button onclick="filterByField('service_category', 'GST')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-receipt w-5"></i> GST Management
             </button>
             <button onclick="filterByField('service_category', 'ROC')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-building w-5"></i> ROC / MCA
+                <i class="fas fa-building w-5"></i> ROC / MCA Desk
             </button>
             <button onclick="filterByField('service_category', 'IT')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-coins w-5"></i> Income Tax
@@ -52,7 +58,7 @@
 
         <div class="p-6 bg-black/20 text-center border-t border-white/10">
             <p class="text-[10px] uppercase text-blue-300 mb-1">Lead Developer</p>
-            <p class="font-bold text-sm">Kamlesh Yadav</p>
+            <p class="font-bold text-sm text-yellow-400">Kamlesh Yadav</p>
         </div>
     </aside>
 
@@ -68,9 +74,9 @@
         <!-- DASHBOARD SECTION -->
         <div id="dashboard" class="section active">
             <div class="flex justify-between items-center mb-10">
-                <h2 class="text-3xl font-black text-slate-800">Workspace Overview</h2>
-                <div id="syncIndicator" class="flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> SYSTEM LIVE
+                <h2 class="text-3xl font-black text-slate-800 tracking-tight">Workspace Overview</h2>
+                <div id="syncIndicator" class="flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> SYSTEM LIVE SYNC
                 </div>
             </div>
 
@@ -138,7 +144,7 @@
                 </div>
                 <div class="mt-6 flex gap-4">
                     <button onclick="handleSubmit()" id="submitBtn" class="flex-1 bg-[#1e3a8a] text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-800 transition-all shadow-lg shadow-blue-200">
-                        <i class="fas fa-cloud-upload-alt mr-2"></i> Sync To Database
+                        <i class="fas fa-cloud-upload-alt mr-2"></i> Sync To WitcorpDB
                     </button>
                     <button onclick="clearForm()" class="px-8 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200">Cancel / Clear</button>
                 </div>
@@ -146,20 +152,20 @@
 
             <!-- RECENT TABLE -->
             <div class="bg-white rounded-[2.5rem] shadow-sm overflow-hidden border border-slate-100">
-                <div class="p-8 border-b flex justify-between items-center">
-                    <h4 class="font-black text-slate-800 uppercase text-sm">Live Records Database</h4>
+                <div class="p-8 border-b flex justify-between items-center bg-slate-50/50">
+                    <h4 class="font-black text-slate-800 uppercase text-sm tracking-widest">Live Records Database</h4>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
-                        <thead class="bg-slate-50">
-                            <tr>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client & Last Update</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Service</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Staff</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Deadline</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Status</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Remarks</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-right">Actions</th>
+                        <thead>
+                            <tr class="bg-slate-50">
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b">Client & Last Update</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b text-center">Service Category</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b text-center">Staff</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b text-center">Deadline</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b text-center">Status</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b">Remarks</th>
+                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="mainTableBody" class="divide-y divide-slate-100"></tbody>
@@ -181,7 +187,7 @@
                     <thead class="bg-slate-50">
                         <tr>
                             <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client & Last Update</th>
-                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Service</th>
+                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Service Category</th>
                             <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Staff</th>
                             <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Deadline</th>
                             <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Status</th>
@@ -248,49 +254,58 @@
                 `<tr><td colspan="7" class="p-20 text-center text-slate-400 font-bold">No records found matching criteria.</td></tr>` : "";
 
             data.forEach(row => {
+                // Status Pill Logic
                 const statusClass = {
-                    'Completed': 'bg-emerald-100 text-emerald-700',
-                    'Pending': 'bg-rose-100 text-rose-700',
-                    'Processing': 'bg-amber-100 text-amber-700'
-                }[row.status] || 'bg-slate-100 text-slate-600';
+                    'Completed': 'st-completed',
+                    'Pending': 'st-pending',
+                    'Processing': 'st-processing'
+                }[row.status] || 'bg-slate-100';
 
-                // Format Update Time
+                const statusIcon = {
+                    'Completed': 'fa-check-circle',
+                    'Pending': 'fa-exclamation-circle',
+                    'Processing': 'fa-sync-alt fa-spin'
+                }[row.status] || 'fa-info-circle';
+
                 const lastUpdate = row.updated_at ? new Date(row.updated_at).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }) : 'Just now';
 
                 tbody.innerHTML += `
-                    <tr class="group">
+                    <tr class="group transition-all hover:bg-blue-50/30">
                         <td class="p-6">
-                            <div class="font-black text-slate-800">${row.client_name}</div>
-                            <div class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">
-                                <i class="far fa-clock mr-1"></i> Updated: ${lastUpdate}
+                            <div class="font-black text-slate-800 text-sm">${row.client_name}</div>
+                            <div class="text-[9px] font-black text-slate-400 mt-1 uppercase flex items-center gap-1">
+                                <i class="far fa-clock text-blue-400"></i> LAST UPDATE: ${lastUpdate}
                             </div>
                         </td>
-                        <td class="p-6">
-                            <span class="text-[10px] font-bold text-blue-500 uppercase">${row.service_category}</span>
-                            <div class="text-sm text-slate-500 font-medium">${row.service_detail || 'General'}</div>
+                        <td class="p-6 text-center">
+                            <div class="inline-block px-3 py-1 bg-blue-600 text-white rounded-lg text-[9px] font-black uppercase mb-1 shadow-sm">
+                                ${row.service_category}
+                            </div>
+                            <div class="text-[11px] text-slate-500 font-bold">${row.service_detail || 'General Service'}</div>
                         </td>
                         <td class="p-6 text-center">
-                            <div class="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-lg text-[11px] font-black text-slate-600">
-                                <i class="fas fa-user-tie text-[9px]"></i> ${row.assigned_staff || 'Unassigned'}
+                            <div class="inline-flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-600 shadow-sm">
+                                <i class="fas fa-user-tie text-blue-500"></i> ${row.assigned_staff || 'Unassigned'}
                             </div>
                         </td>
-                        <td class="p-6 text-center font-bold text-slate-500 text-sm">
-                            ${row.deadline ? new Date(row.deadline).toLocaleDateString('en-GB') : '---'}
+                        <td class="p-6 text-center font-black text-slate-500 text-[11px]">
+                            <i class="far fa-calendar-alt mr-1 text-rose-400"></i>
+                            ${row.deadline ? new Date(row.deadline).toLocaleDateString('en-GB') : 'NOT SET'}
                         </td>
                         <td class="p-6 text-center">
-                            <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase ${statusClass}">
-                                ${row.status}
+                            <span class="status-pill ${statusClass}">
+                                <i class="fas ${statusIcon}"></i> ${row.status}
                             </span>
                         </td>
-                        <td class="p-6 text-slate-500 text-xs italic max-w-[150px] truncate" title="${row.remarks || ''}">
+                        <td class="p-6 text-slate-500 text-[11px] font-medium italic max-w-[150px] truncate" title="${row.remarks || ''}">
                             ${row.remarks || '---'}
                         </td>
                         <td class="p-6 text-right">
                             <div class="flex justify-end gap-2">
-                                <button onclick="editRecord(${row.id})" class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all">
+                                <button onclick="editRecord(${row.id})" class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button onclick="deleteRecord(${row.id})" class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all">
+                                <button onclick="deleteRecord(${row.id})" class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-sm">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
@@ -303,14 +318,11 @@
         // --- CREATE / UPDATE ---
         async function handleSubmit() {
             const id = document.getElementById('editId').value;
-            
-            // Build payload (if ID exists, we only send status and remarks to Supabase to be safe)
             const payload = {
                 status: document.getElementById('status').value,
                 remarks: document.getElementById('remarks').value
             };
 
-            // If it's a NEW entry, we need all fields
             if(!id) {
                 payload.client_name = document.getElementById('clientName').value;
                 payload.service_category = document.getElementById('serviceCategory').value;
@@ -340,8 +352,6 @@
             if (!record) return;
 
             document.getElementById('editId').value = record.id;
-            
-            // Fill Data
             document.getElementById('clientName').value = record.client_name;
             document.getElementById('serviceCategory').value = record.service_category;
             document.getElementById('serviceDetail').value = record.service_detail;
@@ -350,13 +360,12 @@
             document.getElementById('status').value = record.status;
             document.getElementById('remarks').value = record.remarks || "";
 
-            // LOCK FIELDS (Only Status & Remarks Stay Open)
             ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline'].forEach(fieldId => {
                 document.getElementById(fieldId).disabled = true;
             });
 
-            document.getElementById('formTitle').innerText = "Edit mode: strictly comments & status only";
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-check-circle mr-2"></i> Update Remarks & Status`;
+            document.getElementById('formTitle').innerHTML = "<i class='fas fa-lock text-rose-500'></i> RECORD LOCKED: UPDATE STATUS & REMARKS ONLY";
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-check-circle mr-2"></i> Update Record Now`;
             
             showSection('dashboard');
             document.getElementById('remarks').focus();
@@ -368,26 +377,24 @@
             ['clientName', 'serviceDetail', 'assignedStaff', 'deadline', 'remarks'].forEach(i => {
                 const el = document.getElementById(i);
                 el.value = "";
-                el.disabled = false; // Unlock
+                el.disabled = false;
             });
             document.getElementById('serviceCategory').disabled = false;
             document.getElementById('status').disabled = false;
-            
             document.getElementById('formTitle').innerText = "New Entry Management";
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> Sync To Database`;
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> Sync To WitcorpDB`;
         }
 
         // --- FILTERING ---
         function filterByField(field, value) {
             showSection('filterView');
             let filtered = [];
-            
             if (field === 'all') {
                 filtered = [...allRecords];
-                document.getElementById('filterTitle').innerText = "All Portfolio Records";
+                document.getElementById('filterTitle').innerText = "All Master Records";
             } else {
                 filtered = allRecords.filter(r => r[field] === value);
-                document.getElementById('filterTitle').innerText = `${value} Records`;
+                document.getElementById('filterTitle').innerText = `${value} Database View`;
             }
             renderTable(filtered, 'filterTableBody');
         }
@@ -409,13 +416,12 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            
             if (id === 'dashboard') {
                 document.querySelector('[onclick*="dashboard"]').classList.add('active');
             }
         }
 
-        // --- INIT & REALTIME ---
+        // --- INIT ---
         fetchRecords();
         supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'witcorp_records' }, () => {
             fetchRecords();
