@@ -11,6 +11,31 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; scroll-behavior: smooth; }
         
+        /* --- DYNAMIC BORDER LIGHTING EFFECT --- */
+        .lighting-border {
+            position: relative;
+            background: #fff;
+            border-radius: 2.5rem;
+            z-index: 1;
+        }
+        .lighting-border::before {
+            content: "";
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(5px);
+            animation: borderGlow 20s linear infinite;
+            opacity: 0.4;
+            border-radius: 2.6rem;
+        }
+        @keyframes borderGlow {
+            0% { background-position: 0 0; }
+            50% { background-position: 400% 0; }
+            100% { background-position: 0 0; }
+        }
+
         /* Sidebar Styling */
         .nav-btn { position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .nav-btn i { filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.2)); transition: transform 0.3s ease; }
@@ -36,13 +61,16 @@
         .st-completed { background-color: #f0fdf4; color: #16a34a; }
         
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
         /* Branding Motto Style */
         .motto-text { font-size: 9px; letter-spacing: 2px; font-weight: 800; color: rgba(255,255,255,0.7); text-transform: uppercase; margin-top: 8px; position: relative; display: inline-block; }
         .motto-text::after { content: ''; position: absolute; bottom: -4px; left: 25%; width: 50%; height: 1.5px; background: #fbbf24; border-radius: 10px; }
+
+        /* Table Responsive Scroll Fix */
+        .scroll-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -125,7 +153,7 @@
                 </div>
             </div>
 
-            <div id="entryFormAnchor" class="bg-white p-10 rounded-[3rem] shadow-2xl border border-slate-100 mb-14 relative">
+            <div id="entryFormAnchor" class="lighting-border p-10 shadow-2xl mb-14 relative">
                 <div class="flex items-center justify-between mb-10">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
@@ -179,18 +207,18 @@
                 </div>
                 <div class="mt-10 flex gap-5">
                     <button onclick="handleSubmit()" id="submitBtn" class="flex-1 bg-[#1e3a8a] text-white py-6 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-800 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-3">
-                        <i class="fas fa-cloud-arrow-up text-xl"></i> Update To Witcorp
+                        <i class="fas fa-cloud-arrow-up text-xl"></i> Sync To WitcorpDB
                     </button>
                     <button onclick="clearForm()" class="px-10 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200 transition-colors">Cancel / Clear</button>
                 </div>
             </div>
 
-            <div class="bg-white rounded-[3rem] shadow-sm overflow-hidden border border-slate-100">
+            <div class="lighting-border bg-white overflow-hidden border border-slate-100 shadow-lg">
                 <div class="p-8 border-b flex justify-between items-center bg-slate-50/30">
                     <h4 class="font-black text-slate-800 uppercase text-xs tracking-[0.2em]">Live Records Database</h4>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div class="scroll-container">
+                    <table class="w-full text-left border-collapse min-w-[1000px]">
                         <thead>
                             <tr class="bg-slate-50/50">
                                 <th class="p-8 text-[10px] font-black text-slate-400 uppercase border-b tracking-wider">Client</th>
@@ -212,7 +240,7 @@
 
         <div id="clientManagement" class="section">
             <h2 class="text-3xl font-black text-slate-800 mb-10 uppercase tracking-tight">Client Directory</h2>
-            <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-slate-100 mb-12">
+            <div class="lighting-border p-10 shadow-xl mb-12">
                 <input type="hidden" id="cEditId">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <input type="text" id="cName" placeholder="Legal Entity Name" class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
@@ -227,15 +255,15 @@
                 <button onclick="saveClient()" id="clientBtn" class="mt-6 w-full bg-blue-600 text-white p-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all">Save Client Profile</button>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                <div class="lighting-border bg-white border border-slate-100 overflow-hidden">
                     <div class="p-6 bg-blue-600 text-white font-black uppercase text-center text-xs tracking-widest">Private Limited</div>
                     <div id="pvtLtdList" class="p-6 space-y-4"></div>
                 </div>
-                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                <div class="lighting-border bg-white border border-slate-100 overflow-hidden">
                     <div class="p-6 bg-purple-600 text-white font-black uppercase text-center text-xs tracking-widest">LLP Entities</div>
                     <div id="llpList" class="p-6 space-y-4"></div>
                 </div>
-                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                <div class="lighting-border bg-white border border-slate-100 overflow-hidden">
                     <div class="p-6 bg-slate-700 text-white font-black uppercase text-center text-xs tracking-widest">General / Individuals</div>
                     <div id="othersList" class="p-6 space-y-4"></div>
                 </div>
@@ -244,7 +272,7 @@
 
         <div id="vaultManagement" class="section">
             <h2 class="text-3xl font-black text-slate-800 mb-10 uppercase tracking-tight">Credential Vault</h2>
-            <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-slate-100 mb-12">
+            <div class="lighting-border p-10 shadow-xl mb-12">
                 <input type="hidden" id="vEditId">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <input type="text" id="vClient" placeholder="Select Client" class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 font-bold">
@@ -254,19 +282,21 @@
                 </div>
                 <button onclick="saveVault()" id="vaultBtn" class="mt-6 w-full bg-yellow-500 text-blue-900 p-5 rounded-2xl font-black uppercase tracking-widest hover:bg-yellow-400 transition-all">Store Securely</button>
             </div>
-            <div class="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-50/50 border-b">
-                        <tr>
-                            <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Entity</th>
-                            <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Access Category</th>
-                            <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Username</th>
-                            <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Password</th>
-                            <th class="p-8 text-right font-black text-[10px] uppercase text-slate-400 tracking-wider">Secure Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vaultTableBody" class="divide-y divide-slate-100"></tbody>
-                </table>
+            <div class="lighting-border bg-white border border-slate-100 overflow-hidden">
+                <div class="scroll-container">
+                    <table class="w-full text-left min-w-[900px]">
+                        <thead class="bg-slate-50/50 border-b">
+                            <tr>
+                                <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Entity</th>
+                                <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Access Category</th>
+                                <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Username</th>
+                                <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Password</th>
+                                <th class="p-8 text-right font-black text-[10px] uppercase text-slate-400 tracking-wider">Secure Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vaultTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -277,23 +307,25 @@
                 </button>
                 <h2 id="filterTitle" class="text-3xl font-black text-slate-800 uppercase">Records Filtered</h2>
             </div>
-            <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden border" id="filterTableContainer">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-50/50">
-                        <tr>
-                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client</th>
-                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Update Info</th>
-                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Service Desk</th>
-                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Category</th>
-                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Staff</th>
-                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Deadline</th>
-                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Status</th>
-                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Notes</th>
-                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-right tracking-widest">Manage</th>
-                        </tr>
-                    </thead>
-                    <tbody id="filterTableBody" class="divide-y divide-slate-50"></tbody>
-                </table>
+            <div class="lighting-border bg-white shadow-xl overflow-hidden border" id="filterTableContainer">
+                <div class="scroll-container">
+                    <table class="w-full text-left border-collapse min-w-[1200px]">
+                        <thead class="bg-slate-50/50">
+                            <tr>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Update Info</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Service Desk</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Category</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Staff</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Deadline</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Status</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Notes</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-right tracking-widest">Manage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="filterTableBody" class="divide-y divide-slate-50"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -315,7 +347,6 @@
             }
         }
 
-        // Updated Render Table with separate columns for Client, Status, Service, Category
         function renderTable(data, targetId) {
             const tbody = document.getElementById(targetId);
             if (!tbody) return;
@@ -421,7 +452,6 @@
             document.getElementById('cEmail').value = c.email_id;
             document.getElementById('cType').value = c.entity_type;
             document.getElementById('clientBtn').innerText = "Confirm Update Profile";
-            // FIXED: SCROLL TO TOP FORM
             document.getElementById('mainContent').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -479,7 +509,6 @@
             document.getElementById('vUser').value = v.username;
             document.getElementById('vPass').value = v.password;
             document.getElementById('vaultBtn').innerText = "Update Vault Credentials";
-            // FIXED: SCROLL TO TOP FORM
             document.getElementById('mainContent').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -548,7 +577,7 @@
         function clearForm() {
             document.getElementById('editId').value = "";
             document.getElementById('formTitle').innerText = "Management Portal";
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-arrow-up text-xl"></i> Update To Witcorp`;
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-arrow-up text-xl"></i> Sync To WitcorpDB`;
             document.getElementById('editBadge').classList.add('hidden');
             ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline', 'status', 'remarks'].forEach(i => {
                 const el = document.getElementById(i);
