@@ -186,6 +186,7 @@
             <h2 class="text-3xl font-black text-slate-800 mb-8 uppercase">Client Directory</h2>
             
             <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-10">
+                <input type="hidden" id="cEditId">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <input type="text" id="cName" placeholder="Client Name" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
                     <input type="text" id="cPhone" placeholder="Contact Number" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
@@ -196,7 +197,7 @@
                         <option value="Others">Others</option>
                     </select>
                 </div>
-                <button onclick="saveClient()" class="mt-4 w-full bg-blue-600 text-white p-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all">Add/Update Client</button>
+                <button onclick="saveClient()" id="clientBtn" class="mt-4 w-full bg-blue-600 text-white p-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all">Add/Update Client</button>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -219,13 +220,14 @@
         <div id="vaultManagement" class="section">
             <h2 class="text-3xl font-black text-slate-800 mb-8 uppercase">Credential Vault</h2>
             <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-10">
+                <input type="hidden" id="vEditId">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <input type="text" id="vClient" placeholder="Client Name" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold">
                     <input type="text" id="vCat" placeholder="Category (e.g. GST Portal)" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold">
                     <input type="text" id="vUser" placeholder="Username" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold">
                     <input type="text" id="vPass" placeholder="Password" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold">
                 </div>
-                <button onclick="saveVault()" class="mt-4 w-full bg-yellow-500 text-blue-900 p-4 rounded-xl font-black uppercase tracking-widest hover:bg-yellow-400">Save Securely</button>
+                <button onclick="saveVault()" id="vaultBtn" class="mt-4 w-full bg-yellow-500 text-blue-900 p-4 rounded-xl font-black uppercase tracking-widest hover:bg-yellow-400">Save Securely</button>
             </div>
             <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden">
                 <table class="w-full text-left">
@@ -278,7 +280,6 @@
 
         let allRecords = [];
 
-        // --- DASHBOARD LOGIC ---
         async function fetchRecords() {
             const { data, error } = await supabaseClient.from('witcorp_records').select('*').order('updated_at', { ascending: false });
             if (!error) {
@@ -305,12 +306,11 @@
                         <td class="p-6 text-center font-black text-slate-500 text-[11px]">${row.deadline ? new Date(row.deadline).toLocaleDateString('en-GB') : 'NOT SET'}</td>
                         <td class="p-6 text-center"><span class="status-pill ${statusClass}"><i class="fas ${statusIcon}"></i> ${row.status}</span></td>
                         <td class="p-6 text-slate-500 text-[11px] italic max-w-[150px] truncate">${row.remarks || '---'}</td>
-                        <td class="p-6 text-right"><div class="flex justify-end gap-2"><button onclick="editRecord(${row.id})" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-blue-600 hover:bg-blue-600 hover:text-white transition-all"><i class="fas fa-edit"></i></button><button onclick="deleteRecord(${row.id})" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-rose-600 hover:bg-rose-600 hover:text-white transition-all"><i class="fas fa-trash-alt"></i></button></div></td>
+                        <td class="p-6 text-right"><div class="flex justify-end gap-2"><button onclick='editRecord(${JSON.stringify(row)})' class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-blue-600 hover:bg-blue-600 hover:text-white transition-all"><i class="fas fa-edit"></i></button><button onclick="deleteRecord(${row.id})" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-rose-600 hover:bg-rose-600 hover:text-white transition-all"><i class="fas fa-trash-alt"></i></button></div></td>
                     </tr>`;
             });
         }
 
-        // --- FIXED: handleSubmit (UPDATE NOW WORKS) ---
         async function handleSubmit() {
             const id = document.getElementById('editId').value;
             const payload = {
@@ -324,7 +324,6 @@
                 updated_at: new Date().toISOString()
             };
 
-            // Only validate client name for NEW entries or if intentionally changed
             if (!payload.client_name) return alert("Client Name required!");
 
             const { error } = id 
@@ -333,16 +332,31 @@
 
             if (!error) { 
                 alert(id ? "Record Updated!" : "New Record Added!");
-                clearForm(); 
-                fetchRecords(); 
-                showSection('dashboard'); 
-            } else {
-                console.error(error);
-                alert("Error saving data!");
+                clearForm(); fetchRecords(); showSection('dashboard'); 
+            } else { alert("Error saving data!"); }
+        }
+
+        function editRecord(row) {
+            document.getElementById('editId').value = row.id;
+            document.getElementById('clientName').value = row.client_name;
+            document.getElementById('serviceCategory').value = row.service_category;
+            document.getElementById('serviceDetail').value = row.service_detail;
+            document.getElementById('assignedStaff').value = row.assigned_staff;
+            document.getElementById('deadline').value = row.deadline;
+            document.getElementById('status').value = row.status;
+            document.getElementById('remarks').value = row.remarks;
+            document.getElementById('formTitle').innerText = "Update Record Management";
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-sync-alt mr-2"></i> Update Record`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function deleteRecord(id) {
+            if(confirm("Delete record?")) {
+                await supabaseClient.from('witcorp_records').delete().eq('id', id);
+                fetchRecords();
             }
         }
 
-        // --- CLIENT DIRECTORY LOGIC ---
         async function fetchClients() {
             const { data, error } = await supabaseClient.from('witcorp_clients').select('*').order('client_name', { ascending: true });
             if (error) return;
@@ -356,12 +370,25 @@
                         <div class="font-black text-slate-800 text-sm">${c.client_name}</div>
                         <div class="text-[10px] text-slate-500 font-bold mt-1"><i class="fas fa-phone-alt mr-1"></i> ${c.contact_number}</div>
                         <div class="text-[10px] text-blue-600 font-bold break-all mt-1"><i class="fas fa-envelope mr-1"></i> ${c.email_id}</div>
-                        <button onclick="deleteClient(${c.id})" class="mt-2 text-[10px] text-rose-500 font-black uppercase hover:underline">Delete</button>
+                        <div class="mt-2 flex gap-3">
+                            <button onclick='editClient(${JSON.stringify(c)})' class="text-[10px] text-blue-600 font-black uppercase hover:underline">Edit</button>
+                            <button onclick="deleteClient(${c.id})" class="text-[10px] text-rose-500 font-black uppercase hover:underline">Delete</button>
+                        </div>
                     </div>`;
             });
         }
 
+        function editClient(c) {
+            document.getElementById('cEditId').value = c.id;
+            document.getElementById('cName').value = c.client_name;
+            document.getElementById('cPhone').value = c.contact_number;
+            document.getElementById('cEmail').value = c.email_id;
+            document.getElementById('cType').value = c.entity_type;
+            document.getElementById('clientBtn').innerText = "Update Client Info";
+        }
+
         async function saveClient() {
+            const id = document.getElementById('cEditId').value;
             const payload = {
                 client_name: document.getElementById('cName').value,
                 contact_number: document.getElementById('cPhone').value,
@@ -369,8 +396,15 @@
                 entity_type: document.getElementById('cType').value
             };
             if(!payload.client_name) return alert("Client Name Required");
-            const { error } = await supabaseClient.from('witcorp_clients').insert([payload]);
-            if(!error) { fetchClients(); ['cName','cPhone','cEmail'].forEach(i => document.getElementById(i).value = ""); }
+            const { error } = id 
+                ? await supabaseClient.from('witcorp_clients').update(payload).eq('id', id)
+                : await supabaseClient.from('witcorp_clients').insert([payload]);
+            if(!error) { 
+                fetchClients(); 
+                document.getElementById('cEditId').value = "";
+                ['cName','cPhone','cEmail'].forEach(i => document.getElementById(i).value = ""); 
+                document.getElementById('clientBtn').innerText = "Add/Update Client";
+            }
         }
 
         async function deleteClient(id) {
@@ -380,7 +414,6 @@
             }
         }
 
-        // --- VAULT LOGIC (UPDATED WITH CLIENT NAME) ---
         async function fetchVault() {
             const { data, error } = await supabaseClient.from('witcorp_credentials').select('*');
             if (error) return;
@@ -393,12 +426,25 @@
                         <td class="p-6 font-black text-slate-700 text-sm">${v.category}</td>
                         <td class="p-6 font-bold text-blue-600 text-sm">${v.username}</td>
                         <td class="p-6 font-mono text-xs"><span class="bg-slate-100 p-2 rounded-lg">${v.password}</span></td>
-                        <td class="p-6 text-right"><button onclick="deleteVault(${v.id})" class="text-rose-500"><i class="fas fa-trash-alt"></i></button></td>
+                        <td class="p-6 text-right flex gap-2 justify-end">
+                            <button onclick='editVault(${JSON.stringify(v)})' class="text-blue-500"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteVault(${v.id})" class="text-rose-500"><i class="fas fa-trash-alt"></i></button>
+                        </td>
                     </tr>`;
             });
         }
 
+        function editVault(v) {
+            document.getElementById('vEditId').value = v.id;
+            document.getElementById('vClient').value = v.client_name;
+            document.getElementById('vCat').value = v.category;
+            document.getElementById('vUser').value = v.username;
+            document.getElementById('vPass').value = v.password;
+            document.getElementById('vaultBtn').innerText = "Update Credential";
+        }
+
         async function saveVault() {
+            const id = document.getElementById('vEditId').value;
             const payload = {
                 client_name: document.getElementById('vClient').value,
                 category: document.getElementById('vCat').value,
@@ -406,8 +452,15 @@
                 password: document.getElementById('vPass').value
             };
             if(!payload.category || !payload.client_name) return alert("Client and Category Required");
-            const { error } = await supabaseClient.from('witcorp_credentials').insert([payload]);
-            if(!error) { fetchVault(); ['vClient','vCat','vUser','vPass'].forEach(i => document.getElementById(i).value = ""); }
+            const { error } = id 
+                ? await supabaseClient.from('witcorp_credentials').update(payload).eq('id', id)
+                : await supabaseClient.from('witcorp_credentials').insert([payload]);
+            if(!error) { 
+                fetchVault(); 
+                document.getElementById('vEditId').value = "";
+                ['vClient','vCat','vUser','vPass'].forEach(i => document.getElementById(i).value = ""); 
+                document.getElementById('vaultBtn').innerText = "Save Securely";
+            }
         }
 
         async function deleteVault(id) {
@@ -417,7 +470,6 @@
             }
         }
 
-        // --- COMMON LOGIC ---
         function showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -452,36 +504,13 @@
 
         function clearForm() {
             document.getElementById('editId').value = "";
+            document.getElementById('formTitle').innerText = "New Entry Management";
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> Sync To WitcorpDB`;
             ['clientName', 'serviceDetail', 'assignedStaff', 'deadline', 'remarks'].forEach(i => {
                 const el = document.getElementById(i); el.value = ""; el.disabled = false;
             });
-            document.getElementById('serviceCategory').disabled = false;
-            document.getElementById('formTitle').innerText = "New Entry Management";
         }
 
-        function editRecord(id) {
-            const record = allRecords.find(r => r.id === id);
-            if (!record) return;
-            document.getElementById('editId').value = record.id;
-            document.getElementById('clientName').value = record.client_name;
-            document.getElementById('serviceCategory').value = record.service_category;
-            document.getElementById('serviceDetail').value = record.service_detail;
-            document.getElementById('assignedStaff').value = record.assigned_staff;
-            document.getElementById('deadline').value = record.deadline;
-            document.getElementById('status').value = record.status;
-            document.getElementById('remarks').value = record.remarks || "";
-            document.getElementById('formTitle').innerText = "Update Record: " + record.client_name;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        async function deleteRecord(id) {
-            if(confirm("Are you sure? This will remove the record from WitcorpDB.")) {
-                const { error } = await supabaseClient.from('witcorp_records').delete().eq('id', id);
-                if (!error) fetchRecords();
-            }
-        }
-
-        // Initialize
         fetchRecords();
     </script>
 </body>
