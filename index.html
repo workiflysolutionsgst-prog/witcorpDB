@@ -17,7 +17,7 @@
         tr:hover { background-color: #f8fafc; }
         .stat-card { cursor: pointer; transition: all 0.3s ease; }
         .stat-card:hover { transform: translateY(-5px); filter: brightness(0.95); }
-        input:disabled, select:disabled { background-color: #e2e8f0; cursor: not-allowed; color: #64748b; }
+        input:disabled, select:disabled { background-color: #e2e8f0; cursor: not-allowed; color: #64748b; border-color: #cbd5e1; }
         .status-pill { padding: 6px 14px; border-radius: 9999px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; border: 1.5px solid currentColor; }
         .st-pending { background-color: #fff1f2; color: #e11d48; }
         .st-processing { background-color: #fffbeb; color: #d97706; }
@@ -36,15 +36,15 @@
         </div>
         
         <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <button onclick="showSection('dashboard')" class="nav-btn active w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+            <button onclick="showSection('dashboard')" id="nav-dashboard" class="nav-btn active w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-chart-pie w-5"></i> Dashboard Home
             </button>
 
             <div class="pt-4 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest">Client & Security</div>
-            <button onclick="showSection('clientManagement')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+            <button onclick="showSection('clientManagement')" id="nav-client" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-users-cog w-5"></i> Client Details
             </button>
-            <button onclick="showSection('vaultManagement')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
+            <button onclick="showSection('vaultManagement')" id="nav-vault" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
                 <i class="fas fa-key w-5"></i> Credentials Vault
             </button>
 
@@ -105,9 +105,14 @@
 
             <!-- ENTRY FORM -->
             <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-12">
-                <div class="flex items-center gap-3 mb-8">
-                    <i class="fas fa-plus-circle text-blue-600 text-xl"></i>
-                    <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight" id="formTitle">New Entry Management</h3>
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-plus-circle text-blue-600 text-xl"></i>
+                        <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight" id="formTitle">New Entry Management</h3>
+                    </div>
+                    <div id="editBadge" class="hidden px-4 py-1 bg-amber-100 text-amber-700 rounded-lg text-[10px] font-black border border-amber-200 uppercase tracking-widest">
+                        <i class="fas fa-lock mr-1"></i> Edit Mode: Restricted Fields Locked
+                    </div>
                 </div>
                 <input type="hidden" id="editId">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -184,7 +189,6 @@
         <!-- CLIENT MANAGEMENT SECTION -->
         <div id="clientManagement" class="section">
             <h2 class="text-3xl font-black text-slate-800 mb-8 uppercase">Client Directory</h2>
-            
             <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-10">
                 <input type="hidden" id="cEditId">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -199,7 +203,6 @@
                 </div>
                 <button onclick="saveClient()" id="clientBtn" class="mt-4 w-full bg-blue-600 text-white p-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all">Add/Update Client</button>
             </div>
-
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
                     <div class="p-6 bg-blue-600 text-white font-black uppercase text-center tracking-tighter">Private Limited</div>
@@ -296,7 +299,7 @@
             data.forEach(row => {
                 const statusClass = {'Completed': 'st-completed', 'Pending': 'st-pending', 'Processing': 'st-processing'}[row.status] || 'bg-slate-100';
                 const statusIcon = {'Completed': 'fa-check-circle', 'Pending': 'fa-exclamation-circle', 'Processing': 'fa-sync-alt fa-spin'}[row.status] || 'fa-info-circle';
-                const lastUpdate = row.updated_at ? new Date(row.updated_at).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }) : 'Just now';
+                const lastUpdate = row.updated_at ? new Date(row.updated_at).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', year: 'numeric' }) : 'Just now';
 
                 tbody.innerHTML += `
                     <tr class="group transition-all hover:bg-blue-50/30">
@@ -337,6 +340,7 @@
         }
 
         function editRecord(row) {
+            // Fill Form
             document.getElementById('editId').value = row.id;
             document.getElementById('clientName').value = row.client_name;
             document.getElementById('serviceCategory').value = row.service_category;
@@ -345,8 +349,19 @@
             document.getElementById('deadline').value = row.deadline;
             document.getElementById('status').value = row.status;
             document.getElementById('remarks').value = row.remarks;
+            
+            // UI Changes
             document.getElementById('formTitle').innerText = "Update Record Management";
             document.getElementById('submitBtn').innerHTML = `<i class="fas fa-sync-alt mr-2"></i> Update Record`;
+            document.getElementById('editBadge').classList.remove('hidden');
+
+            // Lock Specific Fields
+            ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline'].forEach(id => {
+                document.getElementById(id).disabled = true;
+            });
+
+            // Navigate to Dashboard
+            showSection('dashboard');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -474,6 +489,12 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            
+            // Sidebar visual active state
+            if(id === 'dashboard') document.getElementById('nav-dashboard').classList.add('active');
+            if(id === 'clientManagement') document.getElementById('nav-client').classList.add('active');
+            if(id === 'vaultManagement') document.getElementById('nav-vault').classList.add('active');
+
             if (id === 'dashboard') fetchRecords();
             if (id === 'clientManagement') fetchClients();
             if (id === 'vaultManagement') fetchVault();
@@ -506,8 +527,12 @@
             document.getElementById('editId').value = "";
             document.getElementById('formTitle').innerText = "New Entry Management";
             document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> Sync To WitcorpDB`;
-            ['clientName', 'serviceDetail', 'assignedStaff', 'deadline', 'remarks'].forEach(i => {
-                const el = document.getElementById(i); el.value = ""; el.disabled = false;
+            document.getElementById('editBadge').classList.add('hidden');
+            
+            ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline', 'status', 'remarks'].forEach(i => {
+                const el = document.getElementById(i);
+                el.value = (i === 'serviceCategory') ? 'GST' : (i === 'status' ? 'Pending' : "");
+                el.disabled = false;
             });
         }
 
