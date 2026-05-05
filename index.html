@@ -9,238 +9,251 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; }
-        .nav-btn.active { background-color: #fbbf24; color: #1e3a8a; font-weight: 800; transform: scale(1.05); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; scroll-behavior: smooth; }
+        
+        /* Sidebar Styling */
+        .nav-btn { position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-btn i { filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.2)); transition: transform 0.3s ease; }
+        .nav-btn:hover i { transform: scale(1.2) rotate(-5deg); }
+        .nav-btn.active { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #1e3a8a; font-weight: 800; transform: translateX(5px); box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.3); }
+        
         .section { display: none; }
-        .section.active { display: block; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        tr:hover { background-color: #f8fafc; }
-        .stat-card { cursor: pointer; transition: all 0.3s ease; }
-        .stat-card:hover { transform: translateY(-5px); filter: brightness(0.95); }
-        input:disabled, select:disabled { background-color: #e2e8f0; cursor: not-allowed; color: #64748b; border-color: #cbd5e1; }
-        .status-pill { padding: 6px 14px; border-radius: 9999px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; border: 1.5px solid currentColor; }
+        .section.active { display: block; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Modern Elements */
+        .stat-card { cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255,255,255,0.1); }
+        .stat-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
+        
+        /* Input & Form Styling */
+        input:disabled, select:disabled { background-color: #f8fafc; cursor: default; color: #94a3b8; border-color: #e2e8f0; opacity: 0.8; }
+        .form-input-focus:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        
+        /* Status Pills */
+        .status-pill { padding: 6px 14px; border-radius: 9999px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid currentColor; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .st-pending { background-color: #fff1f2; color: #e11d48; }
         .st-processing { background-color: #fffbeb; color: #d97706; }
         .st-completed { background-color: #f0fdf4; color: #16a34a; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
 
-    <!-- SIDEBAR -->
     <aside class="w-72 bg-[#1e3a8a] text-white flex flex-col shadow-2xl z-50">
         <div class="p-8 border-b border-white/10 text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+            <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
                 <i class="fas fa-university text-[#1e3a8a] text-2xl"></i>
             </div>
-            <h1 class="text-lg font-black text-yellow-400 tracking-tighter uppercase">Witcorp India Advisors LLP</h1>
+            <h1 class="text-lg font-black text-yellow-400 tracking-tighter uppercase leading-tight">Witcorp India<br><span class="text-[10px] text-white/60">Advisors LLP</span></h1>
         </div>
         
         <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
             <button onclick="showSection('dashboard')" id="nav-dashboard" class="nav-btn active w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-chart-pie w-5"></i>🏠Dashboard Home
+                <i class="fas fa-house-chimney-window w-5 text-yellow-400"></i> Dashboard Home
             </button>
 
-            <div class="pt-4 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest">Client & Security</div>
+            <div class="pt-6 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest opacity-70">Client & Security</div>
             <button onclick="showSection('clientManagement')" id="nav-client" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-users-cog w-5"></i> Client Details
+                <i class="fas fa-address-card w-5 text-blue-300"></i> Client Details
             </button>
             <button onclick="showSection('vaultManagement')" id="nav-vault" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-key w-5"></i> Credentials Vault
+                <i class="fas fa-shield-halved w-5 text-blue-300"></i> Credentials Vault
             </button>
 
-            <div class="pt-4 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest">Managements</div>
+            <div class="pt-6 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest opacity-70">Managements</div>
             <button onclick="filterByField('service_category', 'GST')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-receipt w-5"></i> GST Management
+                <i class="fas fa-file-invoice-dollar w-5 text-emerald-400"></i> GST Management
             </button>
             <button onclick="filterByField('service_category', 'ROC')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-building w-5"></i> ROC / MCA Desk
+                <i class="fas fa-landmark-dome w-5 text-amber-500"></i> ROC / MCA Desk
             </button>
             <button onclick="filterByField('service_category', 'IT')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-coins w-5"></i> Income Tax
+                <i class="fas fa-piggy-bank w-5 text-rose-400"></i> Income Tax
             </button>
             <button onclick="filterByField('service_category', 'PT')" class="nav-btn w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all">
-                <i class="fas fa-briefcase w-5"></i> Prof. Tax (PT)
+                <i class="fas fa-briefcase w-5 text-sky-400"></i> Prof. Tax (PT)
             </button>
         </nav>
 
         <div class="p-6 bg-black/20 text-center border-t border-white/10">
-            <p class="text-[10px] uppercase text-blue-300 mb-1">Developed By</p>
+            <p class="text-[10px] uppercase text-blue-300 mb-1 tracking-widest">Developed By</p>
             <p class="font-bold text-sm text-yellow-400">Kamlesh Yadav</p>
         </div>
     </aside>
 
-    <!-- MAIN -->
-    <main class="flex-1 overflow-y-auto p-8 lg:p-12">
+    <main class="flex-1 overflow-y-auto p-8 lg:p-12" id="mainContent">
         
-        <!-- SEARCH BAR -->
-        <div class="mb-8 relative max-w-2xl">
+        <div class="mb-10 relative max-w-2xl transform transition-all focus-within:scale-[1.02]">
             <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-            <input type="text" id="globalSearch" oninput="handleSearch(this.value)" placeholder="Search Client, Service or Staff..." class="w-full pl-14 pr-6 py-4 bg-white rounded-2xl shadow-sm border border-slate-200 outline-none focus:border-blue-500 font-bold text-slate-700">
+            <input type="text" id="globalSearch" oninput="handleSearch(this.value)" placeholder="Search Client, Service or Staff..." class="w-full pl-14 pr-6 py-5 bg-white rounded-2xl shadow-sm border border-slate-200 outline-none focus:border-blue-500 font-bold text-slate-700 transition-all">
         </div>
 
-        <!-- DASHBOARD SECTION -->
         <div id="dashboard" class="section active">
             <div class="flex justify-between items-center mb-10">
                 <h2 class="text-3xl font-black text-slate-800 tracking-tight">Workspace Overview</h2>
-                <div class="flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> SYSTEM LIVE SYNC
+                <div class="flex items-center gap-2 px-5 py-2.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black border border-emerald-200 shadow-sm">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> SYSTEM LIVE SYNC
                 </div>
             </div>
 
-            <!-- STATS -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div onclick="filterByField('all')" class="stat-card bg-white p-8 rounded-[2rem] shadow-sm border-l-[12px] border-blue-600">
-                    <p class="text-xs font-black text-slate-400 uppercase">Total Portfolios</p>
+                <div onclick="filterByField('all')" class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-l-[12px] border-blue-600 relative overflow-hidden group">
+                    <i class="fas fa-folder-tree absolute -right-4 -bottom-4 text-8xl text-slate-50 opacity-10 group-hover:rotate-12 transition-transform"></i>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Total Portfolios</p>
                     <h3 id="statTotal" class="text-5xl font-black text-slate-800 mt-2">0</h3>
                 </div>
-                <div onclick="filterByField('status', 'Completed')" class="stat-card bg-white p-8 rounded-[2rem] shadow-sm border-l-[12px] border-emerald-500">
-                    <p class="text-xs font-black text-slate-400 uppercase">Completed</p>
+                <div onclick="filterByField('status', 'Completed')" class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-l-[12px] border-emerald-500 group relative overflow-hidden">
+                    <i class="fas fa-circle-check absolute -right-4 -bottom-4 text-8xl text-slate-50 opacity-10 group-hover:rotate-12 transition-transform"></i>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Completed</p>
                     <h3 id="statDone" class="text-5xl font-black text-emerald-600 mt-2">0</h3>
                 </div>
-                <div onclick="filterByField('status', 'Pending')" class="stat-card bg-white p-8 rounded-[2rem] shadow-sm border-l-[12px] border-rose-500">
-                    <p class="text-xs font-black text-slate-400 uppercase">Pending Action</p>
+                <div onclick="filterByField('status', 'Pending')" class="stat-card bg-white p-8 rounded-[2.5rem] shadow-sm border-l-[12px] border-rose-500 group relative overflow-hidden">
+                    <i class="fas fa-clock absolute -right-4 -bottom-4 text-8xl text-slate-50 opacity-10 group-hover:rotate-12 transition-transform"></i>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Pending Action</p>
                     <h3 id="statPending" class="text-5xl font-black text-rose-600 mt-2">0</h3>
                 </div>
             </div>
 
-            <!-- ENTRY FORM -->
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-12">
-                <div class="flex items-center justify-between mb-8">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-plus-circle text-blue-600 text-xl"></i>
-                        <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight" id="formTitle">New Entry Management</h3>
+            <div id="entryFormAnchor" class="bg-white p-10 rounded-[3rem] shadow-2xl border border-slate-100 mb-14 relative">
+                <div class="flex items-center justify-between mb-10">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-pen-to-square text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight" id="formTitle">Management Portal</h3>
                     </div>
-                    <div id="editBadge" class="hidden px-4 py-1 bg-amber-100 text-amber-700 rounded-lg text-[10px] font-black border border-amber-200 uppercase tracking-widest">
-                        <i class="fas fa-lock mr-1"></i> Edit Mode: Restricted Fields Locked
+                    <div id="editBadge" class="hidden px-5 py-2 bg-amber-50 text-amber-700 rounded-xl text-[10px] font-black border border-amber-200 uppercase tracking-widest animate-pulse">
+                        <i class="fas fa-lock mr-2"></i> Edit Mode Active
                     </div>
                 </div>
                 <input type="hidden" id="editId">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Client Name</label>
-                        <input type="text" id="clientName" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase ml-2 tracking-wider">Client Name</label>
+                        <input type="text" id="clientName" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 focus:bg-white outline-none font-bold transition-all">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Category</label>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase ml-2 tracking-wider">Category</label>
                         <select id="serviceCategory" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
                             <option value="GST">GST Management</option>
-                            <option value="ROC">ROC / MCA</option>
+                            <option value="ROC">ROC / MCA Desk</option>
                             <option value="IT">Income Tax</option>
                             <option value="PT">Professional Tax</option>
                         </select>
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Service Detail</label>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase ml-2 tracking-wider">Service Detail</label>
                         <input type="text" id="serviceDetail" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Assign Staff</label>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase ml-2 tracking-wider">Assign Staff</label>
                         <input type="text" id="assignedStaff" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Deadline</label>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase ml-2 tracking-wider">Deadline</label>
                         <input type="date" id="deadline" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Status</label>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase ml-2 tracking-wider">Current Status</label>
                         <select id="status" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
-                            <option value="Pending">Pending🚫</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Completed">Completed🟢</option>
+                            <option value="Pending">Pending 🚫</option>
+                            <option value="Processing">Processing ⏳</option>
+                            <option value="Completed">Completed 🟢</option>
                         </select>
                     </div>
-                    <div class="md:col-span-2 space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Remarks / Notes</label>
-                        <input type="text" id="remarks" placeholder="Add additional details..." class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
+                    <div class="md:col-span-2 space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase ml-2 tracking-wider">Remarks / Notes</label>
+                        <input type="text" id="remarks" placeholder="Add specific case notes here..." class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
                     </div>
                 </div>
-                <div class="mt-6 flex gap-4">
-                    <button onclick="handleSubmit()" id="submitBtn" class="flex-1 bg-[#1e3a8a] text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-800 transition-all shadow-lg shadow-blue-200">
-                        <i class="fas fa-cloud-upload-alt mr-2"></i> Update To Witcorp
+                <div class="mt-10 flex gap-5">
+                    <button onclick="handleSubmit()" id="submitBtn" class="flex-1 bg-[#1e3a8a] text-white py-6 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-800 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-3">
+                        <i class="fas fa-cloud-arrow-up text-xl"></i> Update To Witcorp
                     </button>
-                    <button onclick="clearForm()" class="px-8 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200">Cancel / Clear</button>
+                    <button onclick="clearForm()" class="px-10 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200 transition-colors">Cancel / Clear</button>
                 </div>
             </div>
 
-            <!-- MAIN TABLE -->
-            <div class="bg-white rounded-[2.5rem] shadow-sm overflow-hidden border border-slate-100">
-                <div class="p-8 border-b flex justify-between items-center bg-slate-50/50">
-                    <h4 class="font-black text-slate-800 uppercase text-sm tracking-widest">Live Records Database</h4>
+            <div class="bg-white rounded-[3rem] shadow-sm overflow-hidden border border-slate-100">
+                <div class="p-8 border-b flex justify-between items-center bg-slate-50/30">
+                    <h4 class="font-black text-slate-800 uppercase text-xs tracking-[0.2em]">Live Records Database</h4>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50">
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b">Client & Last Update</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b text-center">Service Category</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b text-center">Staff</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b text-center">Deadline</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b text-center">Status</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b">Remarks</th>
-                                <th class="p-6 text-[10px] font-black text-slate-400 uppercase border-b text-right">Actions</th>
+                            <tr class="bg-slate-50/50">
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase border-b tracking-wider">Client & Status</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase border-b text-center tracking-wider">Service</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase border-b text-center tracking-wider">Staff</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase border-b text-center tracking-wider">Deadline</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase border-b text-center tracking-wider">Progress</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase border-b tracking-wider">Remarks</th>
+                                <th class="p-8 text-[10px] font-black text-slate-400 uppercase border-b text-right tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="mainTableBody" class="divide-y divide-slate-100"></tbody>
+                        <tbody id="mainTableBody" class="divide-y divide-slate-50"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- CLIENT MANAGEMENT SECTION -->
         <div id="clientManagement" class="section">
-            <h2 class="text-3xl font-black text-slate-800 mb-8 uppercase">Client Directory</h2>
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-10">
+            <h2 class="text-3xl font-black text-slate-800 mb-10 uppercase tracking-tight">Client Directory</h2>
+            <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-slate-100 mb-12">
                 <input type="hidden" id="cEditId">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <input type="text" id="cName" placeholder="Client Name" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
-                    <input type="text" id="cPhone" placeholder="Contact Number" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
-                    <input type="email" id="cEmail" placeholder="Gmail ID" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
-                    <select id="cType" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <input type="text" id="cName" placeholder="Legal Entity Name" class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
+                    <input type="text" id="cPhone" placeholder="Contact Mobile" class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
+                    <input type="email" id="cEmail" placeholder="Official Email ID" class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
+                    <select id="cType" class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 font-bold outline-none focus:border-blue-500">
                         <option value="Pvt Ltd">Private Limited</option>
-                        <option value="LLP">LLP</option>
-                        <option value="Others">Others</option>
+                        <option value="LLP">LLP Organization</option>
+                        <option value="Others">Proprietor / Others</option>
                     </select>
                 </div>
-                <button onclick="saveClient()" id="clientBtn" class="mt-4 w-full bg-blue-600 text-white p-4 rounded-xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all">Add/Update Client</button>
+                <button onclick="saveClient()" id="clientBtn" class="mt-6 w-full bg-blue-600 text-white p-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all">Save Client Profile</button>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div class="p-6 bg-blue-600 text-white font-black uppercase text-center tracking-tighter">Private Limited</div>
-                    <div id="pvtLtdList" class="p-4 space-y-3"></div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-6 bg-blue-600 text-white font-black uppercase text-center text-xs tracking-widest">Private Limited</div>
+                    <div id="pvtLtdList" class="p-6 space-y-4"></div>
                 </div>
-                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div class="p-6 bg-purple-600 text-white font-black uppercase text-center tracking-tighter">LLP Companies</div>
-                    <div id="llpList" class="p-4 space-y-3"></div>
+                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-6 bg-purple-600 text-white font-black uppercase text-center text-xs tracking-widest">LLP Entities</div>
+                    <div id="llpList" class="p-6 space-y-4"></div>
                 </div>
-                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div class="p-6 bg-slate-700 text-white font-black uppercase text-center tracking-tighter">Others / Individual</div>
-                    <div id="othersList" class="p-4 space-y-3"></div>
+                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-6 bg-slate-700 text-white font-black uppercase text-center text-xs tracking-widest">General / Individuals</div>
+                    <div id="othersList" class="p-6 space-y-4"></div>
                 </div>
             </div>
         </div>
 
-        <!-- VAULT MANAGEMENT SECTION -->
         <div id="vaultManagement" class="section">
-            <h2 class="text-3xl font-black text-slate-800 mb-8 uppercase">Credential Vault</h2>
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-10">
+            <h2 class="text-3xl font-black text-slate-800 mb-10 uppercase tracking-tight">Credential Vault</h2>
+            <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-slate-100 mb-12">
                 <input type="hidden" id="vEditId">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <input type="text" id="vClient" placeholder="Client Name" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold">
-                    <input type="text" id="vCat" placeholder="Category (e.g. GST Portal)" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold">
-                    <input type="text" id="vUser" placeholder="Username" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold">
-                    <input type="text" id="vPass" placeholder="Password" class="p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-bold">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <input type="text" id="vClient" placeholder="Select Client" class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 font-bold">
+                    <input type="text" id="vCat" placeholder="System/Portal Category" class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 font-bold">
+                    <input type="text" id="vUser" placeholder="Login ID" class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 font-bold">
+                    <input type="text" id="vPass" placeholder="Access Password" class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 font-bold">
                 </div>
-                <button onclick="saveVault()" id="vaultBtn" class="mt-4 w-full bg-yellow-500 text-blue-900 p-4 rounded-xl font-black uppercase tracking-widest hover:bg-yellow-400">Save Securely</button>
+                <button onclick="saveVault()" id="vaultBtn" class="mt-6 w-full bg-yellow-500 text-blue-900 p-5 rounded-2xl font-black uppercase tracking-widest hover:bg-yellow-400 transition-all">Store Securely</button>
             </div>
-            <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden">
+            <div class="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden">
                 <table class="w-full text-left">
-                    <thead class="bg-slate-50 border-b">
+                    <thead class="bg-slate-50/50 border-b">
                         <tr>
-                            <th class="p-6 font-black text-xs uppercase text-slate-400">Client Name</th>
-                            <th class="p-6 font-black text-xs uppercase text-slate-400">Category</th>
-                            <th class="p-6 font-black text-xs uppercase text-slate-400">Username</th>
-                            <th class="p-6 font-black text-xs uppercase text-slate-400">Password</th>
-                            <th class="p-6 text-right font-black text-xs uppercase text-slate-400">Action</th>
+                            <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Entity</th>
+                            <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Access Category</th>
+                            <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Username</th>
+                            <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Password</th>
+                            <th class="p-8 text-right font-black text-[10px] uppercase text-slate-400 tracking-wider">Secure Action</th>
                         </tr>
                     </thead>
                     <tbody id="vaultTableBody" class="divide-y divide-slate-100"></tbody>
@@ -248,28 +261,27 @@
             </div>
         </div>
 
-        <!-- FILTERED VIEW -->
         <div id="filterView" class="section">
-            <div class="flex items-center gap-4 mb-10">
-                <button onclick="showSection('dashboard')" class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm text-slate-400 hover:text-blue-600">
-                    <i class="fas fa-arrow-left"></i>
+            <div class="flex items-center gap-6 mb-12">
+                <button onclick="showSection('dashboard')" class="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-md text-slate-400 hover:text-blue-600 transition-all transform hover:-translate-x-1">
+                    <i class="fas fa-arrow-left text-xl"></i>
                 </button>
-                <h2 id="filterTitle" class="text-3xl font-black text-slate-800 uppercase">Filtered Records</h2>
+                <h2 id="filterTitle" class="text-3xl font-black text-slate-800 uppercase">Records Filtered</h2>
             </div>
-            <div class="bg-white rounded-[2.5rem] shadow-sm overflow-hidden border" id="filterTableContainer">
+            <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden border" id="filterTableContainer">
                 <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-50">
+                    <thead class="bg-slate-50/50">
                         <tr>
-                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Client & Last Update</th>
-                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Service Category</th>
-                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Staff</th>
-                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Deadline</th>
-                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-center">Status</th>
-                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase">Remarks</th>
-                            <th class="p-6 text-[10px] font-black text-slate-400 uppercase text-right">Action</th>
+                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client & Timeline</th>
+                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Service Desk</th>
+                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Staff</th>
+                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Deadline</th>
+                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-center tracking-widest">Status</th>
+                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Notes</th>
+                            <th class="p-8 text-[10px] font-black text-slate-400 uppercase text-right tracking-widest">Manage</th>
                         </tr>
                     </thead>
-                    <tbody id="filterTableBody" class="divide-y divide-slate-100"></tbody>
+                    <tbody id="filterTableBody" class="divide-y divide-slate-50"></tbody>
                 </table>
             </div>
         </div>
@@ -295,21 +307,21 @@
         function renderTable(data, targetId) {
             const tbody = document.getElementById(targetId);
             if (!tbody) return;
-            tbody.innerHTML = data.length === 0 ? `<tr><td colspan="7" class="p-20 text-center text-slate-400 font-bold">No records found.</td></tr>` : "";
+            tbody.innerHTML = data.length === 0 ? `<tr><td colspan="7" class="p-20 text-center text-slate-400 font-bold">No active records found.</td></tr>` : "";
             data.forEach(row => {
                 const statusClass = {'Completed': 'st-completed', 'Pending': 'st-pending', 'Processing': 'st-processing'}[row.status] || 'bg-slate-100';
-                const statusIcon = {'Completed': 'fa-check-circle', 'Pending': 'fa-exclamation-circle', 'Processing': 'fa-sync-alt fa-spin'}[row.status] || 'fa-info-circle';
-                const lastUpdate = row.updated_at ? new Date(row.updated_at).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', year: 'numeric' }) : 'Just now';
+                const statusIcon = {'Completed': 'fa-circle-check', 'Pending': 'fa-circle-exclamation', 'Processing': 'fa-spinner fa-spin'}[row.status] || 'fa-info-circle';
+                const lastUpdate = row.updated_at ? new Date(row.updated_at).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', year: 'numeric' }) : 'Syncing...';
 
                 tbody.innerHTML += `
-                    <tr class="group transition-all hover:bg-blue-50/30">
-                        <td class="p-6"><div class="font-black text-slate-800 text-sm">${row.client_name}</div><div class="text-[9px] font-black text-slate-400 mt-1 uppercase flex items-center gap-1"><i class="far fa-clock text-blue-400"></i> LAST UPDATE: ${lastUpdate}</div></td>
-                        <td class="p-6 text-center"><div class="inline-block px-3 py-1 bg-blue-600 text-white rounded-lg text-[9px] font-black uppercase mb-1 shadow-sm">${row.service_category}</div><div class="text-[11px] text-slate-500 font-bold">${row.service_detail || 'General'}</div></td>
-                        <td class="p-6 text-center"><div class="inline-flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-600 shadow-sm"><i class="fas fa-user-tie text-blue-500"></i> ${row.assigned_staff || 'Unassigned'}</div></td>
-                        <td class="p-6 text-center font-black text-slate-500 text-[11px]">${row.deadline ? new Date(row.deadline).toLocaleDateString('en-GB') : 'NOT SET'}</td>
-                        <td class="p-6 text-center"><span class="status-pill ${statusClass}"><i class="fas ${statusIcon}"></i> ${row.status}</span></td>
-                        <td class="p-6 text-slate-500 text-[11px] italic max-w-[150px] truncate">${row.remarks || '---'}</td>
-                        <td class="p-6 text-right"><div class="flex justify-end gap-2"><button onclick='editRecord(${JSON.stringify(row)})' class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-blue-600 hover:bg-blue-600 hover:text-white transition-all"><i class="fas fa-edit"></i></button><button onclick="deleteRecord(${row.id})" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-rose-600 hover:bg-rose-600 hover:text-white transition-all"><i class="fas fa-trash-alt"></i></button></div></td>
+                    <tr class="group transition-all hover:bg-slate-50/80">
+                        <td class="p-8"><div class="font-black text-slate-800 text-sm tracking-tight">${row.client_name}</div><div class="text-[9px] font-black text-slate-400 mt-1 uppercase flex items-center gap-1.5"><i class="far fa-clock text-blue-400"></i> LAST SYNC: ${lastUpdate}</div></td>
+                        <td class="p-8 text-center"><div class="inline-block px-3 py-1 bg-blue-600 text-white rounded-lg text-[9px] font-black uppercase mb-1 shadow-sm tracking-widest">${row.service_category}</div><div class="text-[11px] text-slate-500 font-bold">${row.service_detail || 'General Consulting'}</div></td>
+                        <td class="p-8 text-center"><div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 shadow-sm"><i class="fas fa-user-tie text-blue-500"></i> ${row.assigned_staff || 'TBD'}</div></td>
+                        <td class="p-8 text-center font-black text-slate-500 text-[11px]">${row.deadline ? new Date(row.deadline).toLocaleDateString('en-GB') : 'N/A'}</td>
+                        <td class="p-8 text-center"><span class="status-pill ${statusClass}"><i class="fas ${statusIcon}"></i> ${row.status}</span></td>
+                        <td class="p-8 text-slate-500 text-[11px] italic max-w-[180px] truncate font-medium">${row.remarks || '---'}</td>
+                        <td class="p-8 text-right"><div class="flex justify-end gap-3"><button onclick='editRecord(${JSON.stringify(row)})' class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm hover:scale-110"><i class="fas fa-edit"></i></button><button onclick="deleteRecord(${row.id})" class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-sm hover:scale-110"><i class="fas fa-trash-alt"></i></button></div></td>
                     </tr>`;
             });
         }
@@ -327,20 +339,20 @@
                 updated_at: new Date().toISOString()
             };
 
-            if (!payload.client_name) return alert("Client Name required!");
+            if (!payload.client_name) return alert("Error: Client Name is mandatory.");
 
             const { error } = id 
                 ? await supabaseClient.from('witcorp_records').update(payload).eq('id', id) 
                 : await supabaseClient.from('witcorp_records').insert([payload]);
 
             if (!error) { 
-                alert(id ? "Record Updated!" : "New Record Added!");
+                alert(id ? "Record Updated!" : "Record Successfully Added!");
                 clearForm(); fetchRecords(); showSection('dashboard'); 
-            } else { alert("Error saving data!"); }
+            } else { alert("Sync Error: Please check connection."); }
         }
 
         function editRecord(row) {
-            // Fill Form
+            // Fill Form Logic
             document.getElementById('editId').value = row.id;
             document.getElementById('clientName').value = row.client_name;
             document.getElementById('serviceCategory').value = row.service_category;
@@ -350,23 +362,30 @@
             document.getElementById('status').value = row.status;
             document.getElementById('remarks').value = row.remarks;
             
-            // UI Changes
-            document.getElementById('formTitle').innerText = "Update Record Management";
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-sync-alt mr-2"></i> Update Record`;
+            // Mode Switch UI
+            document.getElementById('formTitle').innerText = "Modify Existing Profile";
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-arrows-rotate mr-2"></i> Confirm Changes`;
             document.getElementById('editBadge').classList.remove('hidden');
 
-            // Lock Specific Fields
+            // Lockdown Restricted Fields
             ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline'].forEach(id => {
                 document.getElementById(id).disabled = true;
             });
 
-            // Navigate to Dashboard
+            // Smooth Scroll & Auto-Tab (FIXED)
             showSection('dashboard');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Use setTimeout to ensure section is visible before scrolling
+            setTimeout(() => {
+                document.getElementById('entryFormAnchor').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 100);
         }
 
         async function deleteRecord(id) {
-            if(confirm("Delete record?")) {
+            if(confirm("Confirm: Are you sure you want to delete this record?")) {
                 await supabaseClient.from('witcorp_records').delete().eq('id', id);
                 fetchRecords();
             }
@@ -381,13 +400,13 @@
             data.forEach(c => {
                 const listId = containers[c.entity_type] || 'othersList';
                 document.getElementById(listId).innerHTML += `
-                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-300 transition-all">
+                    <div class="p-5 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-blue-400 transition-all group">
                         <div class="font-black text-slate-800 text-sm">${c.client_name}</div>
-                        <div class="text-[10px] text-slate-500 font-bold mt-1"><i class="fas fa-phone-alt mr-1"></i> ${c.contact_number}</div>
-                        <div class="text-[10px] text-blue-600 font-bold break-all mt-1"><i class="fas fa-envelope mr-1"></i> ${c.email_id}</div>
-                        <div class="mt-2 flex gap-3">
-                            <button onclick='editClient(${JSON.stringify(c)})' class="text-[10px] text-blue-600 font-black uppercase hover:underline">Edit</button>
-                            <button onclick="deleteClient(${c.id})" class="text-[10px] text-rose-500 font-black uppercase hover:underline">Delete</button>
+                        <div class="text-[10px] text-slate-500 font-bold mt-1"><i class="fas fa-phone-alt mr-1.5 text-blue-500"></i> ${c.contact_number}</div>
+                        <div class="text-[10px] text-blue-600 font-black break-all mt-1 opacity-70 group-hover:opacity-100"><i class="fas fa-envelope mr-1.5"></i> ${c.email_id}</div>
+                        <div class="mt-4 flex gap-4 border-t border-slate-200/50 pt-3">
+                            <button onclick='editClient(${JSON.stringify(c)})' class="text-[9px] text-blue-600 font-black uppercase hover:scale-110 transition-transform">Modify</button>
+                            <button onclick="deleteClient(${c.id})" class="text-[9px] text-rose-500 font-black uppercase hover:scale-110 transition-transform">Purge</button>
                         </div>
                     </div>`;
             });
@@ -399,7 +418,8 @@
             document.getElementById('cPhone').value = c.contact_number;
             document.getElementById('cEmail').value = c.email_id;
             document.getElementById('cType').value = c.entity_type;
-            document.getElementById('clientBtn').innerText = "Update Client Info";
+            document.getElementById('clientBtn').innerText = "Confirm Update Profile";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async function saveClient() {
@@ -410,7 +430,7 @@
                 email_id: document.getElementById('cEmail').value,
                 entity_type: document.getElementById('cType').value
             };
-            if(!payload.client_name) return alert("Client Name Required");
+            if(!payload.client_name) return alert("Entity Name Required");
             const { error } = id 
                 ? await supabaseClient.from('witcorp_clients').update(payload).eq('id', id)
                 : await supabaseClient.from('witcorp_clients').insert([payload]);
@@ -418,12 +438,12 @@
                 fetchClients(); 
                 document.getElementById('cEditId').value = "";
                 ['cName','cPhone','cEmail'].forEach(i => document.getElementById(i).value = ""); 
-                document.getElementById('clientBtn').innerText = "Add/Update Client";
+                document.getElementById('clientBtn').innerText = "Save Client Profile";
             }
         }
 
         async function deleteClient(id) {
-            if(confirm("Delete this client?")) {
+            if(confirm("Action: Delete client profile?")) {
                 await supabaseClient.from('witcorp_clients').delete().eq('id', id);
                 fetchClients();
             }
@@ -436,14 +456,14 @@
             tbody.innerHTML = "";
             data.forEach(v => {
                 tbody.innerHTML += `
-                    <tr>
-                        <td class="p-6 font-black text-blue-900 text-sm">${v.client_name || 'N/A'}</td>
-                        <td class="p-6 font-black text-slate-700 text-sm">${v.category}</td>
-                        <td class="p-6 font-bold text-blue-600 text-sm">${v.username}</td>
-                        <td class="p-6 font-mono text-xs"><span class="bg-slate-100 p-2 rounded-lg">${v.password}</span></td>
-                        <td class="p-6 text-right flex gap-2 justify-end">
-                            <button onclick='editVault(${JSON.stringify(v)})' class="text-blue-500"><i class="fas fa-edit"></i></button>
-                            <button onclick="deleteVault(${v.id})" class="text-rose-500"><i class="fas fa-trash-alt"></i></button>
+                    <tr class="group hover:bg-slate-50">
+                        <td class="p-8 font-black text-blue-900 text-sm tracking-tight">${v.client_name || 'N/A'}</td>
+                        <td class="p-8 font-black text-slate-700 text-sm"><span class="px-2 py-1 bg-slate-100 rounded-lg text-[10px]">${v.category}</span></td>
+                        <td class="p-8 font-bold text-blue-600 text-sm">${v.username}</td>
+                        <td class="p-8 font-mono text-xs"><span class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl shadow-inner">${v.password}</span></td>
+                        <td class="p-8 text-right flex gap-3 justify-end items-center">
+                            <button onclick='editVault(${JSON.stringify(v)})' class="text-blue-500 hover:scale-125 transition-transform"><i class="fas fa-pencil"></i></button>
+                            <button onclick="deleteVault(${v.id})" class="text-rose-500 hover:scale-125 transition-transform"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>`;
             });
@@ -455,7 +475,8 @@
             document.getElementById('vCat').value = v.category;
             document.getElementById('vUser').value = v.username;
             document.getElementById('vPass').value = v.password;
-            document.getElementById('vaultBtn').innerText = "Update Credential";
+            document.getElementById('vaultBtn').innerText = "Update Vault Credentials";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async function saveVault() {
@@ -466,7 +487,7 @@
                 username: document.getElementById('vUser').value,
                 password: document.getElementById('vPass').value
             };
-            if(!payload.category || !payload.client_name) return alert("Client and Category Required");
+            if(!payload.category || !payload.client_name) return alert("Error: Required fields missing.");
             const { error } = id 
                 ? await supabaseClient.from('witcorp_credentials').update(payload).eq('id', id)
                 : await supabaseClient.from('witcorp_credentials').insert([payload]);
@@ -474,12 +495,12 @@
                 fetchVault(); 
                 document.getElementById('vEditId').value = "";
                 ['vClient','vCat','vUser','vPass'].forEach(i => document.getElementById(i).value = ""); 
-                document.getElementById('vaultBtn').innerText = "Save Securely";
+                document.getElementById('vaultBtn').innerText = "Store Securely";
             }
         }
 
         async function deleteVault(id) {
-            if(confirm("Delete credential?")) {
+            if(confirm("Security: Confirm credential deletion?")) {
                 await supabaseClient.from('witcorp_credentials').delete().eq('id', id);
                 fetchVault();
             }
@@ -490,7 +511,7 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             
-            // Sidebar visual active state
+            // Sidebar visual active state sync
             if(id === 'dashboard') document.getElementById('nav-dashboard').classList.add('active');
             if(id === 'clientManagement') document.getElementById('nav-client').classList.add('active');
             if(id === 'vaultManagement') document.getElementById('nav-vault').classList.add('active');
@@ -503,7 +524,7 @@
         function filterByField(field, value) {
             showSection('filterView');
             let filtered = field === 'all' ? [...allRecords] : allRecords.filter(r => r[field] === value);
-            document.getElementById('filterTitle').innerText = `${value} Database View`;
+            document.getElementById('filterTitle').innerText = `${value} Portal View`;
             renderTable(filtered, 'filterTableBody');
         }
 
@@ -512,7 +533,7 @@
             const filtered = allRecords.filter(r => r.client_name?.toLowerCase().includes(q) || r.service_detail?.toLowerCase().includes(q));
             if (query.trim() !== "") {
                 showSection('filterView');
-                document.getElementById('filterTitle').innerText = `Search: "${query}"`;
+                document.getElementById('filterTitle').innerText = `Results for: "${query}"`;
                 renderTable(filtered, 'filterTableBody');
             } else { showSection('dashboard'); }
         }
@@ -525,8 +546,8 @@
 
         function clearForm() {
             document.getElementById('editId').value = "";
-            document.getElementById('formTitle').innerText = "New Entry Management";
-            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> Sync To WitcorpDB`;
+            document.getElementById('formTitle').innerText = "Management Portal";
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-arrow-up text-xl"></i> Update To Witcorp`;
             document.getElementById('editBadge').classList.add('hidden');
             
             ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline', 'status', 'remarks'].forEach(i => {
