@@ -3,564 +3,772 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Witcorp Hub | Enterprise Portal Pro</title>
+    <title>Witcorp Hub | Enterprise Edition Pro</title>
     
-    <!-- SYSTEM ASSETS & FRAMEWORKS -->
+    <!-- CORE SYSTEM ASSETS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
         /* ---------------------------------------------------------
-           CORE DESIGN SYSTEM
+           DESIGN SYSTEM CONSTANTS
            --------------------------------------------------------- */
         :root {
-            --witcorp-blue: #1e3a8a;
-            --witcorp-blue-light: #3b82f6;
+            --witcorp-primary: #1e3a8a;
             --witcorp-accent: #fbbf24;
-            --sidebar-width: 320px;
-            --glass-effect: rgba(255, 255, 255, 0.75);
-            --transition-speed: 0.3s;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: #f1f5f9; 
+            scroll-behavior: smooth; 
             color: #1e293b;
-            overflow: hidden;
-            height: 100vh;
         }
 
         /* ---------------------------------------------------------
-           ANIMATION ENGINE
+           SIDEBAR & NAVIGATION ENGINE
            --------------------------------------------------------- */
-        @keyframes borderRotate {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .nav-btn { 
+            position: relative; 
+            overflow: hidden; 
+            transition: var(--transition-smooth); 
+            border: 1px solid transparent;
         }
-
-        @keyframes slideInUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        
+        .nav-btn i { 
+            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.2)); 
+            transition: transform 0.3s ease; 
         }
-
-        @keyframes pulseSoft {
-            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
-
-        /* ---------------------------------------------------------
-           UI COMPONENTS
-           --------------------------------------------------------- */
-        .lighting-card {
-            position: relative;
-            background: #ffffff;
-            border-radius: 2rem;
-            z-index: 1;
-            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(226, 232, 240, 1);
-            overflow: hidden;
-        }
-
-        .lighting-card::before {
-            content: "";
-            position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(45deg, #1e3a8a, #3b82f6, #10b981, #f59e0b, #ef4444, #1e3a8a);
-            background-size: 400%;
-            z-index: -1;
-            filter: blur(8px);
-            animation: borderRotate 15s linear infinite;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .lighting-card:hover::before { opacity: 0.35; }
-        .lighting-card:hover { transform: translateY(-8px); }
-
-        .sidebar-link {
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sidebar-link.active {
-            background: rgba(251, 191, 36, 0.1);
-            color: #fbbf24;
-            border-left: 4px solid #fbbf24;
-        }
-
-        .sidebar-link:not(.active):hover {
+        
+        .nav-btn:hover {
             background: rgba(255, 255, 255, 0.05);
-            padding-left: 1.75rem;
+            transform: translateX(8px);
         }
 
-        /* Table & Scroll Styles */
-        .custom-scroller::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scroller::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroller::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .custom-scroller::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        .section-view { display: none; opacity: 0; }
-        .section-view.active { display: block; opacity: 1; animation: slideInUp 0.5s ease-out; }
-
-        /* Status Pills */
-        .status-badge {
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.4rem 1rem;
-            border-radius: 9999px;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+        .nav-btn:hover i { 
+            transform: scale(1.2) rotate(-5deg); 
         }
 
-        .shimmer-effect {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
+        .nav-btn.active { 
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); 
+            color: #1e3a8a; 
+            font-weight: 800; 
+            transform: translateX(10px); 
+            box-shadow: 0 15px 25px -5px rgba(245, 158, 11, 0.4); 
+            border-color: rgba(255, 255, 255, 0.2);
         }
-        @keyframes shimmer { to { background-position: -200% 0; } }
+        
+        /* ---------------------------------------------------------
+           LAYOUT & VIEWPORT CONTROLS
+           --------------------------------------------------------- */
+        .section { display: none; }
+        .section.active { 
+            display: block; 
+            animation: slideUpFade 0.6s cubic-bezier(0.22, 1, 0.36, 1); 
+        }
 
+        @keyframes slideUpFade { 
+            from { opacity: 0; transform: translateY(40px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        /* FIX: Horizontal Scroll for Management Tables */
+        .table-scroll-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 2rem;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        table.min-w-custom {
+            min-width: 1200px; /* Force minimum width to ensure buttons don't hide */
+        }
+        
+        /* ---------------------------------------------------------
+           COMPONENT STYLING
+           --------------------------------------------------------- */
+        .stat-card { 
+            cursor: pointer; 
+            transition: var(--transition-smooth); 
+            border: 1px solid rgba(0,0,0,0.05); 
+            background: #ffffff;
+        }
+
+        .stat-card:hover { 
+            transform: translateY(-12px) scale(1.03); 
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15); 
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Form Inputs */
+        .master-input {
+            width: 100%;
+            padding: 1.25rem;
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 1.25rem;
+            font-weight: 700;
+            transition: var(--transition-smooth);
+            outline: none;
+        }
+
+        .master-input:focus {
+            border-color: #3b82f6;
+            background-color: #fff;
+            box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.1);
+        }
+
+        input:disabled, select:disabled { 
+            background-color: #f1f5f9 !important; 
+            cursor: not-allowed; 
+            color: #94a3b8; 
+            border-color: #cbd5e1;
+        }
+        
+        /* Status Pills Branding */
+        .status-pill { 
+            padding: 8px 16px; 
+            border-radius: 9999px; 
+            font-size: 11px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: 1.2px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            border: 2px solid currentColor; 
+        }
+
+        .st-pending { background-color: #fff1f2; color: #e11d48; }
+        .st-processing { background-color: #fffbeb; color: #d97706; }
+        .st-completed { background-color: #f0fdf4; color: #16a34a; }
+        
+        /* ---------------------------------------------------------
+           SCROLLBAR CUSTOMIZATION
+           --------------------------------------------------------- */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { 
+            background: #cbd5e1; 
+            border-radius: 20px; 
+            border: 2px solid #f8fafc;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .motto-text { 
+            font-size: 10px; 
+            letter-spacing: 3px; 
+            font-weight: 800; 
+            color: rgba(255,255,255,0.8); 
+            text-transform: uppercase; 
+            margin-top: 12px; 
+            position: relative; 
+            display: inline-block; 
+        }
+
+        .motto-text::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -6px; 
+            left: 20%; 
+            width: 60%; 
+            height: 2px; 
+            background: #fbbf24; 
+            border-radius: 10px; 
+        }
     </style>
 </head>
-<body class="flex">
+<body class="flex h-screen overflow-hidden bg-[#f1f5f9]">
 
-    <!-- 1. LEFT SIDEBAR NAVIGATION -->
-    <aside class="w-[320px] bg-[#0f172a] text-slate-300 h-screen flex flex-col shadow-2xl z-50">
-        <!-- Logo Branding -->
-        <div class="p-10 border-b border-white/5">
-            <div class="flex items-center gap-4 mb-2">
-                <div class="p-3 bg-blue-600 rounded-2xl shadow-lg shadow-blue-500/20">
-                    <i class="fas fa-layer-group text-2xl text-white"></i>
-                </div>
-                <div>
-                    <h2 class="text-white font-extrabold text-xl tracking-tighter">WITCORP <span class="text-blue-400">HUB</span></h2>
-                    <p class="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-500">Master Console</p>
-                </div>
+    <!-- 1. NAVIGATION BAR (SIDEBAR) -->
+    <aside class="w-80 bg-[#1e3a8a] text-white flex flex-col shadow-2xl z-50 overflow-hidden">
+        <!-- Logo Branding Section -->
+        <div class="p-10 border-b border-white/10 text-center bg-[#1a357d]">
+            <div class="w-20 h-20 mx-auto mb-6 bg-white rounded-[2rem] flex items-center justify-center shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-500">
+                <i class="fas fa-building-columns text-[#1e3a8a] text-3xl"></i>
             </div>
+            <h1 class="text-xl font-black text-yellow-400 tracking-tighter uppercase leading-tight">
+                Witcorp India<br>
+                <span class="text-xs text-white/70 font-bold tracking-[0.2em]">Advisors LLP</span>
+            </h1>
+            <div class="motto-text animate-pulse">Strategic Excellence</div>
         </div>
-
-        <!-- Main Navigation Links -->
-        <nav class="flex-1 p-6 space-y-2 overflow-y-auto custom-scroller">
-            <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-4 ml-4">Core Architecture</p>
+        
+        <!-- Navigation Link Container -->
+        <nav class="flex-1 p-6 space-y-3 overflow-y-auto custom-scrollbar">
+            <div class="pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest opacity-60">General Overview</div>
             
-            <a href="#" onclick="navigateTo('dashboard')" id="nav-dashboard" class="sidebar-link active flex items-center gap-4 p-4 rounded-2xl font-bold text-sm">
-                <i class="fas fa-chart-line text-lg w-6"></i> Command Center
-            </a>
+            <button onclick="showSection('dashboard')" id="nav-dashboard" class="nav-btn active w-full p-5 rounded-2xl text-left flex items-center gap-4 transition-all">
+                <i class="fas fa-grid-horizontal w-6 text-yellow-400"></i> Command Center
+            </button>
 
-            <a href="#" onclick="navigateTo('clients')" id="nav-clients" class="sidebar-link flex items-center gap-4 p-4 rounded-2xl font-bold text-sm">
-                <i class="fas fa-building-shield text-lg w-6"></i> Entity Directory
-            </a>
+            <div class="pt-8 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest opacity-60">Entity & Security</div>
+            
+            <button onclick="showSection('clientManagement')" id="nav-client" class="nav-btn w-full p-5 rounded-2xl text-left flex items-center gap-4 transition-all">
+                <i class="fas fa-user-gear w-6 text-blue-300"></i> Client Directory
+            </button>
+            
+            <button onclick="showSection('vaultManagement')" id="nav-vault" class="nav-btn w-full p-5 rounded-2xl text-left flex items-center gap-4 transition-all">
+                <i class="fas fa-key-skeleton w-6 text-blue-300"></i> Secure Vault
+            </button>
 
-            <a href="#" onclick="navigateTo('reports')" id="nav-reports" class="sidebar-link flex items-center gap-4 p-4 rounded-2xl font-bold text-sm">
-                <i class="fas fa-file-contract text-lg w-6"></i> Compliance Logs
-            </a>
-
-            <div class="pt-10 pb-4">
-                <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-4">Vertical Divisions</p>
-            </div>
-
-            <div class="space-y-3 px-2">
-                <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 cursor-pointer transition-all border border-white/5 group">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-file-invoice text-emerald-400 group-hover:scale-110 transition-transform"></i>
-                        <span class="text-xs font-bold text-slate-400">GST Portal Desk</span>
-                    </div>
-                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                </div>
-
-                <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 cursor-pointer transition-all border border-white/5 group">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-building text-blue-400 group-hover:scale-110 transition-transform"></i>
-                        <span class="text-xs font-bold text-slate-400">ROC Compliance</span>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 cursor-pointer transition-all border border-white/5 group">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-piggy-bank text-amber-400 group-hover:scale-110 transition-transform"></i>
-                        <span class="text-xs font-bold text-slate-400">Income Tax Desk</span>
-                    </div>
-                </div>
-            </div>
+            <div class="pt-8 pb-2 px-4 text-[10px] font-black text-blue-300 uppercase tracking-widest opacity-60">Compliance Desks</div>
+            
+            <button onclick="filterByField('service_category', 'GST')" class="nav-btn w-full p-5 rounded-2xl text-left flex items-center gap-4 transition-all hover:bg-emerald-500/10">
+                <i class="fas fa-receipt w-6 text-emerald-400"></i> GST Management
+            </button>
+            
+            <button onclick="filterByField('service_category', 'ROC')" class="nav-btn w-full p-5 rounded-2xl text-left flex items-center gap-4 transition-all hover:bg-amber-500/10">
+                <i class="fas fa-balance-scale w-6 text-amber-500"></i> ROC / MCA Desk
+            </button>
+            
+            <button onclick="filterByField('service_category', 'IT')" class="nav-btn w-full p-5 rounded-2xl text-left flex items-center gap-4 transition-all hover:bg-rose-500/10">
+                <i class="fas fa-money-bill-trend-up w-6 text-rose-400"></i> Income Tax
+            </button>
+            
+            <button onclick="filterByField('service_category', 'PT')" class="nav-btn w-full p-5 rounded-2xl text-left flex items-center gap-4 transition-all hover:bg-sky-500/10">
+                <i class="fas fa-id-card-clip w-6 text-sky-400"></i> Prof. Tax Desk
+            </button>
         </nav>
 
-        <!-- Sidebar Footer -->
-        <div class="p-8 border-t border-white/5">
-            <div class="bg-slate-800/50 p-4 rounded-[1.5rem] flex items-center gap-4 border border-white/5">
-                <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center font-bold text-white shadow-inner">
-                    KY
-                </div>
-                <div class="overflow-hidden">
-                    <p class="text-xs text-white font-bold truncate">Kamlesh Yadav</p>
-                    <p class="text-[10px] text-slate-500 font-medium">Administrator</p>
-                </div>
-            </div>
+        <!-- Developer Credit Section -->
+        <div class="p-8 bg-black/30 text-center border-t border-white/10">
+            <p class="text-[9px] uppercase text-blue-300 mb-2 tracking-[0.3em] font-bold">System Architect</p>
+            <p class="font-black text-base text-yellow-400 tracking-tight">Kamlesh Yadav</p>
         </div>
     </aside>
 
-    <!-- 2. MAIN CONTENT ENGINE -->
-    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+    <!-- 2. MAIN VIEWPORT ENGINE -->
+    <main class="flex-1 overflow-y-auto p-10 lg:p-16 relative" id="mainContent">
         
-        <!-- GLOBAL HEADER -->
-        <header class="h-28 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-12 z-40">
-            <div class="flex-1 max-w-2xl relative">
-                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="mainSearch" onkeyup="searchRegistry()" placeholder="Global Query: Client, Status, or Agent Name..." 
-                class="w-full pl-16 pr-8 py-4 bg-slate-100/50 border-2 border-transparent focus:border-blue-500/30 focus:bg-white rounded-2xl transition-all outline-none font-semibold text-slate-600">
+        <!-- Global Search Architecture -->
+        <div class="mb-14 relative max-w-3xl transform transition-all focus-within:scale-[1.01] z-10">
+            <div class="absolute left-6 top-1/2 -translate-y-1/2 flex items-center gap-3">
+                <i class="fas fa-magnifying-glass text-slate-400 text-lg"></i>
+                <div class="h-6 w-[1.5px] bg-slate-200"></div>
             </div>
-            
-            <div class="flex items-center gap-6 ml-10">
-                <button class="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-500/20 transition-all shadow-sm">
-                    <i class="far fa-bell text-xl"></i>
-                </button>
-                <div class="h-10 w-[1px] bg-slate-200"></div>
-                <button onclick="triggerModal()" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black uppercase text-xs tracking-widest shadow-xl shadow-blue-600/30 transition-all active:scale-95">
-                    <i class="fas fa-plus-circle mr-2"></i> Entry
-                </button>
-            </div>
-        </header>
-
-        <!-- DYNAMIC VIEWPORT -->
-        <div class="flex-1 overflow-y-auto p-12 custom-scroller bg-[#f8fafc]" id="master-viewport">
-
-            <!-- SECTION: DASHBOARD -->
-            <section id="view-dashboard" class="section-view active">
-                <div class="mb-12">
-                    <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Intelligence Dashboard</h1>
-                    <p class="text-slate-500 font-medium mt-1">Analytical overview of your WitcorpDB compliance matrix.</p>
-                </div>
-
-                <!-- KEY PERFORMANCE INDICATORS -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-                    <div class="lighting-card p-8">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
-                                <i class="fas fa-folder-open text-xl"></i>
-                            </div>
-                            <span class="text-[10px] font-black bg-blue-50 text-blue-600 px-3 py-1 rounded-lg">TOTAL</span>
-                        </div>
-                        <h3 class="text-5xl font-black text-slate-800" id="stat-all">0</h3>
-                        <p class="text-slate-400 text-[10px] font-black uppercase mt-3 tracking-widest">Client Portfolios</p>
-                    </div>
-
-                    <div class="lighting-card p-8">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
-                                <i class="fas fa-check-double text-xl"></i>
-                            </div>
-                            <span class="text-[10px] font-black bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg">ACTIVE</span>
-                        </div>
-                        <h3 class="text-5xl font-black text-slate-800" id="stat-done">0</h3>
-                        <p class="text-slate-400 text-[10px] font-black uppercase mt-3 tracking-widest">Finalized Tasks</p>
-                    </div>
-
-                    <div class="lighting-card p-8">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600">
-                                <i class="fas fa-spinner fa-spin text-xl"></i>
-                            </div>
-                            <span class="text-[10px] font-black bg-amber-50 text-amber-600 px-3 py-1 rounded-lg">PENDING</span>
-                        </div>
-                        <h3 class="text-5xl font-black text-slate-800" id="stat-wait">0</h3>
-                        <p class="text-slate-400 text-[10px] font-black uppercase mt-3 tracking-widest">In-Process Flow</p>
-                    </div>
-
-                    <div class="lighting-card p-8">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600">
-                                <i class="fas fa-bolt text-xl"></i>
-                            </div>
-                            <span class="text-[10px] font-black bg-rose-50 text-rose-600 px-3 py-1 rounded-lg">URGENT</span>
-                        </div>
-                        <h3 class="text-5xl font-black text-slate-800" id="stat-risk">0</h3>
-                        <p class="text-slate-400 text-[10px] font-black uppercase mt-3 tracking-widest">Critical Deadline</p>
-                    </div>
-                </div>
-
-                <!-- MAIN REGISTRY TABLE -->
-                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-8 border-b bg-slate-50/50 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <h4 class="font-black text-slate-800 uppercase text-xs tracking-widest">Transactional Stream</h4>
-                            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                        </div>
-                        <div class="flex gap-4">
-                            <button onclick="syncCentralServer()" class="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">
-                                Force Resync
-                            </button>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50/80">
-                                    <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b">Client Profile</th>
-                                    <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b">Vertical</th>
-                                    <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b">Assignment</th>
-                                    <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b">Operational Status</th>
-                                    <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b text-right">Commands</th>
-                                </tr>
-                            </thead>
-                            <tbody id="registry-body" class="divide-y divide-slate-100">
-                                <!-- HYDRATED VIA JAVASCRIPT -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION: ENTITY DIRECTORY -->
-            <section id="view-clients" class="section-view">
-                <h2 class="text-3xl font-extrabold mb-10">Entity Management</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="client-grid-view"></div>
-            </section>
-
+            <input type="text" id="globalSearch" oninput="handleSearch(this.value)" 
+                placeholder="Query central records: Search client, service category, or staff member..." 
+                class="w-full pl-20 pr-10 py-6 bg-white rounded-[2rem] shadow-xl border border-slate-100 outline-none focus:border-blue-500 font-bold text-slate-700 transition-all text-lg">
         </div>
-    </main>
 
-    <!-- 3. SYSTEM MODAL: TRANSACTIONAL ENGINE -->
-    <div id="modal-container" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-6">
-        <div class="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-slideUp">
-            <div class="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <div>
-                    <h3 class="text-2xl font-black text-slate-900 uppercase tracking-tight" id="modal-label">New Ledger Entry</h3>
-                    <p class="text-slate-500 text-sm font-medium">Syncing data to Witcorp Distributed Cloud[cite: 1]</p>
-                </div>
-                <button onclick="dismissModal()" class="w-14 h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:border-rose-200 transition-all">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
+        <!-- 2.1 DASHBOARD VIEW -->
+        <div id="dashboard" class="section active">
+            <div id="topAnchor"></div>
             
-            <form id="ledger-form" class="p-10 grid grid-cols-2 gap-8">
-                <input type="hidden" id="field-id">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+                <div>
+                    <h2 class="text-4xl font-black text-slate-800 tracking-tight mb-2">Workspace Intelligence</h2>
+                    <p class="text-slate-500 font-bold">Real-time synchronization with Witcorp Cloud Infrastructure.</p>
+                </div>
+                <div class="flex items-center gap-3 px-6 py-3 bg-white text-emerald-600 rounded-2xl text-xs font-black border border-slate-100 shadow-sm">
+                    <span class="relative flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    WITCORP SYSTEM: ONLINE
+                </div>
+            </div>
+
+            <!-- Analytical Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+                <div onclick="filterByField('all')" class="stat-card p-10 rounded-[3.5rem] relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-blue-600"></div>
+                    <i class="fas fa-server absolute -right-6 -bottom-6 text-9xl text-slate-100 group-hover:rotate-6 transition-transform opacity-40"></i>
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Portfolios</p>
+                    <h3 id="statTotal" class="text-6xl font-black text-slate-800 mt-4">0</h3>
+                </div>
+
+                <div onclick="filterByField('status', 'Completed')" class="stat-card p-10 rounded-[3.5rem] relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
+                    <i class="fas fa-check-double absolute -right-6 -bottom-6 text-9xl text-slate-100 group-hover:rotate-6 transition-transform opacity-40"></i>
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Success Logs</p>
+                    <h3 id="statDone" class="text-6xl font-black text-emerald-600 mt-4">0</h3>
+                </div>
+
+                <div onclick="filterByField('status', 'Pending')" class="stat-card p-10 rounded-[3.5rem] relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-rose-500"></div>
+                    <i class="fas fa-fire-flame-curved absolute -right-6 -bottom-6 text-9xl text-slate-100 group-hover:rotate-6 transition-transform opacity-40"></i>
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Critical Pending</p>
+                    <h3 id="statPending" class="text-6xl font-black text-rose-600 mt-4">0</h3>
+                </div>
+            </div>
+
+            <!-- Transactional Entry Logic -->
+            <div id="entryFormAnchor" class="bg-white p-12 rounded-[4rem] shadow-2xl border border-slate-100 mb-16 relative">
+                <div class="flex items-center justify-between mb-12">
+                    <div class="flex items-center gap-5">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-[1.5rem] flex items-center justify-center shadow-inner">
+                            <i class="fas fa-file-pen text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-black text-slate-800 tracking-tight" id="formTitle">Management Portal</h3>
+                            <p class="text-slate-400 font-bold text-sm">Create or Update central records[cite: 1].</p>
+                        </div>
+                    </div>
+                    <div id="editBadge" class="hidden px-6 py-3 bg-amber-50 text-amber-700 rounded-2xl text-xs font-black border border-amber-200 uppercase tracking-widest animate-bounce">
+                        <i class="fas fa-pen-nib mr-2"></i> Operational Mode: Edit
+                    </div>
+                </div>
                 
-                <div class="col-span-2 space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Entity Name</label>
-                    <input type="text" id="field-client" required placeholder="Legal Business Name"
-                    class="w-full p-5 bg-slate-100/80 rounded-2xl border-2 border-transparent focus:border-blue-500 focus:bg-white transition-all outline-none font-bold text-slate-800">
+                <input type="hidden" id="editId">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                    <div class="space-y-4">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-2 tracking-widest">Client Name</label>
+                        <input type="text" id="clientName" class="master-input" placeholder="Legal Name">
+                    </div>
+                    <div class="space-y-4">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-2 tracking-widest">Service Stream</label>
+                        <select id="serviceCategory" class="master-input">
+                            <option value="GST">GST Management</option>
+                            <option value="ROC">ROC / MCA Desk</option>
+                            <option value="IT">Income Tax (Direct)</option>
+                            <option value="PT">Professional Tax</option>
+                            <option value="Audit">Internal Audit</option>
+                        </select>
+                    </div>
+                    <div class="space-y-4">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-2 tracking-widest">Specific Task</label>
+                        <input type="text" id="serviceDetail" class="master-input" placeholder="e.g. Monthly Filing">
+                    </div>
+                    <div class="space-y-4">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-2 tracking-widest">Account Manager</label>
+                        <input type="text" id="assignedStaff" class="master-input" placeholder="Staff Member">
+                    </div>
+                    <div class="space-y-4">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-2 tracking-widest">Deadline Date</label>
+                        <input type="date" id="deadline" class="master-input">
+                    </div>
+                    <div class="space-y-4">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-2 tracking-widest">Operational Status</label>
+                        <select id="status" class="master-input">
+                            <option value="Pending">Pending Action 🚫</option>
+                            <option value="Processing">In-Progress ⏳</option>
+                            <option value="Completed">Success Close 🟢</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2 space-y-4">
+                        <label class="text-xs font-black text-slate-500 uppercase ml-2 tracking-widest">Special Case Remarks</label>
+                        <input type="text" id="remarks" placeholder="Add confidential case notes or internal instructions..." class="master-input">
+                    </div>
                 </div>
-
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Division</label>
-                    <select id="field-category" class="w-full p-5 bg-slate-100/80 rounded-2xl border-2 border-transparent focus:border-blue-500 outline-none font-bold text-slate-800">
-                        <option value="GST">GST Services</option>
-                        <option value="ROC">ROC / MCA Desk</option>
-                        <option value="IT">Income Tax (IT)</option>
-                        <option value="PT">Prof. Tax</option>
-                        <option value="AUDIT">Statutory Audit</option>
-                    </select>
+                
+                <div class="mt-14 flex flex-col md:flex-row gap-6">
+                    <button onclick="handleSubmit()" id="submitBtn" class="flex-1 bg-[#1e3a8a] text-white py-7 rounded-[2rem] font-black uppercase tracking-[0.2em] hover:bg-blue-800 transition-all shadow-2xl shadow-blue-200 flex items-center justify-center gap-4 text-sm active:scale-95">
+                        <i class="fas fa-database text-xl"></i> Sync with Central Ledger
+                    </button>
+                    <button onclick="clearForm()" class="px-12 py-7 bg-slate-100 text-slate-500 rounded-[2rem] font-black uppercase tracking-widest hover:bg-slate-200 transition-all text-xs">Reset View</button>
                 </div>
+            </div>
 
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Target Deadline</label>
-                    <input type="text" id="field-deadline" placeholder="YYYY-MM-DD"
-                    class="w-full p-5 bg-slate-100/80 rounded-2xl border-2 border-transparent focus:border-blue-500 outline-none font-bold text-slate-800">
-                </div>
-
-                <div class="col-span-2 space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Scope / Description</label>
-                    <textarea id="field-detail" rows="3" placeholder="Brief about the compliance task..."
-                    class="w-full p-5 bg-slate-100/80 rounded-2xl border-2 border-transparent focus:border-blue-500 outline-none font-bold text-slate-800 resize-none"></textarea>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Lead Agent</label>
-                    <input type="text" id="field-staff" placeholder="Assigned Member"
-                    class="w-full p-5 bg-slate-100/80 rounded-2xl border-2 border-transparent focus:border-blue-500 outline-none font-bold text-slate-800">
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Initial Status</label>
-                    <select id="field-status" class="w-full p-5 bg-slate-100/80 rounded-2xl border-2 border-transparent focus:border-blue-500 outline-none font-bold text-slate-800">
-                        <option value="Pending">Pending</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Completed">Completed</option>
-                    </select>
-                </div>
-
-                <div class="col-span-2 mt-6">
-                    <button type="submit" class="w-full py-6 bg-slate-900 hover:bg-black text-white rounded-2xl font-black uppercase tracking-[0.25em] shadow-2xl transition-all active:scale-95">
-                        Sync with Central Hub
+            <!-- LIVE DATAGRID -->
+            <div class="bg-white rounded-[4rem] shadow-2xl overflow-hidden border border-slate-100">
+                <div class="p-10 border-b flex justify-between items-center bg-slate-50/40">
+                    <div class="flex items-center gap-4">
+                        <div class="w-2 h-10 bg-blue-600 rounded-full"></div>
+                        <h4 class="font-black text-slate-800 uppercase text-sm tracking-[0.25em]">Live Registry Interface</h4>
+                    </div>
+                    <button onclick="fetchRecords()" class="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline flex items-center gap-2">
+                        <i class="fas fa-rotate"></i> Refresh System
                     </button>
                 </div>
-            </form>
+                
+                <!-- SCROLL FIX: Added width control -->
+                <div class="table-scroll-container">
+                    <table class="w-full text-left border-collapse min-w-custom">
+                        <thead>
+                            <tr class="bg-slate-50/80">
+                                <th class="p-10 text-[11px] font-black text-slate-400 uppercase border-b tracking-[0.1em]">Client Entity</th>
+                                <th class="p-10 text-[11px] font-black text-slate-400 uppercase border-b tracking-[0.1em]">Lifecycle</th>
+                                <th class="p-10 text-[11px] font-black text-slate-400 uppercase border-b text-center tracking-[0.1em]">Task Scope</th>
+                                <th class="p-10 text-[11px] font-black text-slate-400 uppercase border-b text-center tracking-[0.1em]">Vertical</th>
+                                <th class="p-10 text-[11px] font-black text-slate-400 uppercase border-b text-center tracking-[0.1em]">Agent</th>
+                                <th class="p-10 text-[11px] font-black text-slate-400 uppercase border-b text-center tracking-[0.1em]">Target</th>
+                                <th class="p-10 text-[11px] font-black text-slate-400 uppercase border-b text-center tracking-[0.1em]">Sync Status</th>
+                                <th class="p-10 text-[11px] font-black text-slate-400 uppercase border-b tracking-[0.1em]">Internal Notes</th>
+                                <th class="p-10 text-[11px] font-black text-slate-400 uppercase border-b text-right tracking-[0.1em] sticky right-0 bg-slate-50/80">Control</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mainTableBody" class="divide-y divide-slate-100">
+                            <!-- JS HYDRATION -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- 4. CORE CONTROLLER SCRIPT -->
+        <!-- 2.2 CLIENT DIRECTORY VIEW -->
+        <div id="clientManagement" class="section">
+            <h2 class="text-4xl font-black text-slate-800 mb-12 uppercase tracking-tighter">Entity Directory</h2>
+            <div class="bg-white p-12 rounded-[3.5rem] shadow-2xl border border-slate-100 mb-16">
+                <input type="hidden" id="cEditId">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <input type="text" id="cName" placeholder="Legal Business Name" class="master-input">
+                    <input type="text" id="cPhone" placeholder="Contact Mobile" class="master-input">
+                    <input type="email" id="cEmail" placeholder="Sync Email" class="master-input">
+                    <select id="cType" class="master-input">
+                        <option value="Pvt Ltd">Private Limited</option>
+                        <option value="LLP">LLP Organization</option>
+                        <option value="Others">General / Proprietary</option>
+                    </select>
+                </div>
+                <button onclick="saveClient()" id="clientBtn" class="mt-10 w-full bg-[#1e3a8a] text-white p-6 rounded-[2rem] font-black uppercase tracking-widest hover:bg-blue-800 transition-all shadow-xl active:scale-[0.98]">
+                    Secure Client Profile
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-8 bg-blue-600 text-white font-black uppercase text-center text-xs tracking-widest">Pvt. Ltd Sector</div>
+                    <div id="pvtLtdList" class="p-8 space-y-5"></div>
+                </div>
+                <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-8 bg-purple-600 text-white font-black uppercase text-center text-xs tracking-widest">LLP Division</div>
+                    <div id="llpList" class="p-8 space-y-5"></div>
+                </div>
+                <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-8 bg-slate-800 text-white font-black uppercase text-center text-xs tracking-widest">General Ledger</div>
+                    <div id="othersList" class="p-8 space-y-5"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2.3 FILTERED RECORDS VIEW -->
+        <div id="filterView" class="section">
+            <div class="flex items-center gap-8 mb-14">
+                <button onclick="showSection('dashboard')" class="w-16 h-16 rounded-[1.5rem] bg-white flex items-center justify-center shadow-xl text-slate-400 hover:text-blue-600 transition-all hover:-translate-x-2 border border-slate-100">
+                    <i class="fas fa-chevron-left text-2xl"></i>
+                </button>
+                <div>
+                    <h2 id="filterTitle" class="text-4xl font-black text-slate-800 uppercase tracking-tight">Records Filtered</h2>
+                    <p class="text-slate-500 font-bold">Scoped view based on selected vertical[cite: 1].</p>
+                </div>
+            </div>
+            
+            <!-- SCROLL FIX: Same logic for filtered view -->
+            <div class="table-scroll-container">
+                <table class="w-full text-left border-collapse min-w-custom">
+                    <thead class="bg-slate-50/80">
+                        <tr>
+                            <th class="p-10 text-[11px] font-black text-slate-400 uppercase tracking-widest">Client Entity</th>
+                            <th class="p-10 text-[11px] font-black text-slate-400 uppercase tracking-widest">Last Update</th>
+                            <th class="p-10 text-[11px] font-black text-slate-400 uppercase text-center tracking-widest">Service Desk</th>
+                            <th class="p-10 text-[11px] font-black text-slate-400 uppercase text-center tracking-widest">Vertical</th>
+                            <th class="p-10 text-[11px] font-black text-slate-400 uppercase text-center tracking-widest">Agent</th>
+                            <th class="p-10 text-[11px] font-black text-slate-400 uppercase text-center tracking-widest">Deadline</th>
+                            <th class="p-10 text-[11px] font-black text-slate-400 uppercase text-center tracking-widest">Operational Status</th>
+                            <th class="p-10 text-[11px] font-black text-slate-400 uppercase tracking-widest">Notes</th>
+                            <th class="p-10 text-[11px] font-black text-slate-400 uppercase text-right tracking-widest sticky right-0 bg-slate-50/80">Control</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filterTableBody" class="divide-y divide-slate-100">
+                        <!-- JS HYDRATION -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 2.4 SECURE VAULT VIEW -->
+        <div id="vaultManagement" class="section">
+            <h2 class="text-4xl font-black text-slate-800 mb-12 uppercase tracking-tighter">Credential Vault</h2>
+            <div class="bg-white p-12 rounded-[4rem] shadow-2xl border border-slate-100 mb-16">
+                <input type="hidden" id="vEditId">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <input type="text" id="vClient" placeholder="Select Entity" class="master-input">
+                    <input type="text" id="vCat" placeholder="System/Portal Category" class="master-input">
+                    <input type="text" id="vUser" placeholder="Encrypted Login ID" class="master-input">
+                    <input type="text" id="vPass" placeholder="Security Password" class="master-input">
+                </div>
+                <button onclick="saveVault()" id="vaultBtn" class="mt-10 w-full bg-yellow-500 text-blue-950 p-6 rounded-[2rem] font-black uppercase tracking-widest hover:bg-yellow-400 transition-all shadow-xl active:scale-[0.98]">
+                    Lock Encrypted Data
+                </button>
+            </div>
+            
+            <div class="bg-white rounded-[3.5rem] border border-slate-100 overflow-hidden shadow-sm">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50/50 border-b">
+                        <tr>
+                            <th class="p-10 font-black text-[11px] uppercase text-slate-400 tracking-widest">Business Entity</th>
+                            <th class="p-10 font-black text-[11px] uppercase text-slate-400 tracking-widest">System Access</th>
+                            <th class="p-10 font-black text-[11px] uppercase text-slate-400 tracking-widest">Auth Identifier</th>
+                            <th class="p-10 font-black text-[11px] uppercase text-slate-400 tracking-widest">Credential</th>
+                            <th class="p-10 text-right font-black text-[11px] uppercase text-slate-400 tracking-widest">Control</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vaultTableBody" class="divide-y divide-slate-50"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 3. SYSTEM CONTROLLER SCRIPT (CORE LOGIC) -->
     <script>
-        // Supabase Infrastructure[cite: 1]
+        /**
+         * WITCORP HUB: INFRASTRUCTURE CONFIGURATION[cite: 1]
+         */
         const SB_URL = 'https://qdkglnkqsoylnquacjyo.supabase.co';
         const SB_KEY = 'sb_publishable_j8DLUkc6Zmjqd5tMvmGJnw_89ppavCX';
-        const _hub = supabase.createClient(SB_URL, SB_KEY);
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-        let registryCache = [];
+        let allRecords = [];
+        let currentActiveSection = 'dashboard';
 
-        // Application Lifecycles
-        window.addEventListener('DOMContentLoaded', () => {
-            flatpickr("#field-deadline", { dateFormat: "Y-m-d", theme: "material_blue" });
-            syncCentralServer();
-            navigateTo('dashboard');
+        /**
+         * INITIALIZATION ENGINE
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchRecords();
+            fetchClients();
+            fetchVaults();
+            console.info("WitcorpHub: Engine Initialized Successfully.");
         });
 
-        // Navigation Controller
-        function navigateTo(sectionId) {
-            document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+        /**
+         * SECTION NAVIGATION ARCHITECTURE
+         */
+        function showSection(sectionId) {
+            currentActiveSection = sectionId;
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             
-            document.getElementById(`view-${sectionId}`).classList.add('active');
-            document.getElementById(`nav-${sectionId}`).classList.add('active');
+            const targetSection = document.getElementById(sectionId);
+            if(targetSection) targetSection.classList.add('active');
+            
+            const targetNav = document.getElementById(`nav-${sectionId.replace('Management', '')}`);
+            if(targetNav) targetNav.classList.add('active');
+            
+            // Auto-scroll to top on view change
+            document.getElementById('mainContent').scrollTop = 0;
         }
 
-        // Data Synchronization
-        async function syncCentralServer() {
-            const { data, error } = await _hub.from('witcorp_records').select('*').order('created_at', { ascending: false });
-            
-            if (error) {
-                console.error("WitcorpHub: Connection Interrupted", error);
-                return;
+        /**
+         * DATA HYDRATION: MAIN RECORDS
+         */
+        async function fetchRecords() {
+            const { data, error } = await supabaseClient
+                .from('witcorp_records')
+                .select('*')
+                .order('updated_at', { ascending: false });
+
+            if (!error) {
+                allRecords = data;
+                renderTable(data, 'mainTableBody');
+                updateStats(data);
+            } else {
+                console.error("WitcorpHub: Sync Error ->", error.message);
             }
-
-            registryCache = data;
-            renderRegistry(data);
-            refreshAnalytics(data);
         }
 
-        function renderRegistry(list) {
-            const container = document.getElementById('registry-body');
-            container.innerHTML = list.length === 0 ? '<tr><td colspan="5" class="p-20 text-center font-bold text-slate-400">Empty Registry. Create your first entry.</td></tr>' : '';
+        /**
+         * ANALYTICS UPDATE ENGINE
+         */
+        function updateStats(data) {
+            document.getElementById('statTotal').innerText = data.length;
+            document.getElementById('statDone').innerText = data.filter(r => r.status === 'Completed').length;
+            document.getElementById('statPending').innerText = data.filter(r => r.status === 'Pending').length;
+        }
 
-            list.forEach(row => {
-                const statusStyles = {
-                    'Completed': 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                    'Pending': 'bg-rose-50 text-rose-600 border-rose-100',
-                    'Processing': 'bg-amber-50 text-amber-600 border-amber-100'
-                }[row.status] || 'bg-slate-50 text-slate-400';
+        /**
+         * DYNAMIC RENDER ENGINE (CORE COMPONENT)
+         */
+        function renderTable(data, targetId) {
+            const tbody = document.getElementById(targetId);
+            if (!tbody) return;
+            
+            tbody.innerHTML = data.length === 0 
+                ? `<tr><td colspan="9" class="p-24 text-center text-slate-300 font-bold text-xl uppercase tracking-widest">No active records in registry</td></tr>` 
+                : "";
 
-                container.innerHTML += `
-                    <tr class="group hover:bg-slate-50/80 transition-all">
-                        <td class="p-8">
-                            <p class="font-extrabold text-slate-800 text-sm">${row.client_name}</p>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Ref: #WIT-${row.id}</p>
+            data.forEach(row => {
+                const statusConfig = {
+                    'Completed': { class: 'st-completed', icon: 'fa-circle-check' },
+                    'Pending': { class: 'st-pending', icon: 'fa-circle-exclamation' },
+                    'Processing': { class: 'st-processing', icon: 'fa-spinner fa-spin' }
+                }[row.status] || { class: 'bg-slate-100', icon: 'fa-info-circle' };
+
+                const dateIndia = row.updated_at 
+                    ? new Date(row.updated_at).toLocaleString('en-IN', { 
+                        hour: '2-digit', 
+                        minute: '2-digit', 
+                        day: '2-digit', 
+                        month: 'short', 
+                        year: 'numeric' 
+                      }) 
+                    : 'Awaiting...';
+
+                tbody.innerHTML += `
+                    <tr class="group transition-all hover:bg-slate-50/50">
+                        <td class="p-10 font-extrabold text-slate-800 text-sm tracking-tight">${row.client_name}</td>
+                        <td class="p-10 text-[10px] font-black text-slate-400 uppercase">
+                            <span class="flex items-center gap-2"><i class="far fa-clock text-blue-500"></i> ${dateIndia}</span>
                         </td>
-                        <td class="p-8">
-                            <span class="px-3 py-1 bg-slate-900 text-white rounded-lg text-[9px] font-black tracking-widest">${row.service_category}</span>
+                        <td class="p-10 text-center text-[11px] text-slate-500 font-black">${row.service_detail || 'Standard Compliance'}</td>
+                        <td class="p-10 text-center">
+                            <div class="inline-block px-4 py-1.5 bg-blue-600 text-white rounded-xl text-[9px] font-black uppercase shadow-sm tracking-[0.15em]">${row.service_category}</div>
                         </td>
-                        <td class="p-8">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-black">${row.assigned_staff?.[0] || 'U'}</div>
-                                <span class="text-xs font-bold text-slate-600">${row.assigned_staff || 'Unassigned'}</span>
+                        <td class="p-10 text-center">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-2xl text-[10px] font-black text-slate-600 shadow-sm">
+                                <i class="fas fa-user-shield text-blue-500"></i> ${row.assigned_staff || 'TBD'}
                             </div>
                         </td>
-                        <td class="p-8">
-                            <div class="status-badge ${statusStyles}">
-                                <div class="w-1.5 h-1.5 rounded-full bg-current"></div>
-                                ${row.status}
+                        <td class="p-10 text-center font-black text-slate-500 text-[11px]">
+                            ${row.deadline ? new Date(row.deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '---'}
+                        </td>
+                        <td class="p-10 text-center">
+                            <span class="status-pill ${statusConfig.class}">
+                                <i class="fas ${statusConfig.icon}"></i> ${row.status}
+                            </span>
+                        </td>
+                        <td class="p-10 text-slate-500 text-[11px] italic max-w-[200px] truncate font-bold opacity-70 group-hover:opacity-100">${row.remarks || '---'}</td>
+                        <td class="p-10 text-right sticky right-0 bg-white/95 group-hover:bg-slate-50/95 backdrop-blur-sm transition-colors border-l border-slate-50">
+                            <div class="flex justify-end gap-3">
+                                <button onclick='editRecord(${JSON.stringify(row)})' class="w-11 h-11 rounded-[1rem] bg-white border border-slate-200 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-md hover:scale-110 flex items-center justify-center">
+                                    <i class="fas fa-pen-to-square"></i>
+                                </button>
+                                <button onclick="deleteRecord(${row.id})" class="w-11 h-11 rounded-[1rem] bg-white border border-slate-200 text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-md hover:scale-110 flex items-center justify-center">
+                                    <i class="fas fa-trash-can"></i>
+                                </button>
                             </div>
                         </td>
-                        <td class="p-8 text-right">
-                            <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick='initiateEdit(${JSON.stringify(row)})' class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg"><i class="fas fa-edit"></i></button>
-                                <button onclick="executeDelete(${row.id})" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+                    </tr>`;
             });
         }
 
-        // Logic Modules
-        function refreshAnalytics(data) {
-            document.getElementById('stat-all').innerText = data.length;
-            document.getElementById('stat-done').innerText = data.filter(r => r.status === 'Completed').length;
-            document.getElementById('stat-wait').innerText = data.filter(r => r.status === 'Processing').length;
-            
-            const overdue = data.filter(r => {
-                if(!r.deadline || r.status === 'Completed') return false;
-                return new Date(r.deadline) < new Date();
-            }).length;
-            document.getElementById('stat-risk').innerText = overdue;
-        }
-
-        function searchRegistry() {
-            const query = document.getElementById('mainSearch').value.toLowerCase();
-            const results = registryCache.filter(item => 
-                item.client_name.toLowerCase().includes(query) ||
-                item.service_category.toLowerCase().includes(query) ||
-                (item.assigned_staff && item.assigned_staff.toLowerCase().includes(query))
-            );
-            renderRegistry(results);
-        }
-
-        // Modal Controllers
-        function triggerModal() {
-            document.getElementById('ledger-form').reset();
-            document.getElementById('field-id').value = '';
-            document.getElementById('modal-label').innerText = "New Ledger Entry";
-            document.getElementById('modal-container').style.display = 'flex';
-        }
-
-        function dismissModal() {
-            document.getElementById('modal-container').style.display = 'none';
-        }
-
-        document.getElementById('ledger-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('field-id').value;
-            
+        /**
+         * FORM SUBMISSION & SYNC LOGIC
+         */
+        async function handleSubmit() {
+            const id = document.getElementById('editId').value;
             const payload = {
-                client_name: document.getElementById('field-client').value,
-                service_category: document.getElementById('field-category').value,
-                service_detail: document.getElementById('field-detail').value,
-                assigned_staff: document.getElementById('field-staff').value,
-                deadline: document.getElementById('field-deadline').value,
-                status: document.getElementById('field-status').value
+                client_name: document.getElementById('clientName').value,
+                service_category: document.getElementById('serviceCategory').value,
+                service_detail: document.getElementById('serviceDetail').value,
+                assigned_staff: document.getElementById('assignedStaff').value,
+                deadline: document.getElementById('deadline').value,
+                status: document.getElementById('status').value,
+                remarks: document.getElementById('remarks').value,
+                updated_at: new Date().toISOString()
             };
 
-            const query = id ? _hub.from('witcorp_records').update(payload).eq('id', id) : _hub.from('witcorp_records').insert([payload]);
-            const { error } = await query;
+            if (!payload.client_name) return alert("System Alert: Business Entity Name is required for sync.");
 
-            if (!error) {
-                dismissModal();
-                syncCentralServer();
-            }
-        };
+            const { error } = id 
+                ? await supabaseClient.from('witcorp_records').update(payload).eq('id', id) 
+                : await supabaseClient.from('witcorp_records').insert([payload]);
 
-        function initiateEdit(data) {
-            triggerModal();
-            document.getElementById('modal-label').innerText = "Update Record";
-            document.getElementById('field-id').value = data.id;
-            document.getElementById('field-client').value = data.client_name;
-            document.getElementById('field-category').value = data.service_category;
-            document.getElementById('field-detail').value = data.service_detail;
-            document.getElementById('field-staff').value = data.assigned_staff;
-            document.getElementById('field-deadline').value = data.deadline || '';
-            document.getElementById('field-status').value = data.status;
-        }
-
-        async function executeDelete(id) {
-            if (confirm("System Alert: Are you sure you want to purge this record?")) {
-                await _hub.from('witcorp_records').delete().eq('id', id);
-                syncCentralServer();
+            if (!error) { 
+                alert(id ? "Record Revision Success!" : "New Ledger Entry Registered!");
+                clearForm(); 
+                fetchRecords(); 
+                showSection('dashboard'); 
+            } else { 
+                alert("Critical Error: Database Connection Failed."); 
             }
         }
+
+        /**
+         * SEARCH & FILTER LOGIC
+         */
+        function handleSearch(val) {
+            const q = val.toLowerCase();
+            const results = allRecords.filter(r => 
+                r.client_name.toLowerCase().includes(q) || 
+                r.service_category.toLowerCase().includes(q) || 
+                (r.assigned_staff && r.assigned_staff.toLowerCase().includes(q))
+            );
+            renderTable(results, 'mainTableBody');
+        }
+
+        function filterByField(field, value) {
+            showSection('filterView');
+            document.getElementById('filterTitle').innerText = `${value} Registry Scoped`;
+            const filtered = field === 'all' ? allRecords : allRecords.filter(r => r[field] === value);
+            renderTable(filtered, 'filterTableBody');
+        }
+
+        /**
+         * RECORD MANAGEMENT ACTIONS
+         */
+        function editRecord(row) {
+            document.getElementById('editId').value = row.id;
+            document.getElementById('clientName').value = row.client_name;
+            document.getElementById('serviceCategory').value = row.service_category;
+            document.getElementById('serviceDetail').value = row.service_detail;
+            document.getElementById('assignedStaff').value = row.assigned_staff;
+            document.getElementById('deadline').value = row.deadline;
+            document.getElementById('status').value = row.status;
+            document.getElementById('remarks').value = row.remarks;
+            
+            document.getElementById('formTitle').innerText = "System Revision Entry";
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-shield-sync mr-2"></i> Push Updates to Cloud`;
+            document.getElementById('editBadge').classList.remove('hidden');
+            
+            ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline'].forEach(id => {
+                document.getElementById(id).disabled = true;
+            });
+            
+            showSection('dashboard');
+            setTimeout(() => {
+                document.getElementById('entryFormAnchor').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 200);
+        }
+
+        async function deleteRecord(id) {
+            if(confirm("DANGER: This action will permanently purge this record from central servers. Proceed?")) {
+                await supabaseClient.from('witcorp_records').delete().eq('id', id);
+                fetchRecords();
+                if(currentActiveSection === 'filterView') showSection('dashboard');
+            }
+        }
+
+        /**
+         * UTILITY FUNCTIONS
+         */
+        function clearForm() {
+            document.getElementById('editId').value = "";
+            document.getElementById('clientName').value = "";
+            document.getElementById('serviceDetail').value = "";
+            document.getElementById('assignedStaff').value = "";
+            document.getElementById('deadline').value = "";
+            document.getElementById('remarks').value = "";
+            document.getElementById('formTitle').innerText = "Management Portal";
+            document.getElementById('submitBtn').innerHTML = `<i class="fas fa-database text-xl"></i> Sync with Central Ledger`;
+            document.getElementById('editBadge').classList.add('hidden');
+            ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline'].forEach(id => {
+                document.getElementById(id).disabled = false;
+            });
+        }
+
+        // Expansion for Client Management Logic
+        async function fetchClients() {
+            const { data, error } = await supabaseClient.from('witcorp_clients').select('*');
+            if (error) return;
+            const groups = { 'Pvt Ltd': 'pvtLtdList', 'LLP': 'llpList', 'Others': 'othersList' };
+            Object.values(groups).forEach(id => document.getElementById(id).innerHTML = "");
+            data.forEach(c => {
+                const lid = groups[c.entity_type] || 'othersList';
+                document.getElementById(lid).innerHTML += `
+                    <div class="p-6 bg-slate-50/50 rounded-[1.5rem] border border-slate-100 hover:border-blue-400 transition-all group">
+                        <div class="font-black text-slate-800 text-sm tracking-tight">${c.client_name}</div>
+                        <div class="text-[10px] text-slate-500 font-bold mt-2 flex items-center gap-2"><i class="fas fa-phone text-blue-500"></i> ${c.contact_number}</div>
+                        <div class="text-[10px] text-blue-600 font-black mt-1 flex items-center gap-2"><i class="fas fa-envelope"></i> ${c.email_id}</div>
+                    </div>`;
+            });
+        }
+        
+        // Vault Placeholder Logic
+        async function fetchVaults() {
+            // Placeholder for Vault Sync
+            console.log("WitcorpVault: Listening for encrypted handshakes...");
+        }
+
     </script>
 </body>
 </html>
