@@ -36,16 +36,43 @@
         .st-completed { background-color: #f0fdf4; color: #16a34a; }
         
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-        /* Branding Motto Style */
         .motto-text { font-size: 9px; letter-spacing: 2px; font-weight: 800; color: rgba(255,255,255,0.7); text-transform: uppercase; margin-top: 8px; position: relative; display: inline-block; }
         .motto-text::after { content: ''; position: absolute; bottom: -4px; left: 25%; width: 50%; height: 1.5px; background: #fbbf24; border-radius: 10px; }
+        
+        /* Auth Overlay */
+        #authOverlay { position: fixed; inset: 0; background: #1e3a8a; z-index: 1000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
+
+    <!-- Auth System UI -->
+    <div id="authOverlay">
+        <div class="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-lock text-blue-600 text-2xl"></i>
+                </div>
+                <h2 id="authTitle" class="text-2xl font-black text-slate-800">Employee Login</h2>
+                <p class="text-slate-400 text-sm font-bold">Witcorp Advisors Hub</p>
+            </div>
+            <div id="authInputs" class="space-y-4">
+                <input type="text" id="authEmail" placeholder="Email / Username" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-500 font-bold">
+                <input type="password" id="authPass" placeholder="Password" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-500 font-bold">
+                <div id="signupOnly" class="hidden space-y-4">
+                    <input type="text" id="authName" placeholder="Full Name" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-500 font-bold">
+                </div>
+                <button onclick="handleAuth()" id="authBtn" class="w-full bg-[#1e3a8a] text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-800 transition-all shadow-lg">Login Access</button>
+                <p class="text-center text-xs font-bold text-slate-500">
+                    <span id="authToggleText">New Employee?</span> 
+                    <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-blue-600 underline">Request Registration</button>
+                </p>
+            </div>
+        </div>
+    </div>
 
     <aside class="w-72 bg-[#1e3a8a] text-white flex flex-col shadow-2xl z-50">
         <div class="p-8 border-b border-white/10 text-center">
@@ -84,9 +111,14 @@
             </button>
         </nav>
 
-        <div class="p-6 bg-black/20 text-center border-t border-white/10">
-            <p class="text-[10px] uppercase text-blue-300 mb-1 tracking-widest">Developed By</p>
-            <p class="font-bold text-sm text-yellow-400">Kamlesh Yadav</p>
+        <div class="p-4 space-y-2 border-t border-white/10">
+            <button onclick="handleLogout()" class="w-full p-4 rounded-xl text-left flex items-center gap-3 transition-all hover:bg-red-500/20 text-red-400 font-bold">
+                <i class="fas fa-right-from-bracket w-5"></i> Logout Account
+            </button>
+            <div class="text-center pt-2">
+                <p class="text-[10px] uppercase text-blue-300 mb-1 tracking-widest">Developed By</p>
+                <p class="font-bold text-sm text-yellow-400">Kamlesh Yadav</p>
+            </div>
         </div>
     </aside>
 
@@ -99,7 +131,6 @@
 
         <div id="dashboard" class="section active">
             <div id="topAnchor"></div>
-            
             <div class="flex justify-between items-center mb-10">
                 <h2 class="text-3xl font-black text-slate-800 tracking-tight">Workspace Overview</h2>
                 <div class="flex items-center gap-2 px-5 py-2.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black border border-emerald-200 shadow-sm">
@@ -189,8 +220,9 @@
                 <div class="p-8 border-b flex justify-between items-center bg-slate-50/30">
                     <h4 class="font-black text-slate-800 uppercase text-xs tracking-[0.2em]">Live Records Database</h4>
                 </div>
+                <!-- ENABLED HORIZONTAL SCROLL -->
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse min-w-[1000px]">
                         <thead>
                             <tr class="bg-slate-50/50">
                                 <th class="p-8 text-[10px] font-black text-slate-400 uppercase border-b tracking-wider">Client</th>
@@ -254,8 +286,8 @@
                 </div>
                 <button onclick="saveVault()" id="vaultBtn" class="mt-6 w-full bg-yellow-500 text-blue-900 p-5 rounded-2xl font-black uppercase tracking-widest hover:bg-yellow-400 transition-all">Store Securely</button>
             </div>
-            <div class="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden">
-                <table class="w-full text-left">
+            <div class="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden overflow-x-auto">
+                <table class="w-full text-left min-w-[800px]">
                     <thead class="bg-slate-50/50 border-b">
                         <tr>
                             <th class="p-8 font-black text-[10px] uppercase text-slate-400 tracking-wider">Entity</th>
@@ -277,8 +309,9 @@
                 </button>
                 <h2 id="filterTitle" class="text-3xl font-black text-slate-800 uppercase">Records Filtered</h2>
             </div>
-            <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden border" id="filterTableContainer">
-                <table class="w-full text-left border-collapse">
+            <!-- ENABLED HORIZONTAL SCROLL FOR FILTERED VIEW -->
+            <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden border overflow-x-auto" id="filterTableContainer">
+                <table class="w-full text-left border-collapse min-w-[1000px]">
                     <thead class="bg-slate-50/50">
                         <tr>
                             <th class="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client</th>
@@ -305,6 +338,66 @@
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         let allRecords = [];
+        let authMode = 'login'; // login or signup
+
+        // --- AUTH LOGIC ---
+        function toggleAuthMode() {
+            authMode = authMode === 'login' ? 'signup' : 'login';
+            document.getElementById('authTitle').innerText = authMode === 'login' ? 'Employee Login' : 'Employee Registration';
+            document.getElementById('authBtn').innerText = authMode === 'login' ? 'Login Access' : 'Submit Registration';
+            document.getElementById('signupOnly').classList.toggle('hidden');
+            document.getElementById('authToggleText').innerText = authMode === 'login' ? 'New Employee?' : 'Already have account?';
+            document.getElementById('authToggleBtn').innerText = authMode === 'login' ? 'Request Registration' : 'Back to Login';
+        }
+
+        async function handleAuth() {
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPass').value;
+            
+            if(!email || !pass) return alert("All fields mandatory");
+
+            if(authMode === 'signup') {
+                const name = document.getElementById('authName').value;
+                const { error } = await supabaseClient.from('witcorp_users').insert([{ 
+                    email, password: pass, name, status: 'Pending' 
+                }]);
+                if(!error) alert("Registration Request Sent! Admin approval required.");
+                else alert("Email already exists or connection error");
+            } else {
+                const { data, error } = await supabaseClient.from('witcorp_users').select('*').eq('email', email).eq('password', pass).single();
+                if(data) {
+                    if(data.status === 'Approved') {
+                        localStorage.setItem('witcorp_session', JSON.stringify(data));
+                        document.getElementById('authOverlay').style.display = 'none';
+                        initApp();
+                    } else {
+                        alert("Account Pending Approval from Admin.");
+                    }
+                } else {
+                    alert("Invalid Credentials");
+                }
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('witcorp_session');
+            location.reload();
+        }
+
+        window.onload = () => {
+            const session = localStorage.getItem('witcorp_session');
+            if(session) {
+                document.getElementById('authOverlay').style.display = 'none';
+                initApp();
+            }
+        };
+
+        function initApp() {
+            fetchRecords();
+            fetchClients();
+            fetchVault();
+        }
+        // --- END AUTH LOGIC ---
 
         async function fetchRecords() {
             const { data, error } = await supabaseClient.from('witcorp_records').select('*').order('updated_at', { ascending: false });
@@ -315,7 +408,6 @@
             }
         }
 
-        // Updated Render Table with separate columns for Client, Status, Service, Category
         function renderTable(data, targetId) {
             const tbody = document.getElementById(targetId);
             if (!tbody) return;
@@ -406,23 +498,8 @@
                         <div class="font-black text-slate-800 text-sm">${c.client_name}</div>
                         <div class="text-[10px] text-slate-500 font-bold mt-1"><i class="fas fa-phone-alt mr-1.5 text-blue-500"></i> ${c.contact_number}</div>
                         <div class="text-[10px] text-blue-600 font-black break-all mt-1 opacity-70 group-hover:opacity-100"><i class="fas fa-envelope mr-1.5"></i> ${c.email_id}</div>
-                        <div class="mt-4 flex gap-4 border-t border-slate-200/50 pt-3">
-                            <button onclick='editClient(${JSON.stringify(c)})' class="text-[9px] text-blue-600 font-black uppercase hover:scale-110 transition-transform">Modify</button>
-                            <button onclick="deleteClient(${c.id})" class="text-[9px] text-rose-500 font-black uppercase hover:scale-110 transition-transform">Purge</button>
-                        </div>
                     </div>`;
             });
-        }
-
-        function editClient(c) {
-            document.getElementById('cEditId').value = c.id;
-            document.getElementById('cName').value = c.client_name;
-            document.getElementById('cPhone').value = c.contact_number;
-            document.getElementById('cEmail').value = c.email_id;
-            document.getElementById('cType').value = c.entity_type;
-            document.getElementById('clientBtn').innerText = "Confirm Update Profile";
-            // FIXED: SCROLL TO TOP FORM
-            document.getElementById('mainContent').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async function saveClient() {
@@ -433,110 +510,60 @@
                 email_id: document.getElementById('cEmail').value,
                 entity_type: document.getElementById('cType').value
             };
-            if(!payload.client_name) return alert("Entity Name Required");
-            const { error } = id 
-                ? await supabaseClient.from('witcorp_clients').update(payload).eq('id', id)
-                : await supabaseClient.from('witcorp_clients').insert([payload]);
-            if(!error) { 
-                fetchClients(); 
-                document.getElementById('cEditId').value = "";
-                ['cName','cPhone','cEmail'].forEach(i => document.getElementById(i).value = ""); 
-                document.getElementById('clientBtn').innerText = "Save Client Profile";
-            }
-        }
-
-        async function deleteClient(id) {
-            if(confirm("Action: Delete client profile?")) {
-                await supabaseClient.from('witcorp_clients').delete().eq('id', id);
-                fetchClients();
-            }
+            const { error } = id ? await supabaseClient.from('witcorp_clients').update(payload).eq('id', id) : await supabaseClient.from('witcorp_clients').insert([payload]);
+            if (!error) { fetchClients(); document.getElementById('cName').value=''; }
         }
 
         async function fetchVault() {
-            const { data, error } = await supabaseClient.from('witcorp_credentials').select('*');
-            if (error) return;
+            const { data, error } = await supabaseClient.from('witcorp_vault').select('*');
             const tbody = document.getElementById('vaultTableBody');
             tbody.innerHTML = "";
             data.forEach(v => {
                 tbody.innerHTML += `
-                    <tr class="group hover:bg-slate-50">
-                        <td class="p-8 font-black text-blue-900 text-sm tracking-tight">${v.client_name || 'N/A'}</td>
-                        <td class="p-8 font-black text-slate-700 text-sm"><span class="px-2 py-1 bg-slate-100 rounded-lg text-[10px]">${v.category}</span></td>
-                        <td class="p-8 font-bold text-blue-600 text-sm">${v.username}</td>
-                        <td class="p-8 font-mono text-xs"><span class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl shadow-inner">${v.password}</span></td>
-                        <td class="p-8 text-right flex gap-3 justify-end items-center">
-                            <button onclick='editVault(${JSON.stringify(v)})' class="text-blue-500 hover:scale-125 transition-transform"><i class="fas fa-pencil"></i></button>
-                            <button onclick="deleteVault(${v.id})" class="text-rose-500 hover:scale-125 transition-transform"><i class="fas fa-trash-alt"></i></button>
-                        </td>
+                    <tr>
+                        <td class="p-8 font-bold text-slate-700">${v.client_name}</td>
+                        <td class="p-8 font-black text-[10px] text-blue-500 uppercase">${v.category}</td>
+                        <td class="p-8 font-medium">${v.username}</td>
+                        <td class="p-8"><code class="bg-slate-100 px-2 py-1 rounded">${v.password}</code></td>
+                        <td class="p-8 text-right"><button onclick="deleteVault(${v.id})" class="text-rose-500"><i class="fas fa-trash"></i></button></td>
                     </tr>`;
             });
         }
 
-        function editVault(v) {
-            document.getElementById('vEditId').value = v.id;
-            document.getElementById('vClient').value = v.client_name;
-            document.getElementById('vCat').value = v.category;
-            document.getElementById('vUser').value = v.username;
-            document.getElementById('vPass').value = v.password;
-            document.getElementById('vaultBtn').innerText = "Update Vault Credentials";
-            // FIXED: SCROLL TO TOP FORM
-            document.getElementById('mainContent').scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
         async function saveVault() {
-            const id = document.getElementById('vEditId').value;
-            const payload = {
-                client_name: document.getElementById('vClient').value,
-                category: document.getElementById('vCat').value,
-                username: document.getElementById('vUser').value,
-                password: document.getElementById('vPass').value
-            };
-            if(!payload.category || !payload.client_name) return alert("Error: Required fields missing.");
-            const { error } = id 
-                ? await supabaseClient.from('witcorp_credentials').update(payload).eq('id', id)
-                : await supabaseClient.from('witcorp_credentials').insert([payload]);
-            if(!error) { 
-                fetchVault(); 
-                document.getElementById('vEditId').value = "";
-                ['vClient','vCat','vUser','vPass'].forEach(i => document.getElementById(i).value = ""); 
-                document.getElementById('vaultBtn').innerText = "Store Securely";
-            }
-        }
-
-        async function deleteVault(id) {
-            if(confirm("Security: Confirm credential deletion?")) {
-                await supabaseClient.from('witcorp_credentials').delete().eq('id', id);
-                fetchVault();
-            }
+            const payload = { client_name: document.getElementById('vClient').value, category: document.getElementById('vCat').value, username: document.getElementById('vUser').value, password: document.getElementById('vPass').value };
+            await supabaseClient.from('witcorp_vault').insert([payload]);
+            fetchVault();
         }
 
         function showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(id === 'dashboard') document.getElementById('nav-dashboard').classList.add('active');
-            if(id === 'clientManagement') document.getElementById('nav-client').classList.add('active');
-            if(id === 'vaultManagement') document.getElementById('nav-vault').classList.add('active');
-            if (id === 'dashboard') fetchRecords();
-            if (id === 'clientManagement') fetchClients();
-            if (id === 'vaultManagement') fetchVault();
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${id === 'filterView' ? 'dashboard' : id}`);
+            if(activeNav) activeNav.classList.add('active');
         }
 
         function filterByField(field, value) {
-            showSection('filterView');
-            let filtered = field === 'all' ? [...allRecords] : allRecords.filter(r => r[field] === value);
-            document.getElementById('filterTitle').innerText = `${value} Portal View`;
+            let filtered = [];
+            if(field === 'all') filtered = allRecords;
+            else if(field === 'service_category') {
+                filtered = allRecords.filter(r => r.service_category === value);
+                document.getElementById('filterTitle').innerText = `${value} PORTAL VIEW`;
+            }
+            else filtered = allRecords.filter(r => r[field] === value);
+            
             renderTable(filtered, 'filterTableBody');
+            showSection('filterView');
         }
 
-        function handleSearch(query) {
-            const q = query.toLowerCase();
-            const filtered = allRecords.filter(r => r.client_name?.toLowerCase().includes(q) || r.service_detail?.toLowerCase().includes(q));
-            if (query.trim() !== "") {
-                showSection('filterView');
-                document.getElementById('filterTitle').innerText = `Results for: "${query}"`;
-                renderTable(filtered, 'filterTableBody');
-            } else { showSection('dashboard'); }
+        function handleSearch(val) {
+            const filtered = allRecords.filter(r => 
+                r.client_name.toLowerCase().includes(val.toLowerCase()) || 
+                r.service_category.toLowerCase().includes(val.toLowerCase()) ||
+                (r.assigned_staff && r.assigned_staff.toLowerCase().includes(val.toLowerCase()))
+            );
+            renderTable(filtered, 'mainTableBody');
         }
 
         function updateStats(data) {
@@ -547,17 +574,18 @@
 
         function clearForm() {
             document.getElementById('editId').value = "";
+            document.getElementById('clientName').value = "";
+            document.getElementById('serviceDetail').value = "";
+            document.getElementById('assignedStaff').value = "";
+            document.getElementById('deadline').value = "";
+            document.getElementById('remarks').value = "";
             document.getElementById('formTitle').innerText = "Management Portal";
             document.getElementById('submitBtn').innerHTML = `<i class="fas fa-cloud-arrow-up text-xl"></i> Update To Witcorp`;
             document.getElementById('editBadge').classList.add('hidden');
-            ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline', 'status', 'remarks'].forEach(i => {
-                const el = document.getElementById(i);
-                el.value = (i === 'serviceCategory') ? 'GST' : (i === 'status' ? 'Pending' : "");
-                el.disabled = false;
+            ['clientName', 'serviceCategory', 'serviceDetail', 'assignedStaff', 'deadline'].forEach(id => {
+                document.getElementById(id).disabled = false;
             });
         }
-
-        fetchRecords();
     </script>
 </body>
 </html>
