@@ -32,7 +32,7 @@
             <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-lg">
                 <i class="fas fa-university text-[#1e3a8a] text-2xl"></i>
             </div>
-            <h1 class="text-lg font-black text-yellow-400 tracking-tighter uppercase">Witcorp India</h1>
+            <h1 class="text-lg font-black text-yellow-400 tracking-tighter uppercase">Witcorp India Advisors LLP</h1>
         </div>
         
         <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -64,7 +64,7 @@
         </nav>
 
         <div class="p-6 bg-black/20 text-center border-t border-white/10">
-            <p class="text-[10px] uppercase text-blue-300 mb-1">Lead Developer</p>
+            <p class="text-[10px] uppercase text-blue-300 mb-1">Developed By</p>
             <p class="font-bold text-sm text-yellow-400">Kamlesh Yadav</p>
         </div>
     </aside>
@@ -98,7 +98,7 @@
                     <h3 id="statDone" class="text-5xl font-black text-emerald-600 mt-2">0</h3>
                 </div>
                 <div onclick="filterByField('status', 'Pending')" class="stat-card bg-white p-8 rounded-[2rem] shadow-sm border-l-[12px] border-rose-500">
-                    <p class="text-xs font-black text-slate-400 uppercase">Awaiting Action</p>
+                    <p class="text-xs font-black text-slate-400 uppercase">Pending Action</p>
                     <h3 id="statPending" class="text-5xl font-black text-rose-600 mt-2">0</h3>
                 </div>
             </div>
@@ -144,9 +144,9 @@
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Status</label>
                         <select id="status" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none font-bold">
-                            <option value="Pending">Pending</option>
+                            <option value="Pending">Pending🚫</option>
                             <option value="Processing">Processing</option>
-                            <option value="Completed">Completed</option>
+                            <option value="Completed">Completed🟢</option>
                         </select>
                     </div>
                     <div class="md:col-span-2 space-y-2">
@@ -156,7 +156,7 @@
                 </div>
                 <div class="mt-6 flex gap-4">
                     <button onclick="handleSubmit()" id="submitBtn" class="flex-1 bg-[#1e3a8a] text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-800 transition-all shadow-lg shadow-blue-200">
-                        <i class="fas fa-cloud-upload-alt mr-2"></i> Sync To WitcorpDB
+                        <i class="fas fa-cloud-upload-alt mr-2"></i> Update To Witcorp
                     </button>
                     <button onclick="clearForm()" class="px-8 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200">Cancel / Clear</button>
                 </div>
